@@ -1,0 +1,163 @@
+.window {
+    position: absolute;
+    background-color: #000;
+    border: 1px solid #33ff33;
+    border-radius: 4px;
+    box-shadow: 0 0 15px rgba(51, 255, 51, 0.3);
+    overflow: hidden;
+    color: #33ff33;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.3s ease;
+}
+
+.window.active {
+    box-shadow: 0 0 20px rgba(51, 255, 51, 0.5);
+    border-color: #33ff33;
+    z-index: 1000;
+}
+
+.window.maximized {
+    border-radius: 0;
+    border-width: 0;
+}
+
+.windowHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #33ff33;
+    padding: 5px 10px;
+    cursor: move;
+    user-select: none;
+    height: 30px;
+}
+
+.windowTitle {
+    font-size: 14px;
+    font-weight: bold;
+    color: #33ff33;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.windowControls {
+    display: flex;
+    gap: 5px;
+}
+
+.windowControl {
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s, transform 0.1s;
+    border-radius: 3px;
+    padding: 0;
+}
+
+.windowControl:hover {
+    background-color: rgba(51, 255, 51, 0.2);
+}
+
+.windowControl:active {
+    transform: scale(0.95);
+}
+
+.windowMinimize span {
+    position: relative;
+    top: -3px;
+    font-weight: bold;
+}
+
+.windowClose:hover {
+    background-color: rgba(255, 51, 51, 0.5);
+    border-color: #ff3333;
+    color: white;
+}
+
+.windowContent {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+    background-color: #111;
+    padding: 10px;
+    height: calc(100% - 30px);
+}
+
+.windowResizeHandle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 15px;
+    height: 15px;
+    cursor: nwse-resize;
+    z-index: 10;
+}
+
+.windowResizeHandle::before {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid #33ff33;
+    border-bottom: 2px solid #33ff33;
+}
+
+/* Add CRT effects for windows */
+.window::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(18, 16, 16, 0.1);
+    opacity: 0.5;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Styles for mobile */
+@media (max-width: 768px) {
+    .window {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: calc(100% - 50px) !important; /* Leave space for mobile controls */
+        border-radius: 0;
+        z-index: 1000 !important;
+    }
+
+    .windowHeader {
+        height: 40px;
+        padding: 5px 15px;
+    }
+
+    .windowControl {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+    }
+
+    .windowContent {
+        height: calc(100% - 40px);
+    }
+
+    .windowResizeHandle {
+        display: none; /* No resize on mobile */
+    }
+}

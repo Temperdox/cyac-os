@@ -1,0 +1,95 @@
+/* src/components/auth/DiscordCallback.module.css */
+.discordCallback {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Courier New', monospace;
+    color: #33ff33;
+    z-index: 9999;
+}
+
+.callbackMessage {
+    background-color: rgba(20, 20, 20, 0.9);
+    border: 1px solid #33ff33;
+    border-radius: 8px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(51, 255, 51, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.callbackIcon {
+    margin-bottom: 20px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loadingSpinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(51, 255, 51, 0.3);
+    border-top: 4px solid #33ff33;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.successCheck {
+    font-size: 40px;
+    color: #33ff33;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.errorX {
+    font-size: 40px;
+    color: #ff3333;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.errorText {
+    color: #ff3333;
+}
+
+.detailsText {
+    color: #aaaaaa;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.returnButton {
+    margin-top: 20px;
+    background-color: transparent;
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    padding: 10px 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.returnButton:hover {
+    background-color: rgba(51, 255, 51, 0.2);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

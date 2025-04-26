@@ -1,0 +1,237 @@
+.tetrisGame {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #0a0a0a;
+    color: #33ff33;
+    font-family: 'Courier New', monospace;
+}
+
+.gameContainer {
+    flex: 1;
+    display: flex;
+    padding: 10px;
+    gap: 20px;
+    overflow: hidden;
+}
+
+.gameArea {
+    position: relative;
+    border: 2px solid #33ff33;
+    background-color: #000;
+    box-shadow: 0 0 15px rgba(51, 255, 51, 0.3) inset;
+}
+
+.grid {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+}
+
+.cell {
+    border: 1px solid #111;
+    box-sizing: border-box;
+}
+
+.cell.placed {
+    background-color: rgba(51, 255, 51, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 3px #33ff33 inset;
+}
+
+.cell.active {
+    background-color: #33ff33;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 5px #33ff33;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 150px;
+}
+
+.scorePanel,
+.nextPiecePanel,
+.controls,
+.buttonPanel {
+    background-color: #111;
+    border: 1px solid #33ff33;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.panelLabel {
+    text-align: center;
+    border-bottom: 1px solid rgba(51, 255, 51, 0.3);
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.scoreLine {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.highScore {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(51, 255, 51, 0.3);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.nextPiecePreview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.previewCell {
+    border: 1px solid #111;
+    box-sizing: border-box;
+    margin: 1px;
+}
+
+.previewCell.active {
+    background-color: #33ff33;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 5px #33ff33;
+}
+
+.controlsList {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 12px;
+}
+
+.controlItem {
+    display: flex;
+    justify-content: space-between;
+}
+
+.buttonPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.button {
+    background-color: transparent;
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    padding: 8px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    transition: background-color 0.2s;
+    border-radius: 3px;
+}
+
+.button:hover {
+    background-color: rgba(51, 255, 51, 0.2);
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 10;
+}
+
+.gameOverText,
+.pausedText {
+    font-size: 24px;
+    font-weight: bold;
+    color: #33ff33;
+    text-shadow: 0 0 10px rgba(51, 255, 51, 0.5);
+    letter-spacing: 2px;
+}
+
+.mobileControls {
+    display: none;
+    padding: 10px;
+    background-color: #111;
+    border-top: 1px solid #33ff33;
+    justify-content: space-around;
+}
+
+.mobileButton {
+    flex: 1;
+    margin: 0 5px;
+    padding: 15px 0;
+    background-color: rgba(51, 255, 51, 0.1);
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    font-size: 16px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+}
+
+.mobileButton:active {
+    background-color: rgba(51, 255, 51, 0.3);
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .gameContainer {
+        flex-direction: column;
+        padding: 5px;
+        gap: 10px;
+    }
+
+    .gameArea {
+        max-width: 100%;
+        max-height: 70vh;
+        overflow: auto;
+    }
+
+    .cell {
+        width: 15px !important;
+        height: 15px !important;
+    }
+
+    .sidebar {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .scorePanel,
+    .nextPiecePanel,
+    .controls,
+    .buttonPanel {
+        flex: 1;
+        min-width: 100px;
+    }
+
+    .controls {
+        display: none;
+    }
+
+    .mobileControls {
+        display: flex;
+    }
+}

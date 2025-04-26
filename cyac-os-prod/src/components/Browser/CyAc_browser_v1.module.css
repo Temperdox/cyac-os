@@ -1,0 +1,259 @@
+.browser {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #0a0a0a;
+    color: #33ff33;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+}
+
+.toolbar {
+    display: flex;
+    height: 40px;
+    padding: 5px;
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #33ff33;
+    gap: 10px;
+}
+
+.navigationButtons {
+    display: flex;
+    gap: 5px;
+}
+
+.navButton {
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+}
+
+.navButton:hover:not(:disabled) {
+    background-color: rgba(51, 255, 51, 0.2);
+}
+
+.navButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.addressBar {
+    flex: 1;
+    display: flex;
+    gap: 5px;
+}
+
+.urlInput {
+    flex: 1;
+    background-color: #000;
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    padding: 5px 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+}
+
+.goButton {
+    width: 40px;
+    background-color: transparent;
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    transition: background-color 0.2s;
+    border-radius: 3px;
+}
+
+.goButton:hover {
+    background-color: rgba(51, 255, 51, 0.2);
+}
+
+.browserContent {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+    background-color: #0a0a0a;
+}
+
+.loadingIndicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(51, 255, 51, 0.3);
+    border-top: 4px solid #33ff33;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loadingText {
+    font-size: 14px;
+    color: #33ff33;
+    max-width: 80%;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pageContent {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.pageHeader {
+    text-align: center;
+    border-bottom: 1px solid rgba(51, 255, 51, 0.3);
+    padding-bottom: 15px;
+}
+
+.pageHeader h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #33ff33;
+    letter-spacing: 2px;
+}
+
+.url {
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+}
+
+.pageBody {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.section {
+    border: 1px solid rgba(51, 255, 51, 0.3);
+    padding: 15px;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.section h2 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    color: #33ff33;
+    border-bottom: 1px solid rgba(51, 255, 51, 0.3);
+    padding-bottom: 5px;
+}
+
+.cyacLogo {
+    text-align: center;
+    font-size: 36px;
+    font-weight: bold;
+    margin: 30px 0;
+    color: #33ff33;
+    text-shadow: 0 0 10px rgba(51, 255, 51, 0.5);
+    letter-spacing: 3px;
+}
+
+.tagline {
+    font-size: 12px;
+    font-weight: normal;
+    margin-top: 5px;
+    letter-spacing: 1px;
+    opacity: 0.7;
+}
+
+.announcements {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.announcements li {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(51, 255, 51, 0.1);
+}
+
+.announcements li:last-child {
+    border-bottom: none;
+}
+
+.statusBar {
+    height: 25px;
+    background-color: #1a1a1a;
+    border-top: 1px solid #33ff33;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 12px;
+}
+
+.status {
+    color: #aaa;
+}
+
+.securityIndicator {
+    color: #33ff33;
+    display: flex;
+    align-items: center;
+}
+
+.securityIndicator::before {
+    content: '•';
+    font-size: 16px;
+    margin-right: 5px;
+}
+
+/* Animations */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .toolbar {
+        height: 50px;
+    }
+
+    .navButton {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .urlInput,
+    .goButton {
+        font-size: 16px;
+        padding: 8px 10px;
+    }
+
+    .pageHeader h1 {
+        font-size: 20px;
+    }
+
+    .cyacLogo {
+        font-size: 28px;
+    }
+}

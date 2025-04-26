@@ -1,0 +1,101 @@
+.app {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #000;
+	font-family: 'Courier New', monospace;
+	color: #33ff33;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.mainContent {
+	flex: 1;
+	position: relative;
+	width: 100%;
+	height: calc(100% - 40px); /* Reserve space for the taskbar */
+	overflow: hidden;
+}
+
+.settingsButton {
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	background-color: rgba(0, 0, 0, 0.7);
+	border: 1px solid #33ff33;
+	border-radius: 4px;
+	color: #33ff33;
+	padding: 5px 8px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	cursor: pointer;
+	z-index: 8000;
+	font-family: 'Courier New', monospace;
+	font-size: 12px;
+	transition: background-color 0.2s;
+}
+
+.settingsButton:hover {
+	background-color: rgba(51, 255, 51, 0.1);
+}
+
+.settingsIcon {
+	font-size: 14px;
+}
+
+.settingsText {
+	display: inline-block;
+}
+
+/* Default background pattern with subtle grid */
+.mainContent::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-image:
+			linear-gradient(rgba(51, 255, 51, 0.05) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(51, 255, 51, 0.05) 1px, transparent 1px);
+	background-size: 40px 40px;
+	background-position: center center;
+	pointer-events: none;
+	z-index: -1;
+}
+
+/* Add a subtle vignette effect to the edges */
+.mainContent::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: radial-gradient(
+			circle,
+			transparent 50%,
+			rgba(0, 0, 0, 0.5) 150%
+	);
+	pointer-events: none;
+	z-index: -1;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+	.mainContent {
+		height: calc(100% - 50px); /* Taller taskbar on mobile */
+	}
+
+	.settingsButton {
+		padding: 8px;
+	}
+
+	.settingsText {
+		display: none;
+	}
+}

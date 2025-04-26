@@ -1,0 +1,192 @@
+.userBanner {
+    width: 100%;
+    height: 80px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #33ff33;
+    background-color: rgba(10, 10, 10, 0.8);
+    font-family: 'Courier New', monospace;
+    color: #33ff33;
+}
+
+.bannerBackground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.bannerOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+/* Add scanlines effect */
+.bannerBackground::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(
+            rgba(0, 0, 0, 0) 50%,
+            rgba(0, 0, 0, 0.25) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+}
+
+.userContent {
+    position: relative;
+    height: 100%;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1;
+}
+
+.userAvatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #33ff33;
+    box-shadow: 0 0 8px rgba(51, 255, 51, 0.5);
+    margin-right: 15px;
+}
+
+.userAvatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.userDetails {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.username {
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-shadow: 0 0 5px rgba(51, 255, 51, 0.7);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.userLevel {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.levelIndicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #33ff33;
+    margin-right: 6px;
+    box-shadow: 0 0 5px rgba(51, 255, 51, 0.7);
+}
+
+.logoutButton {
+    background-color: transparent;
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    padding: 6px 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    letter-spacing: 1px;
+}
+
+.logoutButton:hover {
+    background-color: rgba(51, 255, 51, 0.2);
+}
+
+.notAuthenticated {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loginButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: rgba(51, 255, 51, 0.1);
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    padding: 8px 15px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: background-color 0.2s, transform 0.1s;
+    width: 100%;
+}
+
+.loginButton:hover {
+    background-color: rgba(51, 255, 51, 0.2);
+}
+
+.loginButton:active {
+    transform: scale(0.98);
+}
+
+.discordLogo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Add retro glow effect to various elements */
+.username, .levelIndicator, .logoutButton, .loginButton {
+    filter: drop-shadow(0 0 2px rgba(51, 255, 51, 0.7));
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .userBanner {
+        height: 70px;
+    }
+
+    .userAvatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .username {
+        font-size: 16px;
+    }
+
+    .userLevel {
+        font-size: 12px;
+    }
+
+    .logoutButton {
+        padding: 4px 10px;
+        font-size: 12px;
+    }
+}
