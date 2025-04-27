@@ -59,7 +59,7 @@ export class FileSystem {
                                                 'CyAc_browser_v1': {
                                                     name: 'CyAc_browser_v1',
                                                     type: 'program',
-                                                    component: '/components/programs/browser/CyAc_browser_v1',
+                                                    component: '/components/Browser/CyAc_browser_v1',
                                                     description: 'CyberAcme Web Browser v1.0'
                                                 }
                                             }

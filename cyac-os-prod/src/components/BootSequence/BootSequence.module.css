@@ -5,7 +5,7 @@
     width: 100%;
     height: 100%;
     background-color: #000;
-    color: #33ff33;
+    color: #ff3333;  /* Changed to red to match your screenshot */
     font-family: 'Courier New', monospace;
     z-index: 9999;
     display: flex;
@@ -32,7 +32,7 @@
     position: relative;
 }
 
-/* Add CRT scanline effect */
+/* Add CRT scanline effect with red tint */
 .bootScreen::after {
     content: " ";
     display: block;
@@ -41,7 +41,7 @@
     left: 0;
     bottom: 0;
     right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 0, 0, 0.02), rgba(255, 0, 0, 0.06));
     background-size: 100% 2px, 3px 100%;
     pointer-events: none;
     z-index: 2;
@@ -51,17 +51,18 @@
     display: flex;
     justify-content: space-between;
     padding: 10px 0;
-    border-bottom: 1px solid #33ff33;
+    border-bottom: 1px solid #ff3333;
     margin-bottom: 20px;
 }
 
 .company {
     font-weight: bold;
     font-size: 18px;
+    color: #ff3333;
 }
 
 .biosVersion {
-    color: #aaff33;
+    color: #ffaa33;
 }
 
 .bootContent {
@@ -83,6 +84,7 @@
     margin-bottom: 4px;
     white-space: pre-wrap;
     animation: fadeIn 0.2s ease-in-out;
+    color: #ff3333;  /* Changed to red to match screenshot */
 }
 
 .progressContainer {
@@ -96,21 +98,22 @@
     width: 120px;
     text-align: right;
     margin-right: 10px;
+    color: #ff3333;  /* Red for the label */
 }
 
 .progressBar {
     flex: 1;
     height: 20px;
     background-color: #111;
-    border: 1px solid #33ff33;
+    border: 1px solid #ff3333;  /* Red border */
     border-radius: 2px;
     overflow: hidden;
 }
 
 .progressFill {
     height: 100%;
-    background-color: #33ff33;
-    box-shadow: 0 0 10px rgba(51, 255, 51, 0.5);
+    background-color: #ff3333;  /* Red progress bar */
+    box-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
     transition: width 0.2s ease-out;
 }
 
@@ -118,6 +121,7 @@
     width: 50px;
     text-align: right;
     margin-left: 10px;
+    color: #ff3333;  /* Red for percentage */
 }
 
 .bootComplete {
@@ -155,7 +159,7 @@
 .ready {
     font-size: 24px;
     font-weight: bold;
-    color: #33ff33;
+    color: #ff3333;  /* Changed to red */
     opacity: 0;
     animation: blinkIn 2s forwards;
 }

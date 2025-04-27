@@ -1,0 +1,167 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: #33ff33;
+    font-family: 'Courier New', monospace;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    border-bottom: 1px solid #33ff33;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 16px;
+    text-transform: uppercase;
+}
+
+.backButton {
+    background-color: transparent;
+    border: 1px solid #ff3333;
+    color: #ff3333;
+    padding: 5px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.backButton:hover {
+    background-color: rgba(255, 51, 51, 0.2);
+}
+
+.content {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.settingItem {
+    margin-bottom: 15px;
+}
+
+.settingItem label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.settingItem input[type="checkbox"] {
+    margin-right: 10px;
+    position: relative;
+    width: 16px;
+    height: 16px;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid #33ff33;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.settingItem input[type="checkbox"]:checked {
+    background-color: rgba(51, 255, 51, 0.5);
+}
+
+.settingItem input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    color: #33ff33;
+    font-size: 14px;
+    top: -1px;
+    left: 2px;
+}
+
+.settingItem input[type="checkbox"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.toggleText {
+    font-size: 14px;
+}
+
+.masterToggle {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.settingsDivider {
+    height: 1px;
+    background-color: rgba(51, 255, 51, 0.3);
+    margin: 20px 0;
+}
+
+.settingsList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.hardwareWarning {
+    color: #ffaa33;
+    font-size: 12px;
+    margin-top: 5px;
+    padding: 5px;
+    border-left: 3px solid #ffaa33;
+    background-color: rgba(255, 170, 51, 0.1);
+}
+
+.intensive {
+    color: #ffaa33;
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+.footer {
+    border-top: 1px solid rgba(51, 255, 51, 0.3);
+    padding: 10px;
+}
+
+.note {
+    font-size: 12px;
+    font-style: italic;
+    color: rgba(51, 255, 51, 0.7);
+    text-align: center;
+}
+
+/* Add retro glow effect to various elements */
+.masterToggle, .toggleText, .backButton {
+    text-shadow: 0 0 2px rgba(51, 255, 51, 0.7);
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .header h2 {
+        font-size: 14px;
+    }
+
+    .backButton {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+
+    .masterToggle {
+        font-size: 14px;
+    }
+
+    .toggleText {
+        font-size: 12px;
+    }
+
+    .content {
+        padding: 10px;
+    }
+
+    .settingsList {
+        gap: 10px;
+    }
+}

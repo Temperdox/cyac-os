@@ -1,19 +1,19 @@
 .quickMenu {
     position: absolute;
-    top: 0;
+    bottom: 42px;
     left: 0;
-    width: 400px;
+    width: 500px; /* Increased width */
     max-width: 100vw;
-    max-height: calc(100vh - 40px);
-    background-color: rgba(0, 0, 0, 0.95);
-    border: 1px solid #33ff33;
-    box-shadow: 0 0 20px rgba(51, 255, 51, 0.5);
+    max-height: calc(100vh - 50px);
+    background-color: rgba(0, 0, 0, 0.95); /* Darker background */
+    border: 2px solid #ff3333; /* Thicker border */
+    box-shadow: 0 0 20px rgba(255, 51, 51, 0.7); /* More prominent glow */
     color: #33ff33;
     font-family: 'Courier New', monospace;
     display: flex;
     flex-direction: column;
     z-index: 9998;
-    animation: slideDown 0.2s ease-out;
+    animation: slideUp 0.2s ease-out;
 }
 
 .quickMenu.mobile {
@@ -30,7 +30,8 @@
 
 .header {
     padding: 10px;
-    border-bottom: 1px solid #33ff33;
+    border-bottom: 2px solid #ff3333; /* Thicker border */
+    background: linear-gradient(to bottom, #440000, #220000);
 }
 
 .navigationBar {
@@ -41,37 +42,54 @@
 }
 
 .backButton,
-.closeButton {
-    background-color: transparent;
-    border: 1px solid #33ff33;
-    color: #33ff33;
-    padding: 5px;
+.closeButton,
+.settingsButton,
+.userButton {
+    background-color: rgba(20, 0, 0, 0.8); /* Darker button background */
+    border: 1px solid #ff3333;
+    color: #ff3333;
+    padding: 5px 10px; /* Increased padding */
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Courier New', monospace;
     font-size: 14px;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, transform 0.1s;
+    border-radius: 3px; /* Slight rounding */
 }
 
 .backButton:hover,
-.closeButton:hover {
-    background-color: rgba(51, 255, 51, 0.2);
+.closeButton:hover,
+.settingsButton:hover,
+.userButton:hover {
+    background-color: rgba(255, 51, 51, 0.2);
+    transform: translateY(-1px); /* Slight lift effect */
+}
+
+.backButton:active,
+.closeButton:active,
+.settingsButton:active,
+.userButton:active {
+    transform: translateY(1px); /* Press effect */
 }
 
 .backButton:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    background-color: rgba(20, 0, 0, 0.4);
 }
 
 .backIcon,
-.closeIcon {
+.closeIcon,
+.settingsIcon,
+.userIcon {
     font-size: 14px;
 }
 
 .backText {
     margin-left: 5px;
+    color: #ff3333;
 }
 
 .currentPath {
@@ -80,6 +98,9 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size: 14px;
+    color: #33ff33;
+    font-weight: bold; /* Make path text bolder */
+    text-shadow: 0 0 5px rgba(51, 255, 51, 0.3); /* Add glow */
 }
 
 .searchBar {
@@ -90,19 +111,25 @@
 
 .searchInput {
     flex: 1;
-    background-color: #111;
-    border: 1px solid #33ff33;
-    color: #33ff33;
-    padding: 8px 35px 8px 10px;
+    background-color: #0a0a0a; /* Darker input background */
+    border: 1px solid #ff3333;
+    color: #33ff33; /* Changed to green text */
+    padding: 10px 35px 10px 10px; /* Increased padding */
     font-family: 'Courier New', monospace;
     font-size: 14px;
     width: 100%;
     box-sizing: border-box;
+    border-radius: 0; /* Remove any rounding */
 }
 
 .searchInput:focus {
     outline: none;
-    box-shadow: 0 0 5px rgba(51, 255, 51, 0.5);
+    box-shadow: 0 0 8px rgba(255, 51, 51, 0.6); /* Stronger focus glow */
+    border-color: #ff5555; /* Brighter border on focus */
+}
+
+.searchInput::placeholder {
+    color: rgba(51, 255, 51, 0.5); /* Green placeholder text */
 }
 
 .clearSearch {
@@ -112,7 +139,7 @@
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #33ff33;
+    color: #ff3333;
     font-size: 16px;
     cursor: pointer;
     display: flex;
@@ -129,7 +156,10 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
-    min-height: 200px; /* Ensure some content space */
+    min-height: 200px;
+    background-color: #000000;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 51, 51, 0.3) rgba(0, 0, 0, 0.2);
 }
 
 .section {
@@ -141,45 +171,61 @@
 .sectionHeader {
     font-size: 14px;
     font-weight: bold;
-    color: #aaff33;
-    border-bottom: 1px solid rgba(51, 255, 51, 0.3);
-    padding-bottom: 3px;
+    color: #ff3333;
+    border-bottom: 1px solid rgba(255, 51, 51, 0.5); /* More visible border */
+    padding-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px; /* Add letter spacing */
 }
 
 .itemGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Wider items */
+    gap: 12px; /* Increased gap */
+    padding: 5px 0;
 }
 
 .item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 10px;
+    padding: 12px;
     cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
     text-align: center;
+    border: 1px solid transparent; /* Invisible border initially */
 }
 
 .item:hover {
-    background-color: rgba(51, 255, 51, 0.2);
+    background-color: rgba(255, 51, 51, 0.15);
+    border: 1px solid rgba(255, 51, 51, 0.3); /* Visible border on hover */
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+.item.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.item.locked:hover {
+    background-color: rgba(255, 51, 51, 0.1);
+    transform: none;
 }
 
 .itemIcon {
     position: relative;
-    font-size: 24px;
-    margin-bottom: 5px;
-    width: 40px;
-    height: 40px;
+    font-size: 28px; /* Larger icons */
+    margin-bottom: 8px;
+    width: 50px;
+    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .folderIcon {
-    color: #aaff33;
+    color: #ffcc00; /* Yellow folders */
+    text-shadow: 0 0 8px rgba(255, 204, 0, 0.3); /* Folder glow */
 }
 
 .fileIcon {
@@ -188,6 +234,7 @@
 
 .programIcon {
     color: #33ffff;
+    text-shadow: 0 0 8px rgba(51, 255, 255, 0.3); /* Program icon glow */
 }
 
 .matchBadge {
@@ -202,11 +249,13 @@
 }
 
 .itemName {
-    font-size: 12px;
+    font-size: 13px; /* Slightly larger font */
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 100%;
+    color: #33ff33;
+    font-weight: bold; /* Bold item names */
 }
 
 .itemDescription {
@@ -216,6 +265,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 100%;
+    margin-top: 2px;
 }
 
 .itemPath {
@@ -225,6 +275,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 100%;
+    margin-top: 2px;
 }
 
 .emptyState {
@@ -239,13 +290,15 @@
 }
 
 .footer {
-    border-top: 1px solid #33ff33;
+    border-top: 2px solid #ff3333; /* Thicker border */
     padding: 10px;
+    background: linear-gradient(to bottom, #220000, #110000);
 }
 
 .statusBar {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-size: 12px;
 }
 
@@ -265,6 +318,7 @@
     border-radius: 50%;
     background-color: #33ff33;
     animation: pulse 2s infinite;
+    box-shadow: 0 0 5px rgba(51, 255, 51, 0.7); /* Added glow */
 }
 
 .mobileFooter {
@@ -281,23 +335,25 @@
     justify-content: center;
     gap: 5px;
     padding: 10px;
-    background-color: transparent;
-    border: 1px solid rgba(51, 255, 51, 0.3);
-    color: #33ff33;
+    background-color: rgba(20, 0, 0, 0.8); /* Darker background */
+    border: 1px solid rgba(255, 51, 51, 0.5); /* More visible border */
+    color: #ff3333;
     font-family: 'Courier New', monospace;
     font-size: 12px;
     cursor: pointer;
+    transition: all 0.2s;
 }
 
 .footerButton:hover {
-    background-color: rgba(51, 255, 51, 0.1);
+    background-color: rgba(255, 51, 51, 0.15);
+    transform: translateY(-2px); /* Slight lift on hover */
 }
 
 .buttonIcon {
     font-size: 18px;
 }
 
-/* Add scanline effect for the retro look */
+/* Scanline effect for the retro look */
 .quickMenu::after {
     content: " ";
     display: block;
@@ -309,7 +365,7 @@
     background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
     background-size: 100% 4px;
     pointer-events: none;
-    opacity: 0.15;
+    opacity: 0.2; /* Increased opacity */
     z-index: -1;
 }
 
@@ -319,23 +375,23 @@
 }
 
 .content::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.4); /* Darker track */
 }
 
 .content::-webkit-scrollbar-thumb {
-    background: rgba(51, 255, 51, 0.3);
-    border-radius: 4px;
+    background: rgba(255, 51, 51, 0.4); /* More visible thumb */
+    border-radius: 0; /* Remove rounding */
 }
 
 .content::-webkit-scrollbar-thumb:hover {
-    background: rgba(51, 255, 51, 0.5);
+    background: rgba(255, 51, 51, 0.6); /* Brighter on hover */
 }
 
 /* Animations */
-@keyframes slideDown {
+@keyframes slideUp {
     from {
         opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(10px);
     }
     to {
         opacity: 1;
@@ -345,7 +401,7 @@
 
 @keyframes pulse {
     0% { opacity: 0.5; }
-    50% { opacity: 1; }
+    50% { opacity: 1; box-shadow: 0 0 10px rgba(51, 255, 51, 0.9); }
     100% { opacity: 0.5; }
 }
 
@@ -360,13 +416,15 @@
     }
 
     .backButton,
-    .closeButton {
+    .closeButton,
+    .settingsButton,
+    .userButton {
         padding: 8px;
     }
 
     .searchInput {
         padding: 10px;
-        font-size: 16px; /* Larger for touch screens */
+        font-size: 16px;
     }
 
     .content {
@@ -376,4 +434,254 @@
     .footerButton {
         padding: 12px;
     }
+}
+
+/* Header buttons container */
+.headerButtons {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Discord login button for footer */
+.discordLoginButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: rgba(51, 255, 51, 0.1);
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    padding: 8px 15px; /* Larger button */
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 10px;
+    font-weight: bold; /* Make text bolder */
+    text-transform: uppercase;
+}
+
+.discordLoginButton:hover {
+    background-color: rgba(51, 255, 51, 0.2);
+    transform: translateY(-2px); /* Slight lift on hover */
+    box-shadow: 0 0 10px rgba(51, 255, 51, 0.3); /* Glow on hover */
+}
+
+.discordIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Settings content styling */
+.effectsToggle {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+}
+
+.effectsLabel {
+    color: #33ff33;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Toggle switch styling */
+.toggleSwitch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.toggleSwitch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggleSlider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #333;
+    transition: .4s;
+    border-radius: 24px;
+    border: 1px solid #ff3333;
+}
+
+.toggleSlider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 3px;
+    background-color: #ff3333;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggleSlider {
+    background-color: rgba(51, 255, 51, 0.3);
+    border-color: #33ff33;
+}
+
+input:checked + .toggleSlider:before {
+    transform: translateX(26px);
+    background-color: #33ff33;
+}
+
+/* Settings divider */
+.settingsDivider {
+    height: 1px;
+    background-color: rgba(255, 51, 51, 0.3);
+    margin: 10px 0;
+}
+
+/* Override some styles for the settings content */
+.section .itemGrid {
+    padding: 10px;
+}
+
+/* Mobile styles for settings */
+@media (max-width: 768px) {
+    .effectsToggle {
+        padding: 10px;
+    }
+
+    .toggleSwitch {
+        width: 40px;
+        height: 20px;
+    }
+
+    .toggleSlider:before {
+        height: 14px;
+        width: 14px;
+        left: 3px;
+        bottom: 2px;
+    }
+
+    input:checked + .toggleSlider:before {
+        transform: translateX(20px);
+    }
+}
+
+/* Login Modal Styles */
+.loginModalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.loginModal {
+    width: 350px;
+    background-color: #110000; /* Darker background */
+    border: 2px solid #cc0000;
+    box-shadow: 0 0 25px rgba(204, 0, 0, 0.7); /* Stronger glow */
+    overflow: hidden;
+    padding: 20px;
+}
+
+.loginModal h3 {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    text-align: center;
+    letter-spacing: 2px;
+    color: #ffffff;
+    font-weight: bold;
+    border-bottom: 1px solid #cc0000;
+    padding-bottom: 15px;
+    text-shadow: 0 0 5px rgba(255, 51, 51, 0.5); /* Text glow */
+}
+
+.loginError {
+    background-color: rgba(204, 0, 0, 0.3);
+    border: 1px solid #cc0000;
+    color: #ff6666;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.discordLoginSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 25px 0;
+}
+
+.discordLogo {
+    background-color: #5865F2;
+    width: 80px; /* Larger logo */
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    box-shadow: 0 0 20px rgba(51, 255, 51, 0.3);
+}
+
+.discordLoginButton {
+    background-color: #5865F2;
+    color: white;
+    border: none;
+    font-weight: bold;
+    padding: 14px 25px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 15px;
+    width: 260px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.discordLoginButton:hover {
+    background-color: #4752C4;
+    transform: translateY(-3px); /* More noticeable lift */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.discordLoginButton:active {
+    transform: translateY(1px);
+}
+
+.loginButtons {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.loginButtons button {
+    padding: 10px 25px;
+    background-color: #330000;
+    border: 1px solid #cc0000;
+    color: #ffffff;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    font-weight: bold;
+}
+
+.loginButtons button:hover {
+    background-color: #550000;
+    transform: translateY(-2px);
 }

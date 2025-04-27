@@ -4,8 +4,8 @@
     left: 0;
     width: 100%;
     height: 40px;
-    background-color: rgba(10, 10, 10, 0.95);
-    border-top: 1px solid #33ff33;
+    background: linear-gradient(to bottom, #440000, #220000);
+    border-top: 2px solid #ff3333;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -24,9 +24,9 @@
 .quickMenuButton {
     height: 32px;
     padding: 0 10px;
-    background-color: rgba(51, 255, 51, 0.1);
-    border: 1px solid #33ff33;
-    color: #33ff33;
+    background-color: rgba(255, 51, 51, 0.1);
+    border: 1px solid #ff3333;
+    color: #ff3333;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -39,11 +39,11 @@
 }
 
 .quickMenuButton:hover {
-    background-color: rgba(51, 255, 51, 0.2);
+    background-color: rgba(255, 51, 51, 0.2);
 }
 
 .quickMenuButton:active {
-    background-color: rgba(51, 255, 51, 0.3);
+    background-color: rgba(255, 51, 51, 0.3);
 }
 
 .buttonIcon {
@@ -69,8 +69,8 @@
     height: 30px;
     padding: 0 10px;
     background-color: rgba(20, 20, 20, 0.7);
-    border: 1px solid rgba(51, 255, 51, 0.5);
-    color: #33ff33;
+    border: 1px solid rgba(255, 51, 51, 0.5);
+    color: #ff3333;
     display: flex;
     align-items: center;
     cursor: pointer;
@@ -83,12 +83,12 @@
 }
 
 .taskButton:hover {
-    background-color: rgba(51, 255, 51, 0.1);
+    background-color: rgba(255, 51, 51, 0.1);
 }
 
 .taskButton.active {
-    background-color: rgba(51, 255, 51, 0.2);
-    border-color: #33ff33;
+    background-color: rgba(255, 51, 51, 0.2);
+    border-color: #ff3333;
 }
 
 .taskButton.minimized {
@@ -121,8 +121,8 @@
 
 .terminalButton {
     background-color: transparent;
-    border: 1px solid #33ff33;
-    color: #33ff33;
+    border: 1px solid #ff3333;
+    color: #ff3333;
     height: 30px;
     width: 30px;
     display: flex;
@@ -135,7 +135,7 @@
 }
 
 .terminalButton:hover {
-    background-color: rgba(51, 255, 51, 0.1);
+    background-color: rgba(255, 51, 51, 0.1);
 }
 
 .statusItem {
@@ -170,22 +170,22 @@
     position: absolute;
     bottom: 45px;
     background-color: rgba(10, 10, 10, 0.95);
-    border: 1px solid #33ff33;
+    border: 1px solid #ff3333;
     border-radius: 4px;
     width: 250px;
     height: 150px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    box-shadow: 0 0 10px rgba(51, 255, 51, 0.3);
+    box-shadow: 0 0 10px rgba(255, 51, 51, 0.3);
     animation: fadeIn 0.2s ease-out;
     z-index: 9001;
 }
 
 .previewTitle {
     padding: 5px 10px;
-    background-color: rgba(51, 255, 51, 0.1);
-    border-bottom: 1px solid #33ff33;
+    background-color: rgba(255, 51, 51, 0.1);
+    border-bottom: 1px solid #ff3333;
     font-size: 12px;
     font-weight: bold;
     white-space: nowrap;
@@ -218,12 +218,12 @@
 }
 
 .taskButtonSection::-webkit-scrollbar-thumb {
-    background: rgba(51, 255, 51, 0.3);
+    background: rgba(255, 51, 51, 0.3);
     border-radius: 2px;
 }
 
 .taskButtonSection::-webkit-scrollbar-thumb:hover {
-    background: rgba(51, 255, 51, 0.5);
+    background: rgba(255, 51, 51, 0.5);
 }
 
 /* Animations */

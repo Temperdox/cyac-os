@@ -1,15 +1,16 @@
 .window {
     position: absolute;
-    background-color: #000;
-    border: 1px solid #33ff33;
+    background-color: #001122;
+    border: 1px solid #0066cc;
     border-radius: 4px;
-    box-shadow: 0 0 15px rgba(51, 255, 51, 0.3);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
     overflow: hidden;
     color: #33ff33;
     font-family: 'Courier New', monospace;
     display: flex;
     flex-direction: column;
     transition: box-shadow 0.3s ease;
+    z-index: 9000;
 }
 
 .window.active {
@@ -27,12 +28,17 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #1a1a1a;
-    border-bottom: 1px solid #33ff33;
+    background: linear-gradient(to bottom, #004488, #003366);
+    border-bottom: 1px solid #0066cc;
     padding: 5px 10px;
     cursor: move;
     user-select: none;
     height: 30px;
+}
+
+.window.active .windowHeader {
+    background: linear-gradient(to bottom, #000b66, #00443a);
+    border-bottom-color: #33ff33;
 }
 
 .windowTitle {
@@ -53,8 +59,8 @@
     width: 20px;
     height: 20px;
     background-color: transparent;
-    border: 1px solid #33ff33;
-    color: #33ff33;
+    border: 1px solid #0066cc;
+    color: #0066cc;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -63,6 +69,11 @@
     transition: background-color 0.2s, transform 0.1s;
     border-radius: 3px;
     padding: 0;
+}
+
+.window.active .windowControl {
+    border-color: #33ff33;
+    color: #33ff33;
 }
 
 .windowControl:hover {

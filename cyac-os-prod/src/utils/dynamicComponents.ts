@@ -23,7 +23,7 @@ import ImageViewer from '../components/viewers/ImageViewer/ImageViewer';
 
 // Create a mapping of component paths to React components
 const dynamicComponents: { [key: string]: React.ComponentType<any> } = {
-    '/components/programs/browser/CyAc_browser_v1': CyAcBrowserV1,
+    '/components/Browser/CyAc_browser_v1': CyAcBrowserV1,
     /*'/components/programs/games/Tetris': Tetris,
     '/components/programs/games/Snake': Snake,
     '/components/programs/animations/Matrix': Matrix,

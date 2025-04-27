@@ -6,9 +6,11 @@ import Terminal from './components/Terminal/Terminal';
 import Window from './components/Window/Window';
 import TaskBar from './components/TaskBar/TaskBar';
 import QuickMenu from './components/QuickMenu/QuickMenu';
-import { CrtEffects } from './components/CrtEffects/CrtEffects';
+import HomeScreen from './components/HomeScreen/HomeScreen';
+import CrtEffects from './components/CrtEffects/CrtEffects';
+import ToastContainer from './components/Toast/ToastContainer';
+import { ToastManager } from './services/ToastManager';
 import { FileSystem } from './services/FileSystem';
-import { CommandProcessor } from './services/CommandProcessor';
 import { AudioManager } from './services/AudioManager';
 import { AuthService } from './services/AuthService';
 import { FocusManager } from './services/FocusManager';
@@ -25,17 +27,25 @@ interface OpenWindow {
     minimized: boolean;
 }
 
+// Programs interface
+interface Program {
+    id: string;
+    title: string;
+    component: string;
+    type: 'window' | 'fullscreen';
+}
+
 const App: React.FC = () => {
     // Application state
     const [powered, setPowered] = useState<boolean>(false);
     const [booted, setBooted] = useState<boolean>(false);
     const [quickMenuOpen, setQuickMenuOpen] = useState<boolean>(false);
-    const [crtEffectsEnabled, setCrtEffectsEnabled] = useState<boolean>(false);
     const [isMobile, setIsMobile] = useState<boolean>(false);
     const [openWindows, setOpenWindows] = useState<OpenWindow[]>([]);
     const [activeWindowId, setActiveWindowId] = useState<string | undefined>('');
     const [isHardwareAccelerated, setIsHardwareAccelerated] = useState<boolean>(true);
-    const [, setCommandHistory] = useState<string[]>([]);
+    const [terminalHeight, setTerminalHeight] = useState<number>(200);
+    const [terminalVisible, setTerminalVisible] = useState<boolean>(true);
 
     // Hardware acceleration check
     useEffect(() => {
@@ -50,8 +60,14 @@ const App: React.FC = () => {
             console.warn('Hardware acceleration appears to be disabled');
             setIsHardwareAccelerated(false);
 
-            // Disable CRT effects automatically if hardware acceleration is off
-            setCrtEffectsEnabled(false);
+            // Show warning after a short delay to ensure ToastManager is ready
+            setTimeout(() => {
+                ToastManager.show({
+                    type: 'warning',
+                    message: 'Hardware acceleration is disabled. Some visual effects may be limited.',
+                    duration: 6000
+                });
+            }, 1000);
         }
     }, []);
 
@@ -80,6 +96,11 @@ const App: React.FC = () => {
             // Initialize file system
             FileSystem.initialize().catch(error => {
                 console.error('Failed to initialize file system:', error);
+                ToastManager.show({
+                    type: 'error',
+                    message: 'File system initialization failed. Some features may not work properly.',
+                    duration: 5000
+                });
             });
 
             // Initialize authentication service
@@ -106,6 +127,13 @@ const App: React.FC = () => {
         // Set focus to terminal after boot
         setTimeout(() => {
             FocusManager.setFocus('terminal');
+
+            // Welcome toast
+            ToastManager.show({
+                type: 'info',
+                message: 'System booted successfully. Welcome to CyberAcme OS.',
+                duration: 5000
+            });
         }, 100);
     };
 
@@ -121,31 +149,27 @@ const App: React.FC = () => {
         }
     };
 
-    // Handle command execution from terminal
-    const handleCommand = async (command: string) => {
-        // Process the command
-        try {
-            const result = await CommandProcessor.processCommand(command, '/home/user');
-
-            // If a program/app should be launched
-            if (result.program) {
-                launchProgram(result.program);
-            }
-
-            // Add to command history
-            setCommandHistory(prev => [...prev, command]);
-        } catch (error) {
-            console.error('Command execution error:', error);
-            // Failure handling could be added here
-        }
+    // Handle terminal resize
+    const handleTerminalResize = (newHeight: number) => {
+        setTerminalHeight(newHeight);
     };
 
-    // Launch a program from quick menu or terminal
-    const launchProgram = (program: { id: string; title: string; component: string; type: 'window' | 'fullscreen' }) => {
+    // Handle command execution from terminal
+    const handleCommand = (program: Program) => {
+        launchProgram(program);
+    };
+
+    // Launch a program from program object
+    const launchProgram = (program: Program) => {
         // Check if program component exists
         const Component = dynamicComponents[program.component];
         if (!Component) {
             console.error(`Component not found: ${program.component}`);
+            ToastManager.show({
+                type: 'error',
+                message: `Failed to launch ${program.title}: Component not found.`,
+                duration: 5000
+            });
             return;
         }
 
@@ -178,6 +202,13 @@ const App: React.FC = () => {
                     }
                 ]);
                 setActiveWindowId(program.id);
+
+                // Notify on program launch
+                /*ToastManager.show({
+                    type: 'success',
+                    message: `Launched: ${program.title}`,
+                    duration: 3000
+                });*/
             }
 
             // Set focus to the window
@@ -199,6 +230,13 @@ const App: React.FC = () => {
                 }
             ]);
             setActiveWindowId(program.id);
+
+            // Notify on fullscreen program launch
+            /*ToastManager.show({
+                type: 'success',
+                message: `Launched fullscreen: ${program.title}`,
+                duration: 3000
+            });*/
 
             // Set focus to the window
             FocusManager.setFocus('window', program.id);
@@ -251,8 +289,20 @@ const App: React.FC = () => {
                         }
                     ]);
                     setActiveWindowId(`file_${item.name}`);
+
+                    // Notify on file open
+                    /*ToastManager.show({
+                        type: 'info',
+                        message: `Opened file: ${item.name}`,
+                        duration: 3000
+                    });*/
                 } catch (error) {
                     console.error('Error opening file:', error);
+                    ToastManager.show({
+                        type: 'error',
+                        message: `Failed to open file: ${item.name}`,
+                        duration: 5000
+                    });
                 }
             }
 
@@ -286,7 +336,7 @@ const App: React.FC = () => {
             setActiveWindowId(undefined);
             FocusManager.setFocus('terminal');
         } else {
-            // Make window active
+// Make window active
             setActiveWindowId(id);
             FocusManager.setFocus('window', id);
         }
@@ -294,6 +344,9 @@ const App: React.FC = () => {
 
     // Handle window close
     const handleWindowClose = (id: string) => {
+        const windowToClose = openWindows.find(w => w.id === id);
+        const windowTitle = windowToClose?.title || 'Window';
+
         setOpenWindows(prev => prev.filter(w => w.id !== id));
 
         // If closing the active window, clear active window ID
@@ -310,6 +363,14 @@ const App: React.FC = () => {
                 FocusManager.setFocus('terminal');
             }
         }
+
+        // Notify on window close
+        /*ToastManager.show({
+            type: 'info',
+            message: `Closed: ${windowTitle}`,
+            duration: 2000
+        });*/
+        console.log(`Closed: ${windowTitle}`);
     };
 
     // Handle window minimize
@@ -359,7 +420,7 @@ const App: React.FC = () => {
 
     // Handle terminal focus
     const handleTerminalFocus = () => {
-        FocusManager.setFocus('terminal');
+        setTerminalVisible(v => !v);
     };
 
     // Render power button or boot sequence if not booted yet
@@ -374,11 +435,22 @@ const App: React.FC = () => {
     // Main application render
     return (
         <div className={styles.app}>
-            {/* CRT effects (conditionally rendered based on settings) */}
-            {crtEffectsEnabled && <CrtEffects isHardwareAccelerated={isHardwareAccelerated} />}
+            {/* Background dot pattern */}
+            <div className={styles.dotPattern}></div>
 
-            {/* Main content area */}
+            {/* CRT Effects - Always included, with hardware acceleration param */}
+            <CrtEffects isHardwareAccelerated={isHardwareAccelerated} />
+
+            {/* Toast Notification Container */}
+            <ToastContainer />
+
+            {/* Main content area with HomeScreen and Windows */}
             <div className={styles.mainContent}>
+                {/* HomeScreen - visible when no windows are open */}
+                {openWindows.filter(w => !w.minimized).length === 0 && (
+                    <HomeScreen />
+                )}
+
                 {/* Windows */}
                 {openWindows
                     .filter(window => !window.minimized)
@@ -396,15 +468,20 @@ const App: React.FC = () => {
                             <window.component {...window.props} />
                         </Window>
                     ))}
-
-                {/* Terminal */}
-                <Terminal
-                    onCommand={handleCommand}
-                    initialHeight={200}
-                    allowResize={!isMobile}
-                    username={AuthService.getCurrentUser()?.username || 'guest'}
-                />
             </div>
+
+            {/* Terminal - positioned at bottom, resizable from top */}
+            {terminalVisible && (
+                <div className={styles.terminalContainer} style={{ height: `${terminalHeight}px` }}>
+                    <Terminal
+                        onCommand={handleCommand}
+                        initialHeight={terminalHeight}
+                        onResize={handleTerminalResize}
+                        allowResize={!isMobile}
+                        username={AuthService.getCurrentUser()?.username || 'guest'}
+                    />
+                </div>
+            )}
 
             {/* Quick menu (overlay) */}
             <QuickMenu
@@ -426,16 +503,6 @@ const App: React.FC = () => {
                 onTerminalFocus={handleTerminalFocus}
                 activeWindowId={activeWindowId}
             />
-
-            {/* Settings button - floating in corner */}
-            <button
-                className={styles.settingsButton}
-                onClick={() => setCrtEffectsEnabled(prev => !prev)}
-                title={crtEffectsEnabled ? "Disable CRT Effects" : "Enable CRT Effects"}
-            >
-                <span className={styles.settingsIcon}>⚙</span>
-                <span className={styles.settingsText}>CRT {crtEffectsEnabled ? 'ON' : 'OFF'}</span>
-            </button>
         </div>
     );
 };

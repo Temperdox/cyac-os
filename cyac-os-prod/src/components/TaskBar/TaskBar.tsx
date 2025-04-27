@@ -115,8 +115,8 @@ const TaskBar: React.FC<TaskBarProps> = ({
                 <button
                     className={styles.terminalButton}
                     onClick={handleTerminalButtonClick}
-                    aria-label="Focus terminal"
-                    title="Focus Terminal"
+                    aria-label="Toggle terminal"
+                    title="Toggle Terminal"
                 >
                     <span className={styles.buttonIcon}>⌨</span>
                 </button>

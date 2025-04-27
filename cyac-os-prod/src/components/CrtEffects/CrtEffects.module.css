@@ -1,33 +1,74 @@
-.crtEffectsContainer {
+/* Enhanced CRT Effects Styling */
+
+/* Basic CRT screen effect container */
+.crt-effects {
+    pointer-events: none;
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9997;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
     overflow: hidden;
 }
 
-/* Scanlines effect */
+/* Horizontal scanlines */
 .scanlines {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-            to bottom,
-            transparent 0%,
-            rgba(0, 0, 0, 0.1) 50%,
-            transparent 100%
+    background: repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 1),
+            rgba(0, 0, 0, 0.15) 1px,
+            transparent 1px,
+            transparent 2px
     );
-    background-size: 100% 4px;
-    z-index: 9998;
-    opacity: 0.3;
+    opacity: 0.7;
+    z-index: 1001;
+    pointer-events: none;
 }
 
-/* Vignette effect (darkened corners) */
+/* Dark horizontal scanlines - clearly visible */
+.dark-scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.9) 0%,
+            rgba(0, 0, 0, 0.9) 1px,
+            transparent 1px,
+            transparent 4px
+    );
+    opacity: 0.15;
+    z-index: 1001;
+    pointer-events: none;
+}
+
+/* Vertical scanlines for added effect */
+.vertical-scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+            to right,
+            transparent 50%,
+            rgba(0, 0, 0, 0.1) 50%
+    );
+    background-size: 4px 100%;
+    z-index: 1001;
+    opacity: 0.2;
+    pointer-events: none;
+}
+
+/* CRT vignette effect - darkens corners */
 .vignette {
     position: absolute;
     top: 0;
@@ -39,8 +80,25 @@
             transparent 50%,
             rgba(0, 0, 0, 0.7) 150%
     );
-    z-index: 9997;
+    z-index: 1002;
     pointer-events: none;
+}
+
+/* CRT glow effect */
+.glow-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+            circle at center,
+            rgba(51, 255, 51, 0.05) 0%,
+            transparent 70%
+    );
+    z-index: 1003;
+    pointer-events: none;
+    animation: glowPulse 5s infinite alternate;
 }
 
 /* Noise effect */
@@ -50,51 +108,51 @@
     left: -500px;
     width: calc(100% + 1000px);
     height: calc(100% + 1000px);
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAADEUlEQVR4nO2aS2sTURSAv/SmTVJTa7SwFERXYh/B+qxd+cjOB4i7ztI/UHRh3fkH3BWsFFF8gKtCF4JVoSBKNFE0WFEXPnLLNXdmboZmkpnkTnLhwDAM59x7vtyZc+feOQkdwXGcbcBu4AAwDIwAYWAI2G54/QFMA3Hgk2VZP/6bIIqiHAGOAceBvTmG+Q0sAtPAC0mSvpdMiKIoB4Bp4GSRFnxLkqQnuQYpVshuYAI4DyileP8C3AHuWpb1q+hCFEU5BEwBx1z/kYAJ4AXwDPhiE9cmoE7rlYAGV9/nwFnLsr6VVIiiKBF6s3HFdeslcNqyrC9B9JpnJkKvTDM+OBE0oyjKiZIIURTlsh5sjWfQSeCsZVmxQpKqZVnPgFG6M5RUzgVd5tElpDZKIB7NI8WOMVxiLM9FyXHuAROBhWhF/oxxCIh7xjmjKEpVEY8Wc63/nWVZDxRFWQCu23pXgYs5bJtHgBtAjMy0q8etIwHeOY7jsC7mJtBsNuNB9JZlvQXidPJqQ4gcQ7wPqgdIAfOebr4QFqAT3OBhCUgC7iyzM0SIbWlZsAjxTGtJCLEsKz8hDVu73iDkT7NJ7eZN03gkxwUGxoFvNkFrjuPUhciVSHj63HFUcSRKk4xt+Q2xIuK4d9sFQkg7OTmuRKJfSIb54hfyvV9IhvniF7LSL6S6RPiFfCP4QS9/fFt4y5VIf5AISwmpVhvUlNI+IRGgbWtbAyJUgLtArc3E9oBEWHV1iwK36e1YpoBLtvZ1cxFJu7vZBwwCDcAs8KvjAGzXD6OWZdW7lVSqrg5Rj2r+NnBVijVj6TlCTwzSPf2ZBe5dDyL3gDpXnyZQmV8hkHa2TxZ0FwH3rJzSHgkRIhFFIRQihAj5J4TkKCSQ3u1gp+gZI9tBjRCZH2s0W3XPH9XGcZw9FYpzZFvWm/Eg2g3ryF/gkl9EGRBFK54tG5KWZb2RJOmmvsM9pb9CvtIlAIuiKJeBx0AKKZfEgbPCIVt0xIfP6MdYwv7AZNDf36wDP7Cy0BxgIu8AAAAASUVORK5CYII=");
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFIklEQVR4nO2aW29URxTHf3vxjXVNcGzHdhyME4PxhSRQkviF8lCVqm3VqqqqfuunqB+gfYY+tGqfWhUJtSI0QBEgLjUJiZ2EYOJgueDgGN9v8WU9Fc7RHPbM7Nk9x3YJ/0er8+85M/P/z5kzs7OzIezGFRaRgC3AFmAnsAGoA7YDKwDPtJsCRoAxYBh4AjwE7gD3gIlCO+gSbFcJrAWagWagAdhk/q83bbxnMK4DPwI/maQ3gLgpbwLtQJdJehOIM2UcGADuAn1G+KQpH1v+3fQZMGMnzPtvgY8MkxtG7IzluXDjDVDY/P2a5T2bNcmYyfNvk3+/5T8TEKCuPFPBBz3wBNYYuduBRmAP8Amw1/jBHcBjbqYtry5jP27GcJgxdQIHgU+Bj033HcADYy8ZeFu8lUgJsA6oBr4G/g78A/QCC2bixaY5bgzUAdXAN8BPwK9A342RI+8PDnyfbaVkIGLKx6Zq/gCuGpGiQpRvM2OoAr4Efi4pLb9w9drdkPwb+qoSmkD1wIdAD9CTLBbXtvcALUCFKXL9q1+TpGC4zZZIXFy/dGXXwu1uL2AJxQYRJ8rTyTtdwCwUvJBUr8KfY6F21dBlbRKZNbO1qAskIrBjI+5AdyO9uRMI6EtxJPKDOd4qBwqC7WtgZILQu1a39Wln9WXcY5FHeiJ6pHYmI7JwxxXcuPq2y6Pz1i10A21y5bawVtPL1LMivYEe0xD8/Fw0fTgm9SV/5JiWI2LdRiOViBwRhVRpnzndTWrnohsAOuqxDCeZLyJVxYnGx8O1M87Dk4meETm5aZ0HQ71AJzACTBtHrgGOAztNmWP+EtlnNUhIU6RVSWT36qON25a92j9QdqCtKrqypLu0qGRsdvLF2ERT35WRoWczw4sWfSJYAc/zIkur3XLgHHBEmVnFrcNNJ+sbaooiy3OaTS/OPxrq33uy9dRELDo+OxGLT8emgKvABSU+B5wFpvLthJWjKQTKgSbgtE1k3bo6v3/vt1VVpeJckXGf2f7RI/FkQmzSGpJrNhZW2oj8BzwHovlKRC1xvSVoGW60NTzQKDv5a3DgbG/3+dHo2LgBzzAIrgK/hSDyT64JWQMqGwCO6/Z6O1GQA8JbB46Vb6lc87h/eCjBbAxPUkGAhHwRCRHr9epHRVLWp/2uqizjrW3b3Xfi0t9/3B9LJOIiVmP2wTDk5dWs2+i4Ts0qz7f39hxQ22+uaXBvBipXeZUrdW2jUVz/CWXzK2Ai04lE1uuIVJWDRt8jM+wj6Zi1jn51Y/T8oB8oT1pMjt2Kxg0mCjnyV4XNVmUH3NtwQfBvwDcjkSjXBgdWPo/NRjSy0uFsOGjbyCbnHC/7j4hltdcvJnNFZNDsDQGRXYDGwMt+p6PBgeuLiQTvEAk57lv1hrkiEp+fG/bMyUVCcUhUFNPxlzNDi+ZHJ0JO8pP8kSMi02NjC54/Ogsr/nLgfV0QSiQS40+enmO+iDw5d+H0zPh4LD45FQsROWXA12tHy4LXdl/JrfPnrwz+PTQ7Fxvz1UvbcIPFj3UG0DnukcO2J/r8uYuS1DzQ/8vCrblhoxaQY3q8FmNwrr29B+bMXF6vu5P4JNAJDAS9YxVLR0oC9VnFDlO3AzvM2X0y7j9rjwT8rA0Zrj7Trs/0lRvJzY7VEeV5jxGfNrZFrTmuvr7bY39wWbT9R43TZxUqsSIkJKJfuP8D3lQUoSFVDZIAAAAASUVORK5CYII=");
     animation: noise 0.2s infinite;
-    z-index: 9996;
+    z-index: 1004;
     opacity: 0.03;
     pointer-events: none;
 }
 
-/* Flicker effect */
-.flickerEffect {
+/* Random screen flicker */
+.screen-flicker {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.03);
-    z-index: 9998;
+    background-color: rgba(255, 255, 255, 0.03);
     opacity: 0;
+    z-index: 1005;
     pointer-events: none;
 }
 
-.flickerEffect.active {
+.screen-flicker.active {
     opacity: 1;
     animation: flicker 0.2s ease-in-out;
 }
 
 /* Glitch effect */
-.glitchEffect {
+.glitch-effect {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 255, 0, 0.03);
-    z-index: 9999;
-    opacity: 0;
+    mix-blend-mode: overlay;
     pointer-events: none;
+    z-index: 1006;
+    opacity: 0;
 }
 
-.glitchEffect.active {
+.glitch-effect.active {
     opacity: 1;
     animation: glitch 0.1s linear;
 }
 
 /* Screen curvature effect */
-.curvature {
+.barrel-distortion {
     position: absolute;
     top: 0;
     left: 0;
@@ -104,11 +162,190 @@
     border-radius: 15%/5%;
     box-shadow: 0 0 20px 20px black inset;
     pointer-events: none;
-    z-index: 9999;
+    z-index: 1007;
     opacity: 0.5;
 }
 
+/* Green scrolling line - key addition */
+.scroll-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: rgba(51, 255, 51, 0.7);
+    box-shadow: 0 0 10px rgba(51, 255, 51, 0.7);
+    pointer-events: none;
+    z-index: 1008;
+    opacity: 0.7;
+    animation: scrollLine 8s linear infinite;
+}
+
+/* Settings button */
+.crt-settings-button {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background: linear-gradient(to bottom, #004400, #003300);
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 10000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+.crt-settings-button:hover {
+    background: linear-gradient(to bottom, #006600, #004400);
+    box-shadow: 0 0 15px rgba(51, 255, 51, 0.3);
+    transform: scale(1.05);
+}
+
+/* Settings modal overlay */
+.crt-settings-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10001;
+    animation: fadeIn 0.3s ease;
+}
+
+.crt-settings-content {
+    background-color: #002200;
+    border: 2px solid #33ff33;
+    box-shadow: 0 0 15px rgba(51, 255, 51, 0.6);
+    width: 400px;
+    max-width: 90%;
+    border-radius: 5px;
+    overflow: hidden;
+    color: #33ff33;
+    font-family: 'Courier New', monospace;
+}
+
+.crt-settings-content h3 {
+    background-color: rgba(51, 255, 51, 0.1);
+    padding: 10px 15px;
+    margin: 0;
+    text-transform: uppercase;
+    font-size: 16px;
+    text-shadow: 0 0 5px #33ff33;
+    border-bottom: 1px solid #33ff33;
+}
+
+.master-toggle {
+    font-weight: bold;
+    font-size: 16px;
+    text-shadow: 0 0 5px rgba(51, 255, 51, 0.5);
+}
+
+.settings-group {
+    padding: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.setting-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.setting-item label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.setting-item input[type="checkbox"] {
+    margin-right: 10px;
+    position: relative;
+    width: 16px;
+    height: 16px;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid #33ff33;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.setting-item input[type="checkbox"]:checked {
+    background-color: rgba(51, 255, 51, 0.5);
+}
+
+.setting-item input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    color: #33ff33;
+    font-size: 14px;
+    top: -1px;
+    left: 2px;
+}
+
+.setting-item input[type="checkbox"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.settings-actions {
+    text-align: center;
+    margin-top: 20px;
+    border-top: 1px solid rgba(51, 255, 51, 0.3);
+    padding: 10px 15px;
+}
+
+.settings-actions button {
+    background: linear-gradient(to bottom, #004400, #003300);
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    padding: 8px 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.settings-actions button:hover {
+    background: linear-gradient(to bottom, #006600, #004400);
+    box-shadow: 0 0 10px rgba(51, 255, 51, 0.5);
+}
+
+/* Hardware warnings */
+.hardware-warning {
+    color: #ffaa33;
+    font-size: 12px;
+    margin-top: 5px;
+    padding: 5px;
+    border-left: 3px solid #ffaa33;
+    background-color: rgba(255, 170, 51, 0.1);
+}
+
+.intensive {
+    color: #ffaa33;
+    font-size: 12px;
+    margin-left: 5px;
+}
+
 /* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 @keyframes noise {
     0% { transform: translate(0, 0); }
     10% { transform: translate(-5%, -5%); }
@@ -134,39 +371,60 @@
 @keyframes glitch {
     0% {
         transform: translate(0);
-        clip-path: inset(0% 0% 0% 0%);
+        background-image: linear-gradient(
+                90deg,
+                rgba(51, 255, 51, 0.1) 33%,
+                rgba(0, 255, 255, 0.1) 33%,
+                rgba(0, 255, 255, 0.1) 66%,
+                rgba(51, 255, 51, 0.1) 66%
+        );
     }
     20% {
         transform: translate(-5px, 0px);
-        clip-path: inset(15% 0% 10% 0%);
+        background-position: -25px 0;
     }
     40% {
         transform: translate(5px, 0px);
-        clip-path: inset(5% 0% 20% 0%);
+        background-position: 10px 0;
     }
     60% {
         transform: translate(0px, -5px);
-        clip-path: inset(10% 0% 5% 0%);
+        background-position: -10px 0;
     }
     80% {
         transform: translate(0px, 5px);
-        clip-path: inset(20% 0% 15% 0%);
+        background-position: 15px 0;
     }
     100% {
         transform: translate(0);
-        clip-path: inset(0% 0% 0% 0%);
+        background-position: 0 0;
     }
 }
 
-/* Media query to disable heavy effects on mobile */
+@keyframes glowPulse {
+    0% { opacity: 0.3; }
+    100% { opacity: 0.6; }
+}
+
+/* Green line animation - 8 second cycle */
+@keyframes scrollLine {
+    0% { top: 0; }
+    100% { top: 100%; }
+}
+
+/* Media query to reduce effects on mobile */
 @media (max-width: 768px) {
-    .curvature,
-    .glitchEffect {
+    .barrel-distortion,
+    .glitch-effect {
         display: none;
     }
 
     .scanlines {
         opacity: 0.15;
+    }
+
+    .dark-scanlines {
+        opacity: 0.05;
     }
 
     .noise {

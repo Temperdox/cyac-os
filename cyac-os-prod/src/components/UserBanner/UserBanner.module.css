@@ -1,15 +1,17 @@
-.userBanner {
-    width: 100%;
-    height: 80px;
+/* UserBanner.module.css - Combines the styles from UserAuthBanner.css and your existing styles */
+.userAuthBanner {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
     overflow: hidden;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #33ff33;
-    background-color: rgba(10, 10, 10, 0.8);
-    font-family: 'Courier New', monospace;
-    color: #33ff33;
+    border-top: 1px solid #0f0;
+    border-bottom: 1px solid #0f0;
+    margin-bottom: 8px;
+    background-color: rgba(0, 0, 0, 0.7);
 }
 
+/* Banner background with reduced brightness */
 .bannerBackground {
     position: absolute;
     top: 0;
@@ -18,158 +20,295 @@
     height: 100%;
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
+    filter: brightness(0.4); /* 40% brightness */
+    z-index: 0;
 }
 
-.bannerOverlay {
+/* Gradient overlay for fade effect */
+.bannerGradientOverlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.8) 100%);
-}
-
-/* Add scanlines effect */
-.bannerBackground::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: linear-gradient(
-            rgba(0, 0, 0, 0) 50%,
-            rgba(0, 0, 0, 0.25) 50%
+    background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.75) 0%, /* 75% transparent black at bottom */
+            rgba(0, 0, 0, 0) 100%   /* Fully transparent at top */
     );
-    background-size: 100% 4px;
+}
+
+/* Scanlines effect */
+.scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+            to bottom,
+            transparent,
+            transparent 1px,
+            rgba(0, 0, 0, 0.2) 1px,
+            rgba(0, 0, 0, 0.2) 2px
+    );
+    opacity: 0.15;
     pointer-events: none;
 }
 
-.userContent {
-    position: relative;
-    height: 100%;
-    padding: 0 15px;
+.userAuthContent {
+    position: relative; /* To appear above the background */
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    padding: 8px 16px;
+    width: 100%;
     z-index: 1;
+    height: 64px; /* Fixed height */
 }
 
 .userAvatar {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    overflow: hidden;
-    border: 2px solid #33ff33;
-    box-shadow: 0 0 8px rgba(51, 255, 51, 0.5);
-    margin-right: 15px;
-}
-
-.userAvatar img {
-    width: 100%;
-    height: 100%;
+    border: 1px solid rgba(0, 255, 0, 0.5);
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
     object-fit: cover;
+    background-color: #2c2c2c;
 }
 
-.userDetails {
-    flex: 1;
+.userInfo {
+    margin-left: 12px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    flex-grow: 1;
 }
 
 .username {
-    font-size: 18px;
+    color: #ffffff;
+    font-size: 16px;
     font-weight: bold;
-    letter-spacing: 1px;
-    text-shadow: 0 0 5px rgba(51, 255, 51, 0.7);
-    margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    margin-bottom: 2px;
+    letter-spacing: 0.5px;
 }
 
-.userLevel {
+.accessLevel {
+    color: #0f0;
+    font-size: 12px;
     display: flex;
     align-items: center;
-    font-size: 14px;
-    opacity: 0.9;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
 }
 
 .levelIndicator {
+    display: inline-block;
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: #33ff33;
+    background-color: #0f0; /* Green indicator */
     margin-right: 6px;
-    box-shadow: 0 0 5px rgba(51, 255, 51, 0.7);
+    box-shadow: 0 0 5px #0f0;
+    animation: pulse 2s infinite;
 }
 
-.logoutButton {
-    background-color: transparent;
-    border: 1px solid #33ff33;
-    color: #33ff33;
-    padding: 6px 12px;
-    font-family: 'Courier New', monospace;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    letter-spacing: 1px;
-}
-
-.logoutButton:hover {
-    background-color: rgba(51, 255, 51, 0.2);
-}
-
-.notAuthenticated {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.loginButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background-color: rgba(51, 255, 51, 0.1);
-    border: 1px solid #33ff33;
-    color: #33ff33;
-    padding: 8px 15px;
-    font-family: 'Courier New', monospace;
+/* Not authenticated message */
+.notAuthenticatedMessage {
+    color: #0f0;
     font-size: 14px;
     font-weight: bold;
-    cursor: pointer;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    flex-grow: 1;
+}
+
+/* Button styles */
+.authBtn {
+    background-color: transparent;
+    color: #0f0;
+    border: 1px solid #0f0;
+    padding: 4px 16px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
     letter-spacing: 1px;
-    transition: background-color 0.2s, transform 0.1s;
-    width: 100%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    margin-left: auto;
 }
 
-.loginButton:hover {
-    background-color: rgba(51, 255, 51, 0.2);
+.authBtn:hover {
+    background-color: rgba(0, 255, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    text-shadow: 0 0 5px #0f0;
 }
 
-.loginButton:active {
-    transform: scale(0.98);
+.authBtn:active {
+    background-color: rgba(0, 255, 0, 0.2);
+    transform: translateY(1px);
 }
 
-.discordLogo {
+.sudoBadge {
+    background-color: #ff0000;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 0;
+    position: absolute;
+    right: 120px; /* Position to left of logout button */
+    top: 50%;
+    transform: translateY(-50%);
+    letter-spacing: 1px;
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    border: 1px solid #ff0000;
+}
+
+/* Menu controls section */
+.menuControls {
+    display: flex;
+    padding: 5px 0;
+    background-color: #000000;
+    border-top: 1px solid #550000;
+    border-bottom: 1px solid #550000;
+    height: 150px;
+    overflow-y: auto;
+}
+
+.menuColumn {
+    flex: 1;
+    padding: 0 10px;
+}
+
+.menuColumn:first-child {
+    border-right: 1px solid rgba(255, 51, 51, 0.3);
+}
+
+.sectionHeader {
+    font-size: 14px;
+    font-weight: bold;
+    color: #ff3333;
+    margin: 8px 0;
+    border-bottom: 1px solid rgba(255, 51, 51, 0.3);
+    padding-bottom: 5px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.menuList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menuItem {
+    padding: 5px 0;
+    cursor: pointer;
+    color: #33ff33;
+    font-size: 14px;
     display: flex;
     align-items: center;
-    justify-content: center;
 }
 
-/* Add retro glow effect to various elements */
-.username, .levelIndicator, .logoutButton, .loginButton {
-    filter: drop-shadow(0 0 2px rgba(51, 255, 51, 0.7));
+.menuItem:hover {
+    text-shadow: 0 0 5px rgba(51, 255, 51, 0.7);
+}
+
+.menuItem::before {
+    content: '■';
+    display: inline-block;
+    margin-right: 8px;
+    color: #33ff33;
+}
+
+/* Search bar styles */
+.searchBar {
+    padding: 10px;
+    background-color: #220000;
+    border-top: 1px solid #550000;
+}
+
+.searchInput {
+    width: 100%;
+    background-color: #111;
+    border: 1px solid #ff3333;
+    color: #33ff33;
+    padding: 8px 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    outline: none;
+    text-transform: uppercase;
+}
+
+.searchInput:focus {
+    box-shadow: 0 0 5px rgba(255, 51, 51, 0.5);
+}
+
+.searchInput::placeholder {
+    color: rgba(51, 255, 51, 0.5);
+}
+
+/* Scrollbar styling */
+.menuControls::-webkit-scrollbar {
+    width: 6px;
+}
+
+.menuControls::-webkit-scrollbar-track {
+    background: #150000;
+}
+
+.menuControls::-webkit-scrollbar-thumb {
+    background: #660000;
+    border-radius: 0;
+}
+
+.menuControls::-webkit-scrollbar-thumb:hover {
+    background: #880000;
+}
+
+/* Animation for pulse effect */
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+/* Animation for when the banner appears */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.userAuthBanner {
+    animation: fadeIn 0.3s ease-out;
 }
 
 /* Mobile styles */
 @media (max-width: 768px) {
-    .userBanner {
-        height: 70px;
+    .menuControls {
+        flex-direction: column;
+        height: auto;
+        max-height: 200px;
+    }
+
+    .menuColumn:first-child {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 51, 51, 0.3);
+        padding-bottom: 10px;
+    }
+
+    .menuColumn:last-child {
+        padding-top: 10px;
+    }
+
+    .username {
+        font-size: 14px;
+    }
+
+    .accessLevel {
+        font-size: 10px;
     }
 
     .userAvatar {
@@ -177,16 +316,8 @@
         height: 40px;
     }
 
-    .username {
-        font-size: 16px;
-    }
-
-    .userLevel {
-        font-size: 12px;
-    }
-
-    .logoutButton {
-        padding: 4px 10px;
-        font-size: 12px;
+    .authBtn {
+        padding: 3px 10px;
+        font-size: 11px;
     }
 }

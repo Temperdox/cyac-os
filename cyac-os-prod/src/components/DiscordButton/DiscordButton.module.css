@@ -1,0 +1,311 @@
+.discordButtonContainer {
+    position: relative;
+    width: 340px;
+    height: 80px;
+    margin: 40px auto;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    transform-style: preserve-3d;
+}
+
+/* Main button styling */
+.discordButton {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #001800, #000800);
+    border: 1px solid #33ff33;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    box-shadow: 0 0 15px rgba(51, 255, 51, 0.3);
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+/* Hover effects */
+.discordButtonContainer.hovering .discordButton {
+    box-shadow: 0 0 20px rgba(51, 255, 51, 0.5);
+    background: linear-gradient(to bottom, #002000, #000a00);
+}
+
+.discordButtonContainer:hover {
+    transform: scale(1.02) translateY(-2px);
+}
+
+.discordButtonContainer:active {
+    transform: scale(0.98);
+}
+
+/* Discord icon */
+.discordIcon {
+    margin-right: 15px;
+    transform: translateZ(5px);
+}
+
+/* Button content */
+.buttonContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.buttonText {
+    display: flex;
+    flex-direction: column;
+}
+
+.primaryText {
+    color: #33ff33;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    text-shadow: 0 0 5px rgba(51, 255, 51, 0.5);
+}
+
+.secondaryText {
+    color: #aaffaa;
+    font-size: 14px;
+    font-family: 'Courier New', monospace;
+    opacity: 0.8;
+}
+
+/* Online users indicator */
+.usersOnline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.onlineIndicator {
+    width: 8px;
+    height: 8px;
+    background-color: #33ff33;
+    border-radius: 50%;
+    animation: pulseOnline 2s infinite;
+}
+
+@keyframes pulseOnline {
+    0% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(51, 255, 51, 0.7);
+    }
+    70% {
+        opacity: 0.7;
+        box-shadow: 0 0 0 5px rgba(51, 255, 51, 0);
+    }
+    100% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(51, 255, 51, 0);
+    }
+}
+
+.onlineText {
+    color: #aaffaa;
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+}
+
+/* Copy button */
+.copyButton {
+    background-color: rgba(51, 255, 51, 0.1);
+    border: 1px solid #33ff33;
+    border-radius: 4px;
+    padding: 6px 10px;
+    color: #33ff33;
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.copyButton:hover {
+    background-color: rgba(51, 255, 51, 0.2);
+    box-shadow: 0 0 10px rgba(51, 255, 51, 0.4);
+}
+
+/* Visual effects */
+.buttonEffects {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* Scan line effect */
+.scanLine {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: rgba(51, 255, 51, 0.5);
+    opacity: 0;
+    z-index: 3;
+}
+
+.discordButtonContainer.hovering .scanLine {
+    opacity: 1;
+    animation: scanLine 3s linear infinite;
+}
+
+@keyframes scanLine {
+    0% {
+        top: 0;
+    }
+    100% {
+        top: 100%;
+    }
+}
+
+/* Glow effect */
+.glowEffect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(51, 255, 51, 0.3) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 0;
+}
+
+.discordButtonContainer.hovering .glowEffect {
+    opacity: 0.5;
+    animation: glowPulse 2s infinite alternate;
+}
+
+@keyframes glowPulse {
+    from {
+        opacity: 0.3;
+    }
+    to {
+        opacity: 0.5;
+    }
+}
+
+/* Corner accents */
+.cornerTL, .cornerTR, .cornerBL, .cornerBR {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-color: #33ff33;
+    z-index: 3;
+}
+
+.cornerTL {
+    top: -1px;
+    left: -1px;
+    border-top: 2px solid;
+    border-left: 2px solid;
+}
+
+.cornerTR {
+    top: -1px;
+    right: -1px;
+    border-top: 2px solid;
+    border-right: 2px solid;
+}
+
+.cornerBL {
+    bottom: -1px;
+    left: -1px;
+    border-bottom: 2px solid;
+    border-left: 2px solid;
+}
+
+.cornerBR {
+    bottom: -1px;
+    right: -1px;
+    border-bottom: 2px solid;
+    border-right: 2px solid;
+}
+
+/* Glitching effect */
+.discordButtonContainer.glitching .discordButton {
+    animation: buttonGlitch 0.2s ease;
+}
+
+.discordButtonContainer.glitching .primaryText {
+    animation: textGlitch 0.2s ease;
+}
+
+@keyframes buttonGlitch {
+    0% {
+        transform: translate(0);
+    }
+    20% {
+        transform: translate(-2px, 2px);
+    }
+    40% {
+        transform: translate(-2px, -2px);
+    }
+    60% {
+        transform: translate(2px, 2px);
+    }
+    80% {
+        transform: translate(2px, -2px);
+    }
+    100% {
+        transform: translate(0);
+    }
+}
+
+@keyframes textGlitch {
+    0% {
+        transform: translate(0);
+        color: #33ff33;
+        opacity: 1;
+    }
+    25% {
+        transform: translate(2px, -1px);
+        color: #ff3366;
+        opacity: 0.8;
+    }
+    50% {
+        transform: translate(-1px, 2px);
+        color: #33ff33;
+        opacity: 1;
+    }
+    75% {
+        transform: translate(-2px, -1px);
+        color: #33ccff;
+        opacity: 0.9;
+    }
+    100% {
+        transform: translate(0);
+        color: #33ff33;
+        opacity: 1;
+    }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .discordButtonContainer {
+        width: 300px;
+        height: 70px;
+        margin: 20px auto;
+    }
+
+    .primaryText {
+        font-size: 16px;
+    }
+
+    .secondaryText, .onlineText {
+        font-size: 12px;
+    }
+
+    .copyButton {
+        padding: 4px 8px;
+        font-size: 10px;
+    }
+}

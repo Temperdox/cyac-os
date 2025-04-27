@@ -1,41 +1,56 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './Terminal.module.css';
 import { FocusManager } from '../../services/FocusManager';
+import { CommandProcessor } from '../../services/CommandProcessor';
 import { FileSystem } from '../../services/FileSystem';
-/*import { CommandProcessor } from '../services/CommandProcessor';*/
 
 interface TerminalProps {
     initialHeight?: number;
+    onResize?: (newHeight: number) => void;
     allowResize?: boolean;
-    onCommand?: (command: string) => void;
     username?: string;
+    onCommand?: (program: {
+        id: string;
+        title: string;
+        component: string;
+        type: 'window' | 'fullscreen';
+    }) => void;
 }
 
 const Terminal: React.FC<TerminalProps> = ({
                                                initialHeight = 250,
+                                               onResize,
                                                allowResize = true,
-                                               onCommand,
                                                username = 'guest',
+                                               onCommand,
                                            }) => {
     // State
-    const [inputValue, setInputValue] = useState('');
-    const [history, setHistory] = useState<string[]>(['Welcome to CyberAcme Terminal v3.6.0', 'Type "help" for a list of commands']);
+    const [inputValue, setInputValue] = useState<string>('');
+    const [history, setHistory] = useState<string[]>([
+        'Welcome to CyberAcme Terminal v3.6.0',
+        'Type "help" for a list of commands'
+    ]);
     const [commandHistory, setCommandHistory] = useState<string[]>([]);
-    const [historyIndex, setHistoryIndex] = useState(-1);
-    const [currentPath] = useState('/home/user');
-    const [terminalHeight, setTerminalHeight] = useState(initialHeight);
-    const [isResizing, setIsResizing] = useState(false);
-    const [isFocused, setIsFocused] = useState(false);
-    const [showCompletions, setShowCompletions] = useState(false);
+    const [historyIndex, setHistoryIndex] = useState<number>(-1);
+    const [currentPath, setCurrentPath] = useState<string>('/home/user');
+    const [isResizing, setIsResizing] = useState<boolean>(false);
+    const [isFocused, setIsFocused] = useState<boolean>(false);
+    const [showCompletions, setShowCompletions] = useState<boolean>(false);
+    const [, setCompletionLeft] = useState<number>(0);
     const [completions, setCompletions] = useState<string[]>([]);
-    const [selectedCompletion, setSelectedCompletion] = useState(0);
+    const [selectedCompletion, setSelectedCompletion] = useState<number>(0);
+
+    // Command categories for suggestions
+    const pathCommands = ['cd', 'ls', 'mkdir', 'rm', 'rmdir'];
+    const fileCommands = ['cat', 'touch', 'rm'];
 
     // Refs
     const terminalRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const inputLineRef = useRef<HTMLFormElement>(null);
     const outputRef = useRef<HTMLDivElement>(null);
-    const resizeStartRef = useRef({ y: 0, height: initialHeight });
-    const tempInputRef = useRef('');
+    const resizeStartRef = useRef<{ y: number; height: number }>({ y: 0, height: initialHeight });
+    const tempInputRef = useRef<string>('');
 
     // Auto-scroll to bottom when history changes
     useEffect(() => {
@@ -46,18 +61,35 @@ const Terminal: React.FC<TerminalProps> = ({
 
     // Focus management
     const focusTerminal = () => {
-        inputRef.current?.focus();
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
         setIsFocused(true);
         FocusManager.setFocus('terminal');
     };
 
-    useEffect(() => {
-        // Initialize focus manager
-        FocusManager.initialize();
+    // Measure caret position in command input for suggestion box start pos
+    const updateCompletionPosition = () => {
+        const inp = inputRef.current;
+        const line = inputLineRef.current;
+        if (!inp || !line) return;
+        const pos = inp.selectionStart ?? 0;
+        const text = inp.value.slice(0, pos);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        const style = window.getComputedStyle(inp);
+        ctx.font = style.font;
+        const w = ctx.measureText(text).width;
+        const inpRect = inp.getBoundingClientRect();
+        const lineRect = line.getBoundingClientRect();
+        setCompletionLeft(inpRect.left - lineRect.left + w);
+    };
 
+    useEffect(() => {
         // Add focus change listener
         const listenerId = 'terminal-component';
-        FocusManager.addListener(listenerId, (focusId) => {
+        FocusManager.addListener(listenerId, (focusId: string) => {
             setIsFocused(focusId === 'terminal');
         });
 
@@ -79,36 +111,49 @@ const Terminal: React.FC<TerminalProps> = ({
 
         document.addEventListener('click', handleGlobalClick);
 
-        // Clean up
         return () => {
             document.removeEventListener('click', handleGlobalClick);
         };
     }, []);
 
-    // Terminal resize handler
+    // Terminal resize handler - for resizing from top
     const handleResizeStart = (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault();
         setIsResizing(true);
-        resizeStartRef.current = {
-            y: e.clientY,
-            height: terminalHeight
-        };
+        if (onResize && initialHeight) {
+            resizeStartRef.current = {
+                y: e.clientY,
+                height: initialHeight,
+            };
+        }
 
         // Ensure terminal has focus during resize
         focusTerminal();
+
+        // Add a class to the body to prevent text selection during resize
+        document.body.classList.add('resizing');
     };
 
     useEffect(() => {
         if (!isResizing) return;
 
         const handleMouseMove = (e: MouseEvent) => {
+            // For top resizing, the delta is inverted since we're pulling from the top
             const deltaY = resizeStartRef.current.y - e.clientY;
-            const newHeight = Math.max(150, resizeStartRef.current.height + deltaY);
-            setTerminalHeight(newHeight);
+
+            // Calculate new height by adding the delta (moving up increases height)
+            // Allow very small heights (as low as 60px)
+            const newHeight = Math.max(60, resizeStartRef.current.height + deltaY);
+
+            // Call the onResize callback if provided
+            if (onResize) {
+                onResize(newHeight);
+            }
         };
 
         const handleMouseUp = () => {
             setIsResizing(false);
+            document.body.classList.remove('resizing');
         };
 
         document.addEventListener('mousemove', handleMouseMove);
@@ -117,8 +162,41 @@ const Terminal: React.FC<TerminalProps> = ({
         return () => {
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
+            document.body.classList.remove('resizing');
         };
-    }, [isResizing]);
+    }, [isResizing, onResize]);
+
+    // Process command internally
+    const processCommand = async (command: string) => {
+        // Handle clear command directly
+        if (command.trim().toLowerCase() === 'clear') {
+            setHistory([]);
+            return;
+        }
+
+        try {
+            // Process command through CommandProcessor
+            const result = await CommandProcessor.processCommand(command, currentPath);
+
+            // Add command output to terminal
+            if (result.output && result.output.length > 0) {
+                setHistory(prev => [...prev, ...result.output]);
+            }
+
+            // Update path if changed (e.g., from cd command)
+            if (result.newPath) {
+                setCurrentPath(result.newPath);
+            }
+
+            // Pass program launch to parent if needed
+            if (result.program && onCommand) {
+                onCommand(result.program);
+            }
+        } catch (error) {
+            // Handle any errors with command processing
+            setHistory(prev => [...prev, `[r]Error: ${error instanceof Error ? error.message : 'Unknown error'}[/r]`]);
+        }
+    };
 
     // Command submission
     const handleSubmit = (e?: React.FormEvent) => {
@@ -129,19 +207,17 @@ const Terminal: React.FC<TerminalProps> = ({
         const command = inputValue.trim();
         const prompt = `${username.toLowerCase()}@cyac:${currentPath}$ ${command}`;
 
-        // Add command to terminal history
+        // Add command prompt to terminal history
         setHistory(prev => [...prev, prompt]);
 
-        // Add command to command history
+        // Add command to command history for up/down navigation
         setCommandHistory(prev => [...prev, command]);
 
         // Reset history navigation
         setHistoryIndex(-1);
 
-        // Execute command
-        if (onCommand) {
-            onCommand(command);
-        }
+        // Process command
+        processCommand(command);
 
         // Clear input
         setInputValue('');
@@ -174,68 +250,81 @@ const Terminal: React.FC<TerminalProps> = ({
         }
     };
 
-    // Tab completion
+    // Tab completion handler
     const handleTabCompletion = () => {
-        const inputParts = inputValue.split(' ');
-        const lastPart = inputParts[inputParts.length - 1];
-
-        // Skip empty completions
-        if (!lastPart) return;
-
-        let completions: string[] = [];
-
-        // Determine if we're completing a command or a path
-        if (inputParts.length === 1) {
-            // Command completion
-            const commands = [
-                'ls', 'cd', 'cat', 'pwd', 'echo', 'clear', 'help', 'home', 'exit'
-            ];
-
-            completions = commands.filter(cmd =>
-                cmd.toLowerCase().startsWith(lastPart.toLowerCase())
-            );
-        } else {
-            // Path completion
-            try {
-                completions = FileSystem.getCompletions(lastPart, currentPath);
-            } catch (error) {
-                console.error('Path completion error:', error);
-                completions = [];
+        try {
+            if (showCompletions) {
+                setShowCompletions(false);
+                return;
             }
-        }
 
-        if (completions.length === 0) return;
+            const raw = inputValue;
 
-        if (completions.length === 1) {
-            // If there's only one completion, use it
-            inputParts[inputParts.length - 1] = completions[0];
-            setInputValue(inputParts.join(' '));
-            setShowCompletions(false);
-        } else {
-            // Show multiple completions
-            setCompletions(completions);
-            setShowCompletions(true);
-            setSelectedCompletion(0);
+            // CASE 1: empty input ⇒ all commands
+            if (!raw.trim()) {
+                const all = CommandProcessor.getCommandCompletions('');
+                setCompletions(all);
+                updateCompletionPosition();
+                setSelectedCompletion(0);
+                setShowCompletions(true);
+                return;
+            }
+
+            const parts = raw.split(' ');
+            const cmd = parts[0].toLowerCase();
+
+            // CASE 2: partial command
+            if (parts.length === 1 && !raw.endsWith(' ')) {
+                const opts = CommandProcessor.getCommandCompletions(cmd);
+                if (opts.length === 1) {
+                    setInputValue(opts[0] + ' ');
+                } else if (opts.length > 1) {
+                    setCompletions(opts);
+                    updateCompletionPosition();
+                    setSelectedCompletion(0);
+                    setShowCompletions(true);
+                }
+                return;
+            }
+
+            // CASE 3: path/file completion
+            if (parts.length > 1 && (pathCommands.includes(cmd) || fileCommands.includes(cmd))) {
+                const last = parts[parts.length - 1];
+                const sug = FileSystem.getCompletions(last, currentPath);
+                if (sug.length === 1) {
+                    parts[parts.length - 1] = sug[0];
+                    setInputValue(parts.join(' '));
+                } else if (sug.length > 1) {
+                    setCompletions(sug);
+                    updateCompletionPosition();
+                    setSelectedCompletion(0);
+                    setShowCompletions(true);
+                }
+            }
+        } catch (err) {
+            console.error('Tab completion error:', err);
         }
     };
 
-    // Apply completion
+    // Apply selected completion
     const applyCompletion = (completion: string) => {
-        const inputParts = inputValue.split(' ');
-        inputParts[inputParts.length - 1] = completion;
-        setInputValue(inputParts.join(' '));
+        // If it's a command completion (no spaces in input yet)
+        if (!inputValue.includes(' ')) {
+            setInputValue(completion + ' ');
+        } else {
+            // It's a path completion
+            const parts = inputValue.split(' ');
+            parts[parts.length - 1] = completion;
+            setInputValue(parts.join(' '));
+        }
+
         setShowCompletions(false);
         inputRef.current?.focus();
     };
 
     // Handle keyboard events
     const handleKeyDown = (e: React.KeyboardEvent) => {
-        // Handle keyboard events only when terminal has focus
-        if (!isFocused) return;
-
-        // Stop event propagation to prevent conflicts with global handlers
-        e.stopPropagation();
-
+        // Handle keyboard events for command history and tab completion
         switch (e.key) {
             case 'ArrowUp':
                 e.preventDefault();
@@ -290,7 +379,7 @@ const Terminal: React.FC<TerminalProps> = ({
         }
 
         // Replace color tags with appropriate spans
-        const parts = [];
+        const parts: React.ReactNode[] = [];
         let lastIndex = 0;
         let match;
         let key = 0;
@@ -313,16 +402,16 @@ const Terminal: React.FC<TerminalProps> = ({
             if (match.index > lastIndex) {
                 parts.push(
                     <span key={key++}>
-            {line.substring(lastIndex, match.index)}
-          </span>
+                        {line.substring(lastIndex, match.index)}
+                    </span>
                 );
             }
 
             // Add colored text
             parts.push(
                 <span key={key++} className={colorClass}>
-          {text}
-        </span>
+                    {text}
+                </span>
             );
 
             lastIndex = match.index + fullMatch.length;
@@ -332,19 +421,24 @@ const Terminal: React.FC<TerminalProps> = ({
         if (lastIndex < line.length) {
             parts.push(
                 <span key={key++}>
-          {line.substring(lastIndex)}
-        </span>
+                    {line.substring(lastIndex)}
+                </span>
             );
         }
 
         return parts.length ? parts : <span>{line}</span>;
     };
 
+    // Handle clicks on the focus indicator directly
+    const handleFocusIndicatorClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        focusTerminal();
+    };
+
     return (
         <div
             className={`${styles.terminal} ${isFocused ? styles.focused : ''} ${isResizing ? styles.resizing : ''}`}
             ref={terminalRef}
-            style={{ height: `${terminalHeight}px` }}
             onClick={focusTerminal}
         >
             {/* Terminal Header with resize handle */}
@@ -364,7 +458,13 @@ const Terminal: React.FC<TerminalProps> = ({
                 ))}
             </div>
 
-            {/* Terminal Input */}
+             {/*Hints Bar (always visible on bottom of terminal)*/}
+            {/*<div className={styles.hintBar}>
+                <div className={styles.hint}>HINT: USE UP/DOWN ARROWS TO NAVIGATE COMMAND HISTORY</div>
+                <div className={styles.hint}>HINT: SOME SCENES AND SUBSCENES REQUIRE AUTHENTICATION</div>
+            </div>*/}
+
+            {/* Terminal Input - always at the bottom */}
             <form className={styles.inputLine} onSubmit={handleSubmit}>
                 <span className={styles.prompt}>{username.toLowerCase()}@cyac:{currentPath}$</span>
                 <input
@@ -404,9 +504,9 @@ const Terminal: React.FC<TerminalProps> = ({
             {!isFocused && (
                 <div
                     className={styles.focusIndicator}
-                    onClick={focusTerminal}
+                    onClick={handleFocusIndicatorClick}
                 >
-                    Click to activate terminal
+                    CLICK HERE TO TYPE IN TERMINAL
                 </div>
             )}
         </div>

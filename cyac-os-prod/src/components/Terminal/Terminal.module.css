@@ -1,19 +1,20 @@
 .terminal {
     background-color: #000;
-    color: #33ff33;
+    color: #ff3333;
     font-family: 'Courier New', monospace;
     display: flex;
     flex-direction: column;
-    border-top: 1px solid #33ff33;
+    border-top: 2px solid #ff3333;
     position: relative;
-    height: 250px;
-    transition: height 0.1s ease;
+    height: 100%;
+    width: 100%;
     overflow: hidden;
+    min-height: 50px; /* Allow resizing to a small height */
 }
 
 .terminal.focused {
-    border-color: #33ff33;
-    box-shadow: 0 0 10px rgba(51, 255, 51, 0.3) inset;
+    border-color: #ff3333;
+    box-shadow: 0 0 10px rgba(255, 51, 51, 0.3) inset;
 }
 
 .terminal.resizing {
@@ -28,18 +29,12 @@
     right: 0;
     height: 5px;
     cursor: ns-resize;
-    z-index: 10;
+    z-index: 1000;
+    background-color: rgba(255, 51, 51, 0.2); /* Subtle background color */
 }
 
-.resizeHandle::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background-color: #33ff33;
-    opacity: 0.5;
+.resizeHandle:hover {
+    background-color: rgba(255, 51, 51, 0.4); /* Darken on hover */
 }
 
 .output {
@@ -48,6 +43,7 @@
     overflow-x: hidden;
     padding: 10px;
     scroll-behavior: smooth;
+    min-height: 0; /* Important for allowing the container to shrink */
 }
 
 .line {
@@ -58,14 +54,35 @@
     line-height: 1.3;
 }
 
+.hintBar {
+    display: flex;
+    justify-content: space-between;
+    background-color: #000;
+    border-top: 1px solid #009900;
+    border-bottom: 1px solid #009900;
+    color: #33ff33;
+    font-size: 12px;
+    padding: 2px 20px;
+}
+
+.hint {
+    white-space: nowrap;
+}
+
 .inputLine {
     display: flex;
     padding: 5px 10px;
-    border-top: 1px solid #33ff33;
+    border-top: 1px solid #ff3333;
+    background-color: #000;
+    width: 100%;
+    min-height: 30px;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
 }
 
 .prompt {
-    color: #33ff33;
+    color: #ff3333;
     margin-right: 5px;
     white-space: nowrap;
     user-select: none;
@@ -74,21 +91,22 @@
 .input {
     flex: 1;
     background: transparent;
-    color: #33ff33;
+    color: #ff3333;
     border: none;
     outline: none;
     font-family: 'Courier New', monospace;
     font-size: 14px;
+    padding: 0;
+    margin: 0;
 }
 
 .completions {
     position: absolute;
-    bottom: 100%;
-    left: 10px;
+    bottom: 34px;
     background-color: #111;
-    border: 1px solid #33ff33;
-    box-shadow: 0 0 10px rgba(51, 255, 51, 0.3);
-    max-height: 200px;
+    border: 1px solid #ff3333;
+    box-shadow: 0 0 10px rgba(255, 51, 51, 0.3);
+    max-height: -webkit-fill-available;
     overflow-y: auto;
     z-index: 100;
     width: 300px;
@@ -101,7 +119,7 @@
 
 .completionItem.selected,
 .completionItem:hover {
-    background-color: rgba(51, 255, 51, 0.2);
+    background-color: rgba(255, 51, 51, 0.2);
 }
 
 .focusIndicator {
@@ -115,11 +133,11 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 50;
+    z-index: 100;
     font-size: 16px;
     font-weight: bold;
-    color: #33ff33;
-    text-shadow: 0 0 5px rgba(51, 255, 51, 0.5);
+    color: #ff3333;
+    text-shadow: 0 0 5px rgba(255, 51, 51, 0.5);
     animation: pulse 1.5s infinite ease-in-out;
 }
 
@@ -147,27 +165,28 @@
 }
 
 .output::-webkit-scrollbar-thumb {
-    background: rgba(51, 255, 51, 0.5);
+    background: rgba(255, 51, 51, 0.5);
     border-radius: 4px;
 }
 
 .output::-webkit-scrollbar-thumb:hover {
-    background: rgba(51, 255, 51, 0.7);
+    background: rgba(255, 51, 51, 0.7);
 }
 
 /* Mobile styles */
 @media (max-width: 768px) {
-    .terminal {
-        height: 150px; /* Smaller on mobile */
-    }
-
     .line,
     .input,
     .prompt {
-        font-size: 12px; /* Smaller font on mobile */
+        font-size: 12px;
     }
 
     .completions {
         width: 250px;
+    }
+
+    .hintBar {
+        padding: 2px 10px;
+        font-size: 10px;
     }
 }
