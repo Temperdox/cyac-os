@@ -3,6 +3,7 @@ import styles from './QuickMenu.module.css';
 import { FileSystem } from '../../services/FileSystem';
 import { FocusManager } from '../../services/FocusManager';
 import UserBanner from '../UserBanner/UserBanner';
+import CrtSettingsPanel from '../CrtEffects/CrtSettingsPanel.tsx';
 import { DiscordAuthService } from '../../services/DiscordAuthService';
 
 interface QuickMenuProps {
@@ -353,14 +354,6 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
         setSettingsPage(page);
     };
 
-    // Toggle CRT effects
-    const toggleCrtEffects = () => {
-        // This would connect to your CRT effects service/context
-        console.log('Toggle CRT effects');
-        // Example:
-        // crtEffectsContext.toggleAllEffects();
-    };
-
     // Handle window management commands
     const handleWindowCommand = (command: string) => {
         if (command === 'minimizeAll') {
@@ -467,37 +460,30 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
                     )}
 
                     {settingsPage === 'effects' && (
-                        <div className={styles.section}>
-                            <div className={styles.sectionHeader}>CRT EFFECTS</div>
-                            <div className={styles.effectsToggle}>
-                                <label className={styles.toggleSwitch}>
-                                    <input type="checkbox" onChange={toggleCrtEffects} />
-                                    <span className={styles.toggleSlider}></span>
-                                </label>
-                                <span className={styles.effectsLabel}>Enable CRT Effects</span>
-                            </div>
-                        </div>
+                        <CrtSettingsPanel onBack={handleBackFromSettings} />
                     )}
                 </div>
 
-                {/* Window controls section */}
-                <div className={styles.menuControls}>
-                    <div className={styles.sectionHeader}>WINDOW CONTROLS</div>
-                    <ul className={styles.menuList}>
-                        <li
-                            className={styles.menuItem}
-                            onClick={() => handleWindowCommand('minimizeAll')}
-                        >
-                            MINIMIZE ALL
-                        </li>
-                        <li
-                            className={styles.menuItem}
-                            onClick={() => handleWindowCommand('closeAll')}
-                        >
-                            CLOSE ALL
-                        </li>
-                    </ul>
-                </div>
+                {/* Window controls section - only show if not in effects page */}
+                {settingsPage !== 'effects' && (
+                    <div className={styles.menuControls}>
+                        <div className={styles.sectionHeader}>WINDOW CONTROLS</div>
+                        <ul className={styles.menuList}>
+                            <li
+                                className={styles.menuItem + "minimizeAll"}
+                                onClick={() => handleWindowCommand('minimizeAll')}
+                            >
+                                MINIMIZE ALL
+                            </li>
+                            <li
+                                className={styles.menuItem + "closeAll"}
+                                onClick={() => handleWindowCommand('closeAll')}
+                            >
+                                CLOSE ALL
+                            </li>
+                        </ul>
+                    </div>
+                )}
 
                 {/* User Banner */}
                 <UserBanner onLogout={handleAuthAction} />
@@ -673,13 +659,13 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
                 <div className={styles.sectionHeader}>WINDOW CONTROLS</div>
                 <ul className={styles.menuList}>
                     <li
-                        className={styles.menuItem}
+                        className={styles.menuItem + "minimizeAll"}
                         onClick={() => handleWindowCommand('minimizeAll')}
                     >
                         MINIMIZE ALL
                     </li>
                     <li
-                        className={styles.menuItem}
+                        className={styles.menuItem + "closeAll"}
                         onClick={() => handleWindowCommand('closeAll')}
                     >
                         CLOSE ALL

@@ -18,7 +18,8 @@ const CONFIG = {
     // Developer Discord IDs - add IDs of accounts that should have dev privileges
     DEV_IDS: [
         '568631703053139974', // CottonLeSergal
-        '381773157121654785'  // Whis
+        '381773157121654785', // Whis
+        '164736401051484160', // Virtus
     ]
 };
 

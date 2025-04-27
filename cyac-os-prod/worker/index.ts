@@ -92,7 +92,7 @@ export default {
     try {
       // Determine the correct redirect URI based on hostname
       function getRedirectUri(url: URL, originHeader: string | null): string {
-        // If we got an Origin header (from the browser), trust it; otherwise fall back to the worker URL.
+        // If it got an Origin header (from the browser), trust it; otherwise fall back to the worker URL.
         const origin = originHeader && originHeader !== '*'
             ? new URL(originHeader).origin
             : url.origin;
@@ -123,7 +123,7 @@ export default {
             return typeof x === 'string' ? x : await x.get();
           }
 
-          // Ensure we have a string client ID
+          // Ensure that it has a string client ID
           const clientId     = await resolveSecret(env.DISCORD_CLIENT_ID);
           const clientSecret = await resolveSecret(env.DISCORD_CLIENT_SECRET);
 

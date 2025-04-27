@@ -180,9 +180,9 @@
     right: 190px; /* Position to left of SUDO badge */
     top: 50%;
     transform: translateY(-50%);
-    background-color: #2c2c2c;
-    color: #33ff33;
-    border: 1px solid #33ff33;
+    background-color: #1d9a96;
+    color: #33fff8;
+    border: 1px solid #33fff8;
     padding: 4px 8px;
     font-size: 12px;
     font-weight: bold;

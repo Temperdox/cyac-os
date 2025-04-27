@@ -179,6 +179,11 @@ const App: React.FC = () => {
         setTerminalHeight(newHeight);
     };
 
+    // Handle terminal toggle
+    const handleTerminalToggle = () => {
+        setTerminalVisible(prev => !prev);
+    };
+
     // Handle command execution from terminal
     const handleCommand = (program: Program) => {
         launchProgram(program);
@@ -198,59 +203,28 @@ const App: React.FC = () => {
             return;
         }
 
+        // Generate a unique ID for this instance of the program
+        const timestamp = new Date().getTime();
+        const uniqueId = `${program.id}_${timestamp}`;
+
         // For mobile, we might force fullscreen mode
         const displayMode = isMobile ? 'fullscreen' : program.type;
 
-        if (displayMode === 'window') {
-            // Check if window is already open
-            const existingWindowIndex = openWindows.findIndex(w => w.id === program.id);
+        // Create a new window
+        const newWindow: OpenWindow = {
+            id: uniqueId,
+            title: program.title,
+            component: Component,
+            minimized: false,
+            props: displayMode === 'fullscreen' ? { isFullscreen: true } : {}
+        };
 
-            if (existingWindowIndex >= 0) {
-                // Window exists, un-minimize if needed and bring to front
-                setOpenWindows(prev =>
-                    prev.map((window, index) =>
-                        index === existingWindowIndex
-                            ? { ...window, minimized: false }
-                            : window
-                    )
-                );
-                setActiveWindowId(program.id);
-            } else {
-                // Open as new window
-                setOpenWindows(prev => [
-                    ...prev,
-                    {
-                        id: program.id,
-                        title: program.title,
-                        component: Component,
-                        minimized: false
-                    }
-                ]);
-                setActiveWindowId(program.id);
-            }
+        // Add the new window to the list of open windows
+        setOpenWindows(prev => [...prev, newWindow]);
+        setActiveWindowId(uniqueId);
 
-            // Set focus to the window
-            FocusManager.setFocus('window', program.id);
-        } else {
-            // Handle fullscreen mode (especially for mobile)
-            console.log('Launching in fullscreen mode:', program.title);
-
-            // For now, just open as a window
-            setOpenWindows(prev => [
-                ...prev,
-                {
-                    id: program.id,
-                    title: program.title,
-                    component: Component,
-                    minimized: false,
-                    props: { isFullscreen: true }
-                }
-            ]);
-            setActiveWindowId(program.id);
-
-            // Set focus to the window
-            FocusManager.setFocus('window', program.id);
-        }
+        // Set focus to the window
+        FocusManager.setFocus('window', uniqueId);
     };
 
     // Handle item click in quick menu
@@ -269,48 +243,36 @@ const App: React.FC = () => {
                 type: 'window'
             });
         } else if (item.type === 'file') {
-            // For files, we can display the content in a window
-            const existingWindowIndex = openWindows.findIndex(w => w.id === `file_${item.name}`);
+            try {
+                const content = FileSystem.getFileContent(`${path}`);
 
-            if (existingWindowIndex >= 0) {
-                // Window exists, un-minimize if needed and bring to front
-                setOpenWindows(prev =>
-                    prev.map((window, index) =>
-                        index === existingWindowIndex
-                            ? { ...window, minimized: false }
-                            : window
-                    )
-                );
-                setActiveWindowId(`file_${item.name}`);
-            } else {
-                // Open as new window
-                try {
-                    const content = FileSystem.getFileContent(`${path}`);
+                // Generate a unique ID for this file window
+                const timestamp = new Date().getTime();
+                const uniqueId = `file_${item.name}_${timestamp}`;
 
-                    // Use a simple text viewer component
-                    setOpenWindows(prev => [
-                        ...prev,
-                        {
-                            id: `file_${item.name}`,
-                            title: item.name,
-                            component: dynamicComponents['/components/viewers/TextViewer'],
-                            props: { content },
-                            minimized: false
-                        }
-                    ]);
-                    setActiveWindowId(`file_${item.name}`);
-                } catch (error) {
-                    console.error('Error opening file:', error);
-                    ToastManager.show({
-                        type: 'error',
-                        message: `Failed to open file: ${item.name}`,
-                        duration: 5000
-                    });
-                }
+                // Create a new window for the file
+                const newWindow: OpenWindow = {
+                    id: uniqueId,
+                    title: item.name,
+                    component: dynamicComponents['/components/viewers/TextViewer'],
+                    props: { content },
+                    minimized: false
+                };
+
+                // Add the new window to the list of open windows
+                setOpenWindows(prev => [...prev, newWindow]);
+                setActiveWindowId(uniqueId);
+
+                // Set focus to the window
+                FocusManager.setFocus('window', uniqueId);
+            } catch (error) {
+                console.error('Error opening file:', error);
+                ToastManager.show({
+                    type: 'error',
+                    message: `Failed to open file: ${item.name}`,
+                    duration: 5000
+                });
             }
-
-            // Set focus to the window
-            FocusManager.setFocus('window', `file_${item.name}`);
         }
     };
 
@@ -415,11 +377,6 @@ const App: React.FC = () => {
         FocusManager.setFocus('window', id);
     };
 
-    // Handle terminal focus
-    const handleTerminalFocus = () => {
-        setTerminalVisible(v => !v);
-    };
-
     // If we're on the auth callback page, render the callback component
     if (isAuthCallback) {
         return <DiscordCallback onComplete={handleAuthComplete} />;
@@ -434,12 +391,9 @@ const App: React.FC = () => {
         return <BootSequence onComplete={handleBootComplete} />;
     }
 
-    // Calculate the fixed height for the main content area
-    // This ensures the home screen doesn't resize when terminal height changes
-    const mainContentStyle = {
-        height: `calc(100% - 40px - ${terminalVisible ? terminalHeight : 0}px)`,
-        transition: 'height 0.2s ease-out'
-    };
+    // Calculate available height for content based on terminal visibility
+    const contentHeight = `calc(100% - 40px - ${terminalVisible ? terminalHeight : 0}px)`;
+    const terminalBottom = 40; // Taskbar height
 
     // Main application render
     return (
@@ -453,14 +407,15 @@ const App: React.FC = () => {
             {/* Toast Notification Container */}
             <ToastContainer />
 
-            {/* Main content area with HomeScreen and Windows */}
-            <div className={styles.mainContent} style={mainContentStyle}>
-                {/* HomeScreen - visible when no windows are open */}
-                {openWindows.filter(w => !w.minimized).length === 0 && (
-                    <HomeScreen />
-                )}
+            {/* Main content area with HomeScreen */}
+            <div
+                className={styles.mainContent}
+                style={{ height: contentHeight, transition: 'height 0.2s ease' }}
+            >
+                {/* HomeScreen - always visible */}
+                <HomeScreen />
 
-                {/* Windows */}
+                {/* Windows rendered as overlays */}
                 {openWindows
                     .filter(window => !window.minimized)
                     .map(window => (
@@ -473,6 +428,8 @@ const App: React.FC = () => {
                             onMinimize={() => handleWindowMinimize(window.id)}
                             onMaximize={() => handleWindowMaximize(window.id)}
                             initialMaximized={window.props?.isMaximized}
+                            terminalHeight={terminalVisible ? terminalHeight : 0}
+                            terminalVisible={terminalVisible}
                         >
                             <window.component {...window.props} />
                         </Window>
@@ -486,7 +443,7 @@ const App: React.FC = () => {
                     style={{
                         height: `${terminalHeight}px`,
                         position: 'absolute',
-                        bottom: '40px',
+                        bottom: `${terminalBottom}px`,
                         left: 0,
                         width: '100%'
                     }}
@@ -528,7 +485,7 @@ const App: React.FC = () => {
                 }))}
                 onItemClick={handleTaskbarItemClick}
                 onQuickMenuToggle={handleQuickMenuToggle}
-                onTerminalFocus={handleTerminalFocus}
+                onTerminalFocus={handleTerminalToggle}
                 activeWindowId={activeWindowId}
             />
         </div>

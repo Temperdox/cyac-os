@@ -17,11 +17,11 @@
 	width: 100%;
 	flex: 1;
 	overflow: hidden;
-	/* Height is now calculated and applied via inline styles */
+	/* Ensure the main content container doesn't collapse */
+	min-height: 200px;
 }
 
 .terminalContainer {
-	/* Terminal container is now absolutely positioned */
 	width: 100%;
 	position: absolute;
 	min-height: 50px; /* Allow terminal to be very small */
@@ -29,8 +29,7 @@
 	display: flex;
 	flex-direction: column;
 	border-top: 2px solid #ff3333;
-	/* No margin bottom as the terminal is absolutely positioned */
-	z-index: 100; /* Ensure terminal is above content but below taskbar */
+	z-index: 100; /* Above the main content but below windows */
 }
 
 .settingsButton {

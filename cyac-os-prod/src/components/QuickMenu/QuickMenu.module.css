@@ -734,7 +734,20 @@ input:checked + .toggleSlider:before {
 }
 
 .menuItem::before {
-    content: '■';
+    display: inline-block;
+    margin-right: 8px;
+    color: #33ff33;
+}
+
+.menuItem .minimizeAll::before {
+    content: '-';
+    display: inline-block;
+    margin-right: 8px;
+    color: #33ff33;
+}
+
+.menuItem .closeAll::before {
+    content: 'X';
     display: inline-block;
     margin-right: 8px;
     color: #33ff33;

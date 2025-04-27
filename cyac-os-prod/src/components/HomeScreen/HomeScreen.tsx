@@ -20,6 +20,9 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
     const timeRef = useRef<number>(0);
     const modifiersRef = useRef<any[]>([]);
 
+    // State for dot pattern visibility
+    const [isDotPatternVisible, setIsDotPatternVisible] = useState<boolean>(true);
+
     // State for animated text
     const [showCommandHint, setShowCommandHint] = useState<boolean>(false);
     const [mottoIndex, setMottoIndex] = useState<number>(0);
@@ -53,8 +56,57 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
         return () => clearInterval(mottoTimer);
     }, []);
 
+    // Listen for CRT settings changes
+    useEffect(() => {
+        // Check initial settings from localStorage
+        try {
+            const savedSettings = localStorage.getItem('crtEffectsSettings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                setIsDotPatternVisible(settings.enabled && settings.dotPattern);
+            }
+        } catch (error) {
+            console.error('Error loading CRT settings:', error);
+        }
+
+        // Listen for changes to CRT settings
+        const handleSettingsChanged = (e: CustomEvent) => {
+            if (e.detail) {
+                const settings = e.detail as any;
+                setIsDotPatternVisible(settings.enabled && settings.dotPattern);
+            }
+        };
+
+        window.addEventListener('crtEffectsSettingsChanged',
+            handleSettingsChanged as EventListener);
+
+        return () => {
+            window.removeEventListener('crtEffectsSettingsChanged',
+                handleSettingsChanged as EventListener);
+        };
+    }, []);
+
     // Initialize the dot pattern
     useEffect(() => {
+        if (!isDotPatternVisible) {
+            // If pattern is disabled, cancel animation and return
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current);
+                animationRef.current = null;
+            }
+
+            // Clear canvas if it exists
+            const canvas = canvasRef.current;
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                if (ctx) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+
+            return;
+        }
+
         // Load the SimplexNoise library
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js';
@@ -81,10 +133,12 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
                 cancelAnimationFrame(animationRef.current);
             }
         };
-    }, []);
+    }, [isDotPatternVisible]);
 
     // Add a new height map modifier at the click position
     const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        if (!isDotPatternVisible) return;
+
         const canvas = canvasRef.current;
         if (!canvas) return;
 
@@ -174,7 +228,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
 
         // Animation loop
         const draw = () => {
-            if (!canvas || !simplexRef.current || !ctx) {
+            if (!canvas || !simplexRef.current || !ctx || !isDotPatternVisible) {
                 animationRef.current = requestAnimationFrame(draw);
                 return;
             }
@@ -233,12 +287,14 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
 
     return (
         <div className={styles.homeScreen}>
-            {/* Dot pattern canvas */}
-            <canvas
-                ref={canvasRef}
-                className={styles.dotPattern}
-                onClick={handleCanvasClick}
-            />
+            {/* Dot pattern canvas - conditionally displayed */}
+            {isDotPatternVisible && (
+                <canvas
+                    ref={canvasRef}
+                    className={styles.dotPattern}
+                    onClick={handleCanvasClick}
+                />
+            )}
 
             <div className={styles.logoContainer}>
                 <div className={styles.logo}>CYBERACME</div>

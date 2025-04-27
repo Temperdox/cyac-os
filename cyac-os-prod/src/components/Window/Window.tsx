@@ -17,7 +17,23 @@ interface WindowProps {
         height: number;
     };
     initialMaximized?: boolean;
+    terminalHeight?: number; // Add terminal height prop
+    terminalVisible?: boolean; // Add terminal visibility prop
 }
+
+// Generate a random position for a new window
+const generateRandomPosition = () => {
+    // Calculate available space, accounting for window size
+    const maxX = Math.max(100, window.innerWidth - 600);
+    const maxY = Math.max(100, window.innerHeight - 400);
+
+    return {
+        x: 100 + Math.floor(Math.random() * Math.max(10, maxX - 200)),
+        y: 100 + Math.floor(Math.random() * Math.max(10, maxY - 300)),
+        width: 600,
+        height: 400
+    };
+};
 
 const Window: React.FC<WindowProps> = ({
                                            id,
@@ -27,14 +43,19 @@ const Window: React.FC<WindowProps> = ({
                                            onMinimize,
                                            onMaximize,
                                            isActive = false,
-                                           initialPosition = { x: 100, y: 100, width: 600, height: 400 },
+                                           initialPosition,
                                            initialMaximized = false,
+                                           terminalHeight = 0,
+                                           terminalVisible = true,
                                        }) => {
-    const [position, setPosition] = useState(initialPosition);
+    // If no initial position provided, generate a random one
+    const defaultPosition = initialPosition || generateRandomPosition();
+
+    const [position, setPosition] = useState(defaultPosition);
     const [isDragging, setIsDragging] = useState(false);
     const [isResizing, setIsResizing] = useState(false);
     const [maximized, setMaximized] = useState(initialMaximized);
-    const [preMaximizedPosition, setPreMaximizedPosition] = useState(initialPosition);
+    const [preMaximizedPosition, setPreMaximizedPosition] = useState(defaultPosition);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
     const [resizeStart, setResizeStart] = useState({ x: 0, y: 0 });
 
@@ -94,19 +115,33 @@ const Window: React.FC<WindowProps> = ({
                 const newX = Math.max(0, e.clientX - dragStart.x);
                 const newY = Math.max(0, e.clientY - dragStart.y);
 
+                // Ensure window stays within viewport bounds
+                const maxX = window.innerWidth - (position.width / 2);
+                const maxY = window.innerHeight - 50 - (terminalVisible ? terminalHeight : 0);
+
+                const clampedX = Math.min(maxX, newX);
+                const clampedY = Math.min(maxY, newY);
+
                 setPosition(prev => ({
                     ...prev,
-                    x: newX,
-                    y: newY,
+                    x: clampedX,
+                    y: clampedY,
                 }));
             } else if (isResizing) {
                 const newWidth = Math.max(300, position.width + (e.clientX - resizeStart.x));
                 const newHeight = Math.max(200, position.height + (e.clientY - resizeStart.y));
 
+                // Ensure resize stays within viewport bounds
+                const maxWidth = window.innerWidth - position.x;
+                const maxHeight = window.innerHeight - position.y - 40 - (terminalVisible ? terminalHeight : 0);
+
+                const clampedWidth = Math.min(maxWidth, newWidth);
+                const clampedHeight = Math.min(maxHeight, newHeight);
+
                 setPosition(prev => ({
                     ...prev,
-                    width: newWidth,
-                    height: newHeight,
+                    width: clampedWidth,
+                    height: clampedHeight,
                 }));
 
                 setResizeStart({
@@ -132,7 +167,7 @@ const Window: React.FC<WindowProps> = ({
             document.removeEventListener('mouseup', handleMouseUp);
             document.body.style.userSelect = '';
         };
-    }, [isDragging, isResizing, dragStart, resizeStart, position, maximized]);
+    }, [isDragging, isResizing, dragStart, resizeStart, position, maximized, terminalHeight, terminalVisible]);
 
     // Toggle maximize
     const handleMaximize = () => {
@@ -155,9 +190,9 @@ const Window: React.FC<WindowProps> = ({
                 top: 0,
                 left: 0,
                 width: '100%',
-                // Preserve space for the terminal at the bottom
-                height: 'calc(100% - 250px)', // Adjust this value if needed
-                zIndex: isActive ? 1000 : 999,
+                // Preserve space for the terminal at the bottom if visible
+                height: `calc(100% - 40px - ${terminalVisible ? terminalHeight : 0}px)`,
+                zIndex: isActive ? 1100 : 1000,
             };
         }
 
@@ -167,7 +202,7 @@ const Window: React.FC<WindowProps> = ({
             left: `${position.x}px`,
             width: `${position.width}px`,
             height: `${position.height}px`,
-            zIndex: isActive ? 1000 : 999,
+            zIndex: isActive ? 1100 : 1000,
         };
     };
 
