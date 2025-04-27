@@ -1,17 +1,16 @@
 // worker/index.ts
-// Remove the parseCookie import if not needed
-// import { parse as parseCookie } from 'cookie';
 
 // Cloudflare worker environment variables
 interface Env {
-  DISCORD_CLIENT_ID: string;
-  DISCORD_CLIENT_SECRET: string;
-  DISCORD_REDIRECT_URI_CYAC_ME: string;
-  DISCORD_REDIRECT_URI_CYBERAC_ME: string;
-  DISCORD_REDIRECT_URI_WORKER: string;
-  JWT_SECRET: string;
-  SESSION_SECRET: string;
-  // Add a NODE_ENV property if needed
+  // each of these is a Secret-Store binding with a .get() that returns the real string
+  DISCORD_CLIENT_ID: { get(): Promise<string> };
+  DISCORD_CLIENT_SECRET: { get(): Promise<string> };
+  DISCORD_REDIRECT_URI_CYAC_ME: { get(): Promise<string> };
+  DISCORD_REDIRECT_URI_CYBERAC_ME: { get(): Promise<string> };
+  DISCORD_REDIRECT_URI_OS_PROD: { get(): Promise<string> };
+  JWT_SECRET: { get(): Promise<string> };
+  SESSION_SECRET: { get(): Promise<string> };
+  // any truly plain env var:
   NODE_ENV?: string;
 }
 
@@ -92,21 +91,23 @@ export default {
 
     try {
       // Determine the correct redirect URI based on hostname
-      const getRedirectUri = (hostname: string): string => {
-        if (hostname.includes('cyberac.me')) {
-          return env.DISCORD_REDIRECT_URI_CYBERAC_ME;
-        } else if (hostname.includes('cyac.me')) {
-          return env.DISCORD_REDIRECT_URI_CYAC_ME;
-        } else {
-          return env.DISCORD_REDIRECT_URI_WORKER;
-        }
-      };
+      function getRedirectUri(url: URL, originHeader: string | null): string {
+        // If we got an Origin header (from the browser), trust it; otherwise fall back to the worker URL.
+        const origin = originHeader && originHeader !== '*'
+            ? new URL(originHeader).origin
+            : url.origin;
+
+        // Callback with origin to match given URI
+        return `${origin}/discord-callback`;
+      }
 
       // Token exchange endpoint
       if (url.pathname === '/auth/discord/token' && request.method === 'POST') {
+
         try {
-          const payload_token = await request.json() as { code: string };
-          const code = payload_token.code;
+          // Parse the request JSON
+          const d_payload = await request.json() as { code: string; redirect_uri?: string };
+          const code = d_payload.code;
 
           if (!code) {
             return Response.json(
@@ -116,25 +117,39 @@ export default {
           }
 
           // Get hostname from URL or Origin header for redirect URI
-          const hostname = url.hostname || (origin !== '*' ? new URL(origin).hostname : '');
-          const REDIRECT_URI = getRedirectUri(hostname);
+          const REDIRECT_URI = getRedirectUri(url, request.headers.get('Origin'));
 
-          const params = new URLSearchParams({
-            client_id: env.DISCORD_CLIENT_ID,
-            client_secret: env.DISCORD_CLIENT_SECRET,
-            grant_type: 'authorization_code',
-            code: code,
-            redirect_uri: REDIRECT_URI
+          async function resolveSecret(x: string | { get(): Promise<string> }): Promise<string> {
+            return typeof x === 'string' ? x : await x.get();
+          }
+
+          // Ensure we have a string client ID
+          const clientId     = await resolveSecret(env.DISCORD_CLIENT_ID);
+          const clientSecret = await resolveSecret(env.DISCORD_CLIENT_SECRET);
+
+          // Log the parameters for debugging
+          console.log('Token exchange parameters:', {
+            clientId,
+            redirectUri: REDIRECT_URI,
+            code: code.substring(0, 5) + '...' // Show only the beginning for security
           });
+
+          const params = new URLSearchParams();
+          params.append('client_id', clientId);
+          params.append('client_secret', clientSecret);
+          params.append('grant_type', 'authorization_code');
+          params.append('code', code);
+          params.append('redirect_uri', REDIRECT_URI);
 
           const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: params
+            body: params.toString()
           });
 
           if (!tokenRes.ok) {
             const errorText = await tokenRes.text();
+            console.error('Token exchange failed:', tokenRes.status, errorText);
 
             return Response.json({
               error: 'Token exchange failed',
@@ -152,6 +167,7 @@ export default {
           });
 
           if (!userRes.ok) {
+            console.error('Failed to fetch user info:', userRes.status);
             return Response.json({
               error: 'Failed to fetch user info',
               status: userRes.status
@@ -159,18 +175,22 @@ export default {
           }
 
           const userInfo = await userRes.json() as UserInfo;
+          console.log('Successfully authenticated user:', userInfo.username);
 
           // Build JWT payload with 24h refresh and 14-day expiration
           const now = Math.floor(Date.now() / 1000);
-          const payload = {
+          const jwt_payload = {
             discordId: userInfo.id,
             refreshAfter: now + 24 * 3600,              // 24 hours
             iat: now,                                   // issued at
             exp: now + 14 * 24 * 3600                   // 14 days
           };
 
+          let jwtSecret: string;
+          jwtSecret = await env.JWT_SECRET.get();
+
           // Sign JWT with secret
-          const jwt = await signJwt(payload, env.JWT_SECRET);
+          const jwt = await signJwt(jwt_payload, jwtSecret);
 
           // Return tokens, JWT, and user info
           return Response.json({
@@ -180,6 +200,7 @@ export default {
           }, { status: 200, headers: CORS_JSON });
         } catch (error) {
           const err = error as Error;
+          console.error('Token exchange error:', err.message, err.stack);
           return Response.json({
             error: 'Token exchange failed',
             message: err.message || 'Unknown error'
@@ -206,6 +227,7 @@ export default {
           });
 
           if (!userResponse.ok) {
+            console.error('Failed to fetch user info from Discord:', userResponse.status);
             return Response.json({
               error: 'Failed to fetch user info',
               details: `Discord API returned ${userResponse.status}`
@@ -213,11 +235,13 @@ export default {
           }
 
           const user = await userResponse.json() as UserInfo;
+          console.log('Successfully retrieved user info for:', user.username);
 
           // Return user info
           return Response.json({ user }, { status: 200, headers: CORS_JSON });
         } catch (error) {
           const err = error as Error;
+          console.error('Auth/me endpoint error:', err.message, err.stack);
           return Response.json(
               { error: 'Server error', message: err.message },
               { status: 500, headers: CORS_JSON }
@@ -235,8 +259,9 @@ export default {
       });
 
     } catch (error) {
-      // Global error handler - avoid using process.env in Workers
+      // Global error handler
       const err = error as Error;
+      console.error('Global error handler:', err.message, err.stack);
 
       // Check if in development mode using env variable
       const isDevelopment = env.NODE_ENV !== 'production';

@@ -13,7 +13,6 @@ const CrtEffectsSettings: React.FC<CrtEffectsSettingsProps> = ({ onBack }) => {
     // Check for hardware acceleration on component mount
     useEffect(() => {
         // Simple check for hardware acceleration
-        // In a real application, you would use a more robust method
         const canvas = document.createElement('canvas');
         const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
         setIsHardwareAccelerated(!!gl);

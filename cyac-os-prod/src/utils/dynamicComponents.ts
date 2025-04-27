@@ -1,7 +1,6 @@
 import React from 'react';
 
 // Import components directly for best performance in our case
-// In a real app with many components, you might use dynamic imports
 
 // Browser component
 import CyAcBrowserV1 from '../components/Browser/CyAc_browser_v1';

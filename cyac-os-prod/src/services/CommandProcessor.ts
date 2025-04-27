@@ -474,7 +474,6 @@ export class CommandProcessor {
                 return;
             }
 
-            // In a real app, you would create a directory here
             result.output.push(`[g]mkdir: Created directory ${args[0]}[/g]`);
         } catch (error) {
             result.output.push(`[r]mkdir: ${(error as Error).message}[/r]`);
@@ -503,7 +502,6 @@ export class CommandProcessor {
                 return;
             }
 
-            // In a real app, you would create a file here
             result.output.push(`[g]touch: Created file ${args[0]}[/g]`);
         } catch (error) {
             result.output.push(`[r]touch: ${(error as Error).message}[/r]`);
@@ -532,7 +530,7 @@ export class CommandProcessor {
                 return;
             }
 
-            // In a real app, you would delete a file or directory here
+            // Does not actually function
             result.output.push(`[g]rm: Removed ${args[0]}[/g]`);
         } catch (error) {
             result.output.push(`[r]rm: ${(error as Error).message}[/r]`);

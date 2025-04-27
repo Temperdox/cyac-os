@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './DiscordCallback.module.css';
 import { DiscordAuthService } from '../../../services/DiscordAuthService';
+import { AuthService } from '../../../services/AuthService';
 
 interface DiscordCallbackProps {
     onComplete: (result: { success: boolean; username?: string }) => void;
@@ -15,12 +16,13 @@ const DiscordCallback: React.FC<DiscordCallbackProps> = ({ onComplete }) => {
     useEffect(() => {
         const processCallback = async () => {
             console.log("DiscordCallback: Component mounted");
+            console.log("URL:", window.location.href);
+            console.log("Path:", window.location.pathname);
 
             // Extract the code from URL
             const url = new URL(window.location.href);
             const code = url.searchParams.get('code');
 
-            console.log("DiscordCallback: URL path", url.pathname);
             console.log("DiscordCallback: Code present:", !!code);
 
             if (!code) {
@@ -48,21 +50,44 @@ const DiscordCallback: React.FC<DiscordCallbackProps> = ({ onComplete }) => {
                     return;
                 }
 
+                // Get the Discord user
+                const discordUser = DiscordAuthService.getCurrentUser();
+
+                if (!discordUser) {
+                    console.error("DiscordCallback: Got success but no user data");
+                    setStatus('error');
+                    setMessage('Authentication failed');
+                    setDetails('Unable to retrieve user information from Discord.');
+                    onComplete({ success: false });
+                    return;
+                }
+
+                // Sync with main AuthService
+                const authResult = AuthService.loginWithDiscord(discordUser);
+
+                if (!authResult.success) {
+                    console.error("DiscordCallback: Failed to sync with AuthService");
+                    setStatus('error');
+                    setMessage('Authentication failed');
+                    setDetails('Unable to complete local authentication.');
+                    onComplete({ success: false });
+                    return;
+                }
+
                 // Success
-                const user = DiscordAuthService.getCurrentUser();
-
                 setStatus('success');
-                setMessage('Login successful! Redirecting...');
+                setMessage(`Login successful as ${discordUser.username}! Redirecting...`);
 
+                // Add a delay to show the success message before redirecting
                 setTimeout(() => {
                     // Clear the code from the URL
                     window.history.replaceState({}, document.title, '/');
 
                     onComplete({
                         success: true,
-                        username: user?.username
+                        username: discordUser.username
                     });
-                }, 1500);
+                }, 2000);
 
             } catch (err) {
                 console.error("Discord login callback error:", err);

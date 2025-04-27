@@ -4,18 +4,15 @@ import { DiscordAuthService } from '../../services/DiscordAuthService';
 
 interface UserBannerProps {
     onLogout?: () => void;
-    onMinimizeAll?: () => void;
-    onCloseAll?: () => void;
 }
 
 const UserBanner: React.FC<UserBannerProps> = ({
                                                    onLogout,
-                                                   onMinimizeAll,
-                                                   onCloseAll
                                                }) => {
     const [user, setUser] = useState<any>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [hasSudo, setHasSudo] = useState(false);
+    const [isDev, setIsDev] = useState(false);
 
     // Check authentication status and get user data
     useEffect(() => {
@@ -28,22 +25,31 @@ const UserBanner: React.FC<UserBannerProps> = ({
                 setUser(userData);
                 // Check if the user has sudo privileges
                 setHasSudo(!!(userData?.isPrivileged || userData?.isDev));
+                // Check if user is a developer
+                setIsDev(!!userData?.isDev);
+            } else {
+                setUser(null);
+                setHasSudo(false);
+                setIsDev(false);
             }
         };
 
-        checkAuth().then(r => console.log(r));
+        checkAuth();
         // Set interval to periodically check authentication status
         const interval = setInterval(checkAuth, 60000); // Check every minute
 
         return () => clearInterval(interval);
     }, []);
 
-    // Handle logout
-    const handleLogout = () => {
-        DiscordAuthService.logout();
-        setIsAuthenticated(false);
-        setUser(null);
-        if (onLogout) onLogout();
+    // Handle login/logout
+    const handleAuthAction = () => {
+        if (isAuthenticated) {
+            // Logout
+            if (onLogout) onLogout();
+        } else {
+            // Direct login via Discord OAuth
+            DiscordAuthService.login();
+        }
     };
 
     // Generate avatar URL
@@ -96,64 +102,39 @@ const UserBanner: React.FC<UserBannerProps> = ({
                         </div>
 
                         {/* Styled logout button */}
-                        <button className={styles.authBtn} onClick={handleLogout}>
+                        <button className={styles.authBtn} onClick={handleAuthAction}>
                             LOGOUT
                         </button>
 
+                        {/* Display SUDO badge if user has sudo privileges */}
                         {hasSudo && <div className={styles.sudoBadge}>SUDO</div>}
+
+                        {/* Display DEV tag if user is a developer */}
+                        {isDev && <div className={styles.devTag}>DEV</div>}
                     </>
                 ) : (
                     // Logged out view - Guest user
                     <>
-                        <div className={styles.notAuthenticatedMessage}>
-                            SYSTEM NOT AUTHENTICATED
+                        <div className={styles.guestAvatar}>
+                            <span>G</span>
+                        </div>
+                        <div className={styles.userInfo}>
+                            <div className={styles.username}>GUEST</div>
+                            <div className={styles.accessLevel}>
+                                <span className={styles.levelIndicator}></span>
+                                LEVEL 0
+                            </div>
                         </div>
 
                         {/* Styled login button */}
                         <button
                             className={styles.authBtn}
-                            onClick={() => DiscordAuthService.login()}
+                            onClick={handleAuthAction}
                         >
                             LOGIN
                         </button>
                     </>
                 )}
-            </div>
-
-            <div className={styles.menuControls}>
-                <div className={styles.menuColumn}>
-                    <div className={styles.sectionHeader}>DIRECTORIES</div>
-                    <ul className={styles.menuList}>
-                        <li className={styles.menuItem}>HOME</li>
-                        <li className={styles.menuItem}>SYS</li>
-                        <li className={styles.menuItem}>RESTRICTED</li>
-                    </ul>
-                </div>
-                <div className={styles.menuColumn}>
-                    <div className={styles.sectionHeader}>WINDOWS</div>
-                    <ul className={styles.menuList}>
-                        <li
-                            className={styles.menuItem}
-                            onClick={onMinimizeAll}
-                        >
-                            MINIMIZE ALL
-                        </li>
-                        <li
-                            className={styles.menuItem}
-                            onClick={onCloseAll}
-                        >
-                            CLOSE ALL
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div className={styles.searchBar}>
-                <input
-                    type="text"
-                    placeholder="SEARCH..."
-                    className={styles.searchInput}
-                />
             </div>
         </div>
     );

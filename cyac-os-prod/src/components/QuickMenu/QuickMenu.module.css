@@ -3,7 +3,7 @@
     bottom: 42px;
     left: 0;
     width: 500px; /* Increased width */
-    max-width: 100vw;
+    max-width: 40vw;
     max-height: calc(100vh - 50px);
     background-color: rgba(0, 0, 0, 0.95); /* Darker background */
     border: 2px solid #ff3333; /* Thicker border */
@@ -12,7 +12,7 @@
     font-family: 'Courier New', monospace;
     display: flex;
     flex-direction: column;
-    z-index: 9998;
+    z-index: 100;
     animation: slideUp 0.2s ease-out;
 }
 
@@ -157,6 +157,7 @@
     flex-direction: column;
     gap: 15px;
     min-height: 200px;
+    max-height: 40vh;
     background-color: #000000;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 51, 51, 0.3) rgba(0, 0, 0, 0.2);
@@ -684,4 +685,69 @@ input:checked + .toggleSlider:before {
 .loginButtons button:hover {
     background-color: #550000;
     transform: translateY(-2px);
+}
+
+.menuControls {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #000000;
+    border-top: 1px solid #550000;
+    border-bottom: 1px solid #550000;
+}
+
+.sectionHeader {
+    font-size: 14px;
+    font-weight: bold;
+    color: #ff3333;
+    margin: 8px 0;
+    border-bottom: 1px solid rgba(255, 51, 51, 0.3);
+    padding-bottom: 5px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.menuList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menuItem {
+    padding: 8px;
+    cursor: pointer;
+    color: #33ff33;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    margin: 5px 0;
+    border: 1px solid rgba(51, 255, 51, 0.3);
+    transition: all 0.2s;
+}
+
+.menuItem:hover {
+    background-color: rgba(51, 255, 51, 0.1);
+    text-shadow: 0 0 5px rgba(51, 255, 51, 0.7);
+    border-color: rgba(51, 255, 51, 0.7);
+}
+
+.menuItem::before {
+    content: '■';
+    display: inline-block;
+    margin-right: 8px;
+    color: #33ff33;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .menuControls {
+        padding: 5px;
+    }
+
+    .menuItem {
+        padding: 6px;
+        font-size: 12px;
+    }
 }

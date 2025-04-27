@@ -144,18 +144,14 @@ export class FileSystem {
 
     /**
      * Initialize the file system
-     * This would scan the file structure in a real app
      */
     public static async initialize(): Promise<void> {
         if (this.isInitialized) return;
 
         try {
-            // In a real application, this would dynamically scan the file structure
             console.log('Initializing file system...');
 
             // For now, we're using the hardcoded structure
-            // In a real app, you would scan the program directories
-
             this.isInitialized = true;
             console.log('File system initialized successfully');
         } catch (error) {

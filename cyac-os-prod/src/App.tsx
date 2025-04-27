@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './App.module.css';
+import './themes/global.css';
 import PowerButton from './components/PowerButton/PowerButton';
 import BootSequence from './components/BootSequence/BootSequence';
 import Terminal from './components/Terminal/Terminal';
@@ -14,8 +15,7 @@ import { FileSystem } from './services/FileSystem';
 import { AudioManager } from './services/AudioManager';
 import { AuthService } from './services/AuthService';
 import { FocusManager } from './services/FocusManager';
-
-// Dynamic component loading - in a real app, these would be imported as needed
+import DiscordCallback from './components/auth/DiscordCallback/DiscordCallback';
 import dynamicComponents from './utils/dynamicComponents';
 
 // Interface for open windows
@@ -46,6 +46,31 @@ const App: React.FC = () => {
     const [isHardwareAccelerated, setIsHardwareAccelerated] = useState<boolean>(true);
     const [terminalHeight, setTerminalHeight] = useState<number>(200);
     const [terminalVisible, setTerminalVisible] = useState<boolean>(true);
+
+    // Check if current path is the auth callback
+    const isAuthCallback = window.location.pathname.includes('/auth/callback') ||
+        window.location.pathname.includes('/discord-callback');
+
+    // Handle auth callback completion
+    const handleAuthComplete = (result: { success: boolean; username?: string }) => {
+        if (result.success) {
+            ToastManager.show({
+                type: 'success',
+                message: `Logged in as ${result.username}`,
+                duration: 3000
+            });
+        } else {
+            ToastManager.show({
+                type: 'error',
+                message: 'Login failed',
+                duration: 3000
+            });
+        }
+
+        // Replace the URL to remove the auth code
+        window.history.replaceState({}, document.title, '/');
+        window.location.href = '/';
+    };
 
     // Hardware acceleration check
     useEffect(() => {
@@ -202,23 +227,15 @@ const App: React.FC = () => {
                     }
                 ]);
                 setActiveWindowId(program.id);
-
-                // Notify on program launch
-                /*ToastManager.show({
-                    type: 'success',
-                    message: `Launched: ${program.title}`,
-                    duration: 3000
-                });*/
             }
 
             // Set focus to the window
             FocusManager.setFocus('window', program.id);
         } else {
             // Handle fullscreen mode (especially for mobile)
-            // In a real app, you might use a different approach for fullscreen apps
             console.log('Launching in fullscreen mode:', program.title);
 
-            // For now, we'll just open as a window
+            // For now, just open as a window
             setOpenWindows(prev => [
                 ...prev,
                 {
@@ -230,13 +247,6 @@ const App: React.FC = () => {
                 }
             ]);
             setActiveWindowId(program.id);
-
-            // Notify on fullscreen program launch
-            /*ToastManager.show({
-                type: 'success',
-                message: `Launched fullscreen: ${program.title}`,
-                duration: 3000
-            });*/
 
             // Set focus to the window
             FocusManager.setFocus('window', program.id);
@@ -289,13 +299,6 @@ const App: React.FC = () => {
                         }
                     ]);
                     setActiveWindowId(`file_${item.name}`);
-
-                    // Notify on file open
-                    /*ToastManager.show({
-                        type: 'info',
-                        message: `Opened file: ${item.name}`,
-                        duration: 3000
-                    });*/
                 } catch (error) {
                     console.error('Error opening file:', error);
                     ToastManager.show({
@@ -336,7 +339,7 @@ const App: React.FC = () => {
             setActiveWindowId(undefined);
             FocusManager.setFocus('terminal');
         } else {
-// Make window active
+            // Make window active
             setActiveWindowId(id);
             FocusManager.setFocus('window', id);
         }
@@ -364,12 +367,6 @@ const App: React.FC = () => {
             }
         }
 
-        // Notify on window close
-        /*ToastManager.show({
-            type: 'info',
-            message: `Closed: ${windowTitle}`,
-            duration: 2000
-        });*/
         console.log(`Closed: ${windowTitle}`);
     };
 
@@ -423,6 +420,11 @@ const App: React.FC = () => {
         setTerminalVisible(v => !v);
     };
 
+    // If we're on the auth callback page, render the callback component
+    if (isAuthCallback) {
+        return <DiscordCallback onComplete={handleAuthComplete} />;
+    }
+
     // Render power button or boot sequence if not booted yet
     if (!powered) {
         return <PowerButton onPowerOn={handlePowerOn} />;
@@ -431,6 +433,13 @@ const App: React.FC = () => {
     if (!booted) {
         return <BootSequence onComplete={handleBootComplete} />;
     }
+
+    // Calculate the fixed height for the main content area
+    // This ensures the home screen doesn't resize when terminal height changes
+    const mainContentStyle = {
+        height: `calc(100% - 40px - ${terminalVisible ? terminalHeight : 0}px)`,
+        transition: 'height 0.2s ease-out'
+    };
 
     // Main application render
     return (
@@ -445,7 +454,7 @@ const App: React.FC = () => {
             <ToastContainer />
 
             {/* Main content area with HomeScreen and Windows */}
-            <div className={styles.mainContent}>
+            <div className={styles.mainContent} style={mainContentStyle}>
                 {/* HomeScreen - visible when no windows are open */}
                 {openWindows.filter(w => !w.minimized).length === 0 && (
                     <HomeScreen />
@@ -470,9 +479,18 @@ const App: React.FC = () => {
                     ))}
             </div>
 
-            {/* Terminal - positioned at bottom, resizable from top */}
+            {/* Terminal - positioned at bottom with fixed height */}
             {terminalVisible && (
-                <div className={styles.terminalContainer} style={{ height: `${terminalHeight}px` }}>
+                <div
+                    className={styles.terminalContainer}
+                    style={{
+                        height: `${terminalHeight}px`,
+                        position: 'absolute',
+                        bottom: '40px',
+                        left: 0,
+                        width: '100%'
+                    }}
+                >
                     <Terminal
                         onCommand={handleCommand}
                         initialHeight={terminalHeight}
@@ -489,6 +507,16 @@ const App: React.FC = () => {
                 onClose={() => setQuickMenuOpen(false)}
                 onNavigate={handleQuickMenuItemClick}
                 isMobile={isMobile}
+                onMinimizeAll={() => {
+                    setOpenWindows(prev => prev.map(w => ({ ...w, minimized: true })));
+                    setActiveWindowId(undefined);
+                    FocusManager.setFocus('terminal');
+                }}
+                onCloseAll={() => {
+                    setOpenWindows([]);
+                    setActiveWindowId(undefined);
+                    FocusManager.setFocus('terminal');
+                }}
             />
 
             {/* Taskbar */}

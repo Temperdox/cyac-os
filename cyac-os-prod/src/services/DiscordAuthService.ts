@@ -3,11 +3,11 @@
 // Configuration - update these values for your environment
 const CONFIG = {
     // API endpoint for Discord auth - replace with your actual worker URL
-    API_ENDPOINT: 'https://cyac-os.cdbabmaina.workers.dev',
+    API_ENDPOINT: window.location.origin,
 
     // Discord OAuth configuration
     CLIENT_ID: '1364594366756421673',
-    REDIRECT_URI: `${window.location.origin}/auth/callback`,
+    REDIRECT_URI: `${window.location.origin}/discord-callback`,
 
     // Local storage keys
     STORAGE_KEY_TOKEN: 'cyac_discord_token',
@@ -17,8 +17,8 @@ const CONFIG = {
 
     // Developer Discord IDs - add IDs of accounts that should have dev privileges
     DEV_IDS: [
-        '123456789012345678', // Example ID 1 - replace with actual Discord IDs
-        '876543210987654321'  // Example ID 2
+        '568631703053139974', // CottonLeSergal
+        '381773157121654785'  // Whis
     ]
 };
 
@@ -59,8 +59,6 @@ export class DiscordAuthService {
             response_type: 'code',
             scope: 'identify',
         });
-
-        // Redirect to Discord OAuth
         window.location.href = `https://discord.com/api/oauth2/authorize?${params.toString()}`;
     }
 
@@ -81,35 +79,26 @@ export class DiscordAuthService {
      */
     public static async handleCallback(code: string): Promise<boolean> {
         try {
-            // Exchange code for tokens
-            const response = await fetch(`${CONFIG.API_ENDPOINT}/auth/discord/token`, {
+            const resp = await fetch(`${CONFIG.API_ENDPOINT}/auth/discord/token`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ code })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code, redirect_uri: CONFIG.REDIRECT_URI })
             });
+            if (!resp.ok) throw new Error(await resp.text());
 
-            if (!response.ok) {
-                throw new Error(`Token exchange failed: ${response.status}`);
-            }
-
-            const data = await response.json() as AuthTokens & { user?: DiscordUser };
+            const data = await resp.json() as AuthTokens & { user?: DiscordUser };
 
             if (data.user) {
-                // Initialize privilege flags to false
                 this.initializeUserPrivileges(data.user);
-
-                // Then set appropriate privileges based on authentication
                 this.setUserPrivileges(data.user);
             }
 
-            // Save auth data to local storage
+            // ← reuse your helper here
             this.saveAuthData(data);
 
             return true;
-        } catch (error) {
-            console.error('Auth callback error:', error);
+        } catch (err) {
+            console.error('handleCallback error:', err);
             return false;
         }
     }
@@ -167,20 +156,13 @@ export class DiscordAuthService {
      * @returns DiscordUser | null
      */
     public static getCurrentUser(): DiscordUser | null {
-        const userJson = localStorage.getItem(CONFIG.STORAGE_KEY_USER);
-        if (!userJson) return null;
-
-        const user = JSON.parse(userJson) as DiscordUser;
-
-        // Make sure privilege flags are correctly set
-        if (this.hasAuthToken()) {
-            this.setUserPrivileges(user);
-        } else {
-            // Reset privileges if no valid token
-            this.initializeUserPrivileges(user);
+        const raw = localStorage.getItem(CONFIG.STORAGE_KEY_USER);
+        if (!raw) return null;
+        try {
+            return JSON.parse(raw) as DiscordUser;
+        } catch {
+            return null;
         }
-
-        return user;
     }
 
     /**

@@ -5,6 +5,11 @@ interface User {
     username: string;
     accessLevel: number;
     loginTime: string;
+    discordId?: string;
+    avatar?: string;
+    banner?: string;
+    isDev?: boolean;
+    isPrivileged?: boolean;
 }
 
 /**
@@ -18,68 +23,35 @@ interface AuthResult {
 
 /**
  * Authentication Service
- * Handles user authentication and session management
+ * Handles user authentication and session management with Discord
  */
 export class AuthService {
     // Current user information
     private static currentUser: User | null = null;
 
-    // Demo user for testing - in a real app, this would be a server call
-    private static readonly demoUsers: Record<string, User> = {
-        'admin': {
-            username: 'admin',
-            accessLevel: 10, // Admin level
-            loginTime: new Date().toISOString()
-        },
-        'user': {
-            username: 'user',
-            accessLevel: 5, // Standard user
-            loginTime: new Date().toISOString()
-        },
-        'guest': {
-            username: 'guest',
-            accessLevel: 1, // Guest level
-            loginTime: new Date().toISOString()
-        }
-    };
-
-    // Demo passwords - in a real app, passwords would be hashed and stored securely
-    private static readonly demoPasswords: Record<string, string> = {
-        'admin': 'admin123',
-        'user': 'user123',
-        'guest': 'guest123'
-    };
-
     /**
-     * Attempt to log in a user
-     * @param username Username
-     * @param password Password
+     * Login with Discord credentials
+     * @param discordUser Discord user object
      * @returns Authentication result
      */
-    public static login(username: string, password: string = ''): AuthResult {
-        // In a real app, this would validate against a server
-        // For the demo, we'll use hardcoded users
-
-        // Check if username exists
-        if (!(username in this.demoUsers)) {
+    public static loginWithDiscord(discordUser: any): AuthResult {
+        if (!discordUser || !discordUser.id || !discordUser.username) {
             return {
                 success: false,
-                message: 'User not found'
+                message: 'Invalid Discord user data'
             };
         }
 
-        // Check password (guest user doesn't need password)
-        if (username !== 'guest' && this.demoPasswords[username] !== password) {
-            return {
-                success: false,
-                message: 'Invalid password'
-            };
-        }
-
-        // Set current user
+        // Create user with Discord properties
         this.currentUser = {
-            ...this.demoUsers[username],
-            loginTime: new Date().toISOString()
+            username: discordUser.username,
+            accessLevel: discordUser.accessLevel || 1,
+            loginTime: new Date().toISOString(),
+            discordId: discordUser.id,
+            avatar: discordUser.avatar,
+            banner: discordUser.banner,
+            isDev: discordUser.isDev || false,
+            isPrivileged: discordUser.isPrivileged || false
         };
 
         // Save to local storage for persistence
@@ -91,7 +63,7 @@ export class AuthService {
 
         return {
             success: true,
-            message: 'Login successful',
+            message: 'Discord login successful',
             username: this.currentUser.username
         };
     }
@@ -148,6 +120,14 @@ export class AuthService {
     public static hasAccess(requiredLevel: number): boolean {
         if (!this.currentUser) return false;
         return this.currentUser.accessLevel >= requiredLevel;
+    }
+
+    /**
+     * Check if current user is a developer
+     * @returns Whether current user has developer privileges
+     */
+    public static isDevUser(): boolean {
+        return !!this.currentUser?.isDev;
     }
 
     /**
