@@ -2,17 +2,17 @@
     position: absolute;
     bottom: 42px;
     left: 0;
-    width: 500px; /* Increased width */
+    width: 500px;
     max-width: 40vw;
     max-height: calc(100vh - 50px);
-    background-color: rgba(0, 0, 0, 0.95); /* Darker background */
-    border: 2px solid #ff3333; /* Thicker border */
-    box-shadow: 0 0 20px rgba(255, 51, 51, 0.7); /* More prominent glow */
+    background-color: rgba(0, 0, 0, 0.95);
+    border: 2px solid #ff3333;
+    box-shadow: 0 0 20px rgba(255, 51, 51, 0.7);
     color: #33ff33;
     font-family: 'Courier New', monospace;
     display: flex;
     flex-direction: column;
-    z-index: 100;
+    z-index: 320;
     animation: slideUp 0.2s ease-out;
 }
 
@@ -22,15 +22,19 @@
     left: 0;
     width: 100%;
     height: 100%;
+    max-width: 100%;
     max-height: 100vh;
     border: none;
     border-radius: 0;
     z-index: 9999;
+    overflow: hidden; /* Prevent content from causing scrolling */
+    display: flex;
+    flex-direction: column;
 }
 
 .header {
     padding: 10px;
-    border-bottom: 2px solid #ff3333; /* Thicker border */
+    border-bottom: 2px solid #ff3333;
     background: linear-gradient(to bottom, #440000, #220000);
 }
 
@@ -45,10 +49,10 @@
 .closeButton,
 .settingsButton,
 .userButton {
-    background-color: rgba(20, 0, 0, 0.8); /* Darker button background */
+    background-color: rgba(20, 0, 0, 0.8);
     border: 1px solid #ff3333;
     color: #ff3333;
-    padding: 5px 10px; /* Increased padding */
+    padding: 5px 10px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -56,7 +60,7 @@
     font-family: 'Courier New', monospace;
     font-size: 14px;
     transition: background-color 0.2s, transform 0.1s;
-    border-radius: 3px; /* Slight rounding */
+    border-radius: 3px;
 }
 
 .backButton:hover,
@@ -64,14 +68,14 @@
 .settingsButton:hover,
 .userButton:hover {
     background-color: rgba(255, 51, 51, 0.2);
-    transform: translateY(-1px); /* Slight lift effect */
+    transform: translateY(-1px);
 }
 
 .backButton:active,
 .closeButton:active,
 .settingsButton:active,
 .userButton:active {
-    transform: translateY(1px); /* Press effect */
+    transform: translateY(1px);
 }
 
 .backButton:disabled {
@@ -99,37 +103,42 @@
     white-space: nowrap;
     font-size: 14px;
     color: #33ff33;
-    font-weight: bold; /* Make path text bolder */
-    text-shadow: 0 0 5px rgba(51, 255, 51, 0.3); /* Add glow */
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(51, 255, 51, 0.3);
 }
 
 .searchBar {
     position: relative;
     display: flex;
     align-items: center;
+    transition: all 0.3s ease;
+}
+
+.searchBar.searchFocused {
+    padding: 5px 0;
 }
 
 .searchInput {
     flex: 1;
-    background-color: #0a0a0a; /* Darker input background */
+    background-color: #0a0a0a;
     border: 1px solid #ff3333;
-    color: #33ff33; /* Changed to green text */
-    padding: 10px 35px 10px 10px; /* Increased padding */
+    color: #33ff33;
+    padding: 10px 35px 10px 10px;
     font-family: 'Courier New', monospace;
     font-size: 14px;
     width: 100%;
     box-sizing: border-box;
-    border-radius: 0; /* Remove any rounding */
+    border-radius: 0;
 }
 
 .searchInput:focus {
     outline: none;
-    box-shadow: 0 0 8px rgba(255, 51, 51, 0.6); /* Stronger focus glow */
-    border-color: #ff5555; /* Brighter border on focus */
+    box-shadow: 0 0 8px rgba(255, 51, 51, 0.6);
+    border-color: #ff5555;
 }
 
 .searchInput::placeholder {
-    color: rgba(51, 255, 51, 0.5); /* Green placeholder text */
+    color: rgba(51, 255, 51, 0.5);
 }
 
 .clearSearch {
@@ -163,6 +172,14 @@
     scrollbar-color: rgba(255, 51, 51, 0.3) rgba(0, 0, 0, 0.2);
 }
 
+.quickMenu.mobile .content {
+    flex: 1;
+    max-height: unset; /* Remove max-height in mobile to allow flexible content area */
+    overflow-y: auto; /* Ensure it still scrolls */
+    -webkit-overflow-scrolling: touch; /* Better scroll on iOS */
+    padding-bottom: 140px; /* Add padding to ensure content isn't hidden behind UserBanner + footer */
+}
+
 .section {
     display: flex;
     flex-direction: column;
@@ -173,16 +190,16 @@
     font-size: 14px;
     font-weight: bold;
     color: #ff3333;
-    border-bottom: 1px solid rgba(255, 51, 51, 0.5); /* More visible border */
+    border-bottom: 1px solid rgba(255, 51, 51, 0.5);
     padding-bottom: 5px;
     text-transform: uppercase;
-    letter-spacing: 1px; /* Add letter spacing */
+    letter-spacing: 1px;
 }
 
 .itemGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Wider items */
-    gap: 12px; /* Increased gap */
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
     padding: 5px 0;
 }
 
@@ -194,13 +211,19 @@
     cursor: pointer;
     transition: all 0.2s;
     text-align: center;
-    border: 1px solid transparent; /* Invisible border initially */
+    border: 1px solid transparent;
 }
 
 .item:hover {
     background-color: rgba(255, 51, 51, 0.15);
-    border: 1px solid rgba(255, 51, 51, 0.3); /* Visible border on hover */
-    transform: translateY(-2px); /* Slight lift on hover */
+    border: 1px solid rgba(255, 51, 51, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Add active state for touch devices */
+.item:active {
+    background-color: rgba(255, 51, 51, 0.3);
+    transform: scale(0.98);
 }
 
 .item.locked {
@@ -215,7 +238,7 @@
 
 .itemIcon {
     position: relative;
-    font-size: 28px; /* Larger icons */
+    font-size: 28px;
     margin-bottom: 8px;
     width: 50px;
     height: 50px;
@@ -225,8 +248,8 @@
 }
 
 .folderIcon {
-    color: #ffcc00; /* Yellow folders */
-    text-shadow: 0 0 8px rgba(255, 204, 0, 0.3); /* Folder glow */
+    color: #ffcc00;
+    text-shadow: 0 0 8px rgba(255, 204, 0, 0.3);
 }
 
 .fileIcon {
@@ -235,7 +258,7 @@
 
 .programIcon {
     color: #33ffff;
-    text-shadow: 0 0 8px rgba(51, 255, 255, 0.3); /* Program icon glow */
+    text-shadow: 0 0 8px rgba(51, 255, 255, 0.3);
 }
 
 .matchBadge {
@@ -250,13 +273,13 @@
 }
 
 .itemName {
-    font-size: 13px; /* Slightly larger font */
+    font-size: 13px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 100%;
     color: #33ff33;
-    font-weight: bold; /* Bold item names */
+    font-weight: bold;
 }
 
 .itemDescription {
@@ -291,7 +314,7 @@
 }
 
 .footer {
-    border-top: 2px solid #ff3333; /* Thicker border */
+    border-top: 2px solid #ff3333;
     padding: 10px;
     background: linear-gradient(to bottom, #220000, #110000);
 }
@@ -319,13 +342,20 @@
     border-radius: 50%;
     background-color: #33ff33;
     animation: pulse 2s infinite;
-    box-shadow: 0 0 5px rgba(51, 255, 51, 0.7); /* Added glow */
+    box-shadow: 0 0 5px rgba(51, 255, 51, 0.7);
 }
 
 .mobileFooter {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    border-top: 2px solid #ff3333;
+    background: linear-gradient(to bottom, #220000, #110000);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200; /* Ensure it's above other elements including UserBanner */
 }
 
 .footerButton {
@@ -335,9 +365,9 @@
     align-items: center;
     justify-content: center;
     gap: 5px;
-    padding: 10px;
-    background-color: rgba(20, 0, 0, 0.8); /* Darker background */
-    border: 1px solid rgba(255, 51, 51, 0.5); /* More visible border */
+    padding: 16px 10px; /* Increased height for better tap targets */
+    background-color: rgba(20, 0, 0, 0.8);
+    border: 1px solid rgba(255, 51, 51, 0.5);
     color: #ff3333;
     font-family: 'Courier New', monospace;
     font-size: 12px;
@@ -345,13 +375,17 @@
     transition: all 0.2s;
 }
 
-.footerButton:hover {
+.footerButton:hover, .footerButton:active {
     background-color: rgba(255, 51, 51, 0.15);
-    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+.footerButton:active {
+    transform: scale(0.95);
 }
 
 .buttonIcon {
-    font-size: 18px;
+    font-size: 20px; /* Larger icons */
+    margin-bottom: 4px;
 }
 
 /* Scanline effect for the retro look */
@@ -366,7 +400,7 @@
     background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
     background-size: 100% 4px;
     pointer-events: none;
-    opacity: 0.2; /* Increased opacity */
+    opacity: 0.2;
     z-index: -1;
 }
 
@@ -376,16 +410,16 @@
 }
 
 .content::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.4); /* Darker track */
+    background: rgba(0, 0, 0, 0.4);
 }
 
 .content::-webkit-scrollbar-thumb {
-    background: rgba(255, 51, 51, 0.4); /* More visible thumb */
-    border-radius: 0; /* Remove rounding */
+    background: rgba(255, 51, 51, 0.4);
+    border-radius: 0;
 }
 
 .content::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 51, 51, 0.6); /* Brighter on hover */
+    background: rgba(255, 51, 51, 0.6);
 }
 
 /* Animations */
@@ -420,21 +454,163 @@
     .closeButton,
     .settingsButton,
     .userButton {
-        padding: 8px;
+        padding: 10px; /* Larger tap targets */
+        min-width: 44px; /* Minimum size for tap targets */
+        min-height: 44px; /* Minimum size for tap targets */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .backText {
+        display: none; /* Hide text on mobile to save space */
     }
 
     .searchInput {
-        padding: 10px;
-        font-size: 16px;
+        padding: 15px 40px 15px 15px; /* Larger input area */
+        font-size: 16px; /* Prevent zoom on iOS */
+        height: 50px;
+    }
+
+    .clearSearch {
+        width: 30px;
+        height: 30px;
+        font-size: 22px;
+        right: 12px;
     }
 
     .content {
         padding: 15px;
     }
 
-    .footerButton {
-        padding: 12px;
+    /* Make section headers sticky on mobile for better navigation */
+    .sectionHeader {
+        position: sticky;
+        top: 0;
+        background-color: rgba(0, 0, 0, 0.9);
+        padding: 10px 0;
+        margin: 0;
+        z-index: 10;
     }
+
+    /* Add some padding to the mobile items */
+    .item {
+        padding: 16px 10px;
+    }
+
+    /* Increase the size of the item icons for better visibility */
+    .itemIcon {
+        font-size: 32px;
+        margin-bottom: 12px;
+        width: 60px;
+        height: 60px;
+    }
+
+    /* Slightly larger text for item names */
+    .itemName {
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    /* Add a small vibration feedback on item tap (CSS no longer controls this,
+       but we'll add a comment for implementation in JS) */
+    /* For vibration feedback on item tap, add in JS:
+       if (window.navigator.vibrate) {
+         window.navigator.vibrate(50);
+       }
+    */
+
+    /* Adjust window controls in mobile view */
+    .menuControls {
+        border-bottom: 1px solid rgba(255, 51, 51, 0.3);
+        margin-bottom: 8px;
+    }
+
+    .menuList {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .menuItem {
+        flex: 1;
+        min-width: 150px;
+        padding: 12px;
+        margin: 4px;
+    }
+
+    /* Fix for iOS height calculation with vh units */
+    .quickMenu.mobile {
+        height: 100%;
+        height: -webkit-fill-available;
+    }
+
+    /* Fix for iOS input focus issues */
+    .quickMenu.mobile .content {
+        padding-bottom: 70px; /* Extra padding to ensure content isn't hidden behind keyboard */
+    }
+
+    /* Fix for the mobile footer to stay at the bottom */
+    .mobileFooter {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+    }
+
+    /* Improve footer buttons for mobile */
+    .footerButton {
+        padding: 16px 5px;
+        min-height: 70px;
+    }
+}
+
+/* Specific fixes for very small screens */
+@media (max-width: 320px) {
+    .itemGrid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    }
+
+    .item {
+        padding: 10px 5px;
+    }
+
+    .itemIcon {
+        font-size: 24px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .footerButton {
+        font-size: 10px;
+    }
+
+    .buttonIcon {
+        font-size: 16px;
+    }
+}
+
+/* Fix for the menuItem class handling */
+.menuItem .minimizeAll,
+.menuItem .closeAll {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.menuItem .minimizeAll::before {
+    content: '-';
+    display: inline-block;
+    margin-right: 8px;
+    color: #33ff33;
+}
+
+.menuItem .closeAll::before {
+    content: 'X';
+    display: inline-block;
+    margin-right: 8px;
+    color: #33ff33;
 }
 
 /* Header buttons container */
@@ -444,37 +620,7 @@
     gap: 5px;
 }
 
-/* Discord login button for footer */
-.discordLoginButton {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: rgba(51, 255, 51, 0.1);
-    border: 1px solid #33ff33;
-    color: #33ff33;
-    padding: 8px 15px; /* Larger button */
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-left: 10px;
-    font-weight: bold; /* Make text bolder */
-    text-transform: uppercase;
-}
-
-.discordLoginButton:hover {
-    background-color: rgba(51, 255, 51, 0.2);
-    transform: translateY(-2px); /* Slight lift on hover */
-    box-shadow: 0 0 10px rgba(51, 255, 51, 0.3); /* Glow on hover */
-}
-
-.discordIcon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Settings content styling */
+/* Adjustment for settings menu */
 .effectsToggle {
     display: flex;
     align-items: center;
@@ -542,225 +688,4 @@ input:checked + .toggleSlider:before {
     height: 1px;
     background-color: rgba(255, 51, 51, 0.3);
     margin: 10px 0;
-}
-
-/* Override some styles for the settings content */
-.section .itemGrid {
-    padding: 10px;
-}
-
-/* Mobile styles for settings */
-@media (max-width: 768px) {
-    .effectsToggle {
-        padding: 10px;
-    }
-
-    .toggleSwitch {
-        width: 40px;
-        height: 20px;
-    }
-
-    .toggleSlider:before {
-        height: 14px;
-        width: 14px;
-        left: 3px;
-        bottom: 2px;
-    }
-
-    input:checked + .toggleSlider:before {
-        transform: translateX(20px);
-    }
-}
-
-/* Login Modal Styles */
-.loginModalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
-}
-
-.loginModal {
-    width: 350px;
-    background-color: #110000; /* Darker background */
-    border: 2px solid #cc0000;
-    box-shadow: 0 0 25px rgba(204, 0, 0, 0.7); /* Stronger glow */
-    overflow: hidden;
-    padding: 20px;
-}
-
-.loginModal h3 {
-    margin: 0 0 20px 0;
-    font-size: 18px;
-    text-align: center;
-    letter-spacing: 2px;
-    color: #ffffff;
-    font-weight: bold;
-    border-bottom: 1px solid #cc0000;
-    padding-bottom: 15px;
-    text-shadow: 0 0 5px rgba(255, 51, 51, 0.5); /* Text glow */
-}
-
-.loginError {
-    background-color: rgba(204, 0, 0, 0.3);
-    border: 1px solid #cc0000;
-    color: #ff6666;
-    padding: 10px 15px;
-    margin-bottom: 20px;
-    font-size: 12px;
-    text-align: center;
-}
-
-.discordLoginSection {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 25px 0;
-}
-
-.discordLogo {
-    background-color: #5865F2;
-    width: 80px; /* Larger logo */
-    height: 80px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    box-shadow: 0 0 20px rgba(51, 255, 51, 0.3);
-}
-
-.discordLoginButton {
-    background-color: #5865F2;
-    color: white;
-    border: none;
-    font-weight: bold;
-    padding: 14px 25px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-bottom: 15px;
-    width: 260px;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.discordLoginButton:hover {
-    background-color: #4752C4;
-    transform: translateY(-3px); /* More noticeable lift */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-}
-
-.discordLoginButton:active {
-    transform: translateY(1px);
-}
-
-.loginButtons {
-    display: flex;
-    justify-content: center;
-    margin-top: 25px;
-}
-
-.loginButtons button {
-    padding: 10px 25px;
-    background-color: #330000;
-    border: 1px solid #cc0000;
-    color: #ffffff;
-    cursor: pointer;
-    font-family: 'Courier New', monospace;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.2s;
-    font-weight: bold;
-}
-
-.loginButtons button:hover {
-    background-color: #550000;
-    transform: translateY(-2px);
-}
-
-.menuControls {
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    background-color: #000000;
-    border-top: 1px solid #550000;
-    border-bottom: 1px solid #550000;
-}
-
-.sectionHeader {
-    font-size: 14px;
-    font-weight: bold;
-    color: #ff3333;
-    margin: 8px 0;
-    border-bottom: 1px solid rgba(255, 51, 51, 0.3);
-    padding-bottom: 5px;
-    text-transform: uppercase;
-    text-align: center;
-}
-
-.menuList {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-.menuItem {
-    padding: 8px;
-    cursor: pointer;
-    color: #33ff33;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-    margin: 5px 0;
-    border: 1px solid rgba(51, 255, 51, 0.3);
-    transition: all 0.2s;
-}
-
-.menuItem:hover {
-    background-color: rgba(51, 255, 51, 0.1);
-    text-shadow: 0 0 5px rgba(51, 255, 51, 0.7);
-    border-color: rgba(51, 255, 51, 0.7);
-}
-
-.menuItem::before {
-    display: inline-block;
-    margin-right: 8px;
-    color: #33ff33;
-}
-
-.menuItem .minimizeAll::before {
-    content: '-';
-    display: inline-block;
-    margin-right: 8px;
-    color: #33ff33;
-}
-
-.menuItem .closeAll::before {
-    content: 'X';
-    display: inline-block;
-    margin-right: 8px;
-    color: #33ff33;
-}
-
-/* Mobile styles */
-@media (max-width: 768px) {
-    .menuControls {
-        padding: 5px;
-    }
-
-    .menuItem {
-        padding: 6px;
-        font-size: 12px;
-    }
 }

@@ -8,6 +8,15 @@
     border-top: 1px solid #0f0;
     border-bottom: 1px solid #0f0;
     background-color: rgba(0, 0, 0, 0.7);
+    z-index: 10; /* Ensure it's above other elements */
+}
+
+/* For mobile quick menu, ensure proper positioning */
+.userAuthBanner.mobile {
+    border-top: 1px solid #0f0;
+    border-bottom: none; /* Remove bottom border on mobile */
+    margin-bottom: 70px; /* Space for the footer navigation */
+    margin-top: auto; /* Push to the bottom of its container */
 }
 
 /* Banner background with reduced brightness */
@@ -156,6 +165,14 @@
     transform: translateY(1px);
 }
 
+/* Container for badges to better handle mobile layout */
+.badgesContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 10px;
+}
+
 /* Updated SUDO badge to match the example image */
 .sudoBadge {
     background-color: #cc0000;
@@ -164,10 +181,6 @@
     font-weight: bold;
     padding: 4px 8px;
     border-radius: 2px;
-    position: absolute;
-    right: 120px; /* Position to left of logout button */
-    top: 50%;
-    transform: translateY(-50%);
     letter-spacing: 1px;
     text-shadow: 0 0 3px rgba(255, 0, 0, 0.5);
     box-shadow: 0 0 5px rgba(255, 0, 0, 0.7);
@@ -176,10 +189,6 @@
 
 /* DEV tag styling */
 .devTag {
-    position: absolute;
-    right: 190px; /* Position to left of SUDO badge */
-    top: 50%;
-    transform: translateY(-50%);
     background-color: #1d9a96;
     color: #33fff8;
     border: 1px solid #33fff8;
@@ -232,19 +241,42 @@
     .authBtn {
         padding: 3px 10px;
         font-size: 11px;
+        min-width: 60px; /* Ensure tap target size */
+        min-height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .sudoBadge,
     .devTag {
         font-size: 10px;
-        padding: 3px 6px;
+        padding: 2px 5px;
     }
 
-    .sudoBadge {
-        right: 90px;
-    }
+    /* Adjusted layout for very small screens */
+    @media (max-width: 360px) {
+        .userAuthContent {
+            padding: 8px;
+        }
 
-    .devTag {
-        right: 140px;
+        .userAvatar,
+        .guestAvatar {
+            width: 32px;
+            height: 32px;
+        }
+
+        .username {
+            font-size: 12px;
+        }
+
+        .accessLevel {
+            font-size: 9px;
+        }
+
+        /* Hide badges on very small screens */
+        .badgesContainer {
+            display: none;
+        }
     }
 }

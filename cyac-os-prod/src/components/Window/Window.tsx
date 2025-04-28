@@ -9,6 +9,7 @@ interface WindowProps {
     onClose?: () => void;
     onMinimize?: () => void;
     onMaximize?: () => void;
+    onFocus?: () => void; // New prop for handling focus
     isActive?: boolean;
     initialPosition?: {
         x: number;
@@ -17,8 +18,8 @@ interface WindowProps {
         height: number;
     };
     initialMaximized?: boolean;
-    terminalHeight?: number; // Add terminal height prop
-    terminalVisible?: boolean; // Add terminal visibility prop
+    terminalHeight?: number;
+    terminalVisible?: boolean;
 }
 
 // Generate a random position for a new window
@@ -42,6 +43,7 @@ const Window: React.FC<WindowProps> = ({
                                            onClose,
                                            onMinimize,
                                            onMaximize,
+                                           onFocus,
                                            isActive = false,
                                            initialPosition,
                                            initialMaximized = false,
@@ -72,6 +74,11 @@ const Window: React.FC<WindowProps> = ({
     const handleWindowClick = (e: React.MouseEvent) => {
         e.stopPropagation();
         FocusManager.setActiveWindow(id);
+
+        // Call the onFocus callback if provided
+        if (onFocus) {
+            onFocus();
+        }
     };
 
     // Start dragging the window
@@ -89,6 +96,11 @@ const Window: React.FC<WindowProps> = ({
 
         // Set focus to window
         FocusManager.setActiveWindow(id);
+
+        // Call the onFocus callback if provided
+        if (onFocus) {
+            onFocus();
+        }
     };
 
     // Start resizing the window
@@ -192,7 +204,7 @@ const Window: React.FC<WindowProps> = ({
                 width: '100%',
                 // Preserve space for the terminal at the bottom if visible
                 height: `calc(100% - 40px - ${terminalVisible ? terminalHeight : 0}px)`,
-                zIndex: isActive ? 1100 : 1000,
+                zIndex: isActive ? 210 : 200, // Higher z-index for active window
             };
         }
 
@@ -202,7 +214,7 @@ const Window: React.FC<WindowProps> = ({
             left: `${position.x}px`,
             width: `${position.width}px`,
             height: `${position.height}px`,
-            zIndex: isActive ? 1100 : 1000,
+            zIndex: isActive ? 210 : 200, // Higher z-index for active window
         };
     };
 

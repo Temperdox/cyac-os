@@ -25,7 +25,7 @@
 	width: 100%;
 	position: absolute;
 	min-height: 50px; /* Allow terminal to be very small */
-	max-height: 80%; /* Don't let it take up more than 80% of screen */
+	max-height: 80%;
 	display: flex;
 	flex-direction: column;
 	border-top: 2px solid #ff3333;

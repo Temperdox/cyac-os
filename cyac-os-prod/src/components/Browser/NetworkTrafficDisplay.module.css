@@ -1,0 +1,152 @@
+/* NetworkTrafficDisplay.module.css - Updated version */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Full width */
+    margin-left: 0;
+}
+
+.graphsContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.graphRow {
+    position: relative;
+    height: 15px;
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+}
+
+.graphRow + .graphRow {
+    margin-top: 2px;
+}
+
+.labelIn {
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    color: #bb86fc;
+    font-size: 10px;
+    font-family: monospace;
+    font-weight: bold;
+    z-index: 2;
+}
+
+.labelOut {
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    color: #03dac6;
+    font-size: 10px;
+    font-family: monospace;
+    font-weight: bold;
+    z-index: 2;
+}
+
+.barContainer {
+    display: flex;
+    align-items: flex-end;
+    margin-left: 25px;
+    width: calc(100% - 25px);
+    height: 100%;
+}
+
+.barIn {
+    flex-grow: 1;
+    background-color: #bb86fc;
+    margin: 0 1px;
+    max-height: 15px;
+    align-self: flex-start; /* Bars grow from top */
+    transition: height 0.3s ease-out;
+}
+
+.barOut {
+    flex-grow: 1;
+    background-color: #03dac6;
+    margin: 0 1px;
+    max-height: 15px;
+    align-self: flex-start; /* Bars grow from top */
+    transition: height 0.3s ease-out;
+}
+
+.eventText {
+    color: #03dac6;
+    font-size: 10px;
+    font-family: monospace;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.eventTextContainer {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    color: #03dac6;
+    font-size: 10px;
+    font-family: monospace;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.eventDescription {
+    /* this one will shrink and get an ellipsis */
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.eventRates {
+    /* never shrink, so it’s always fully visible */
+    flex: 0 0 auto;
+    margin-left: 6px;
+    /* copy your existing typography */
+    color: #03dac6;
+    font-size: 10px;
+    font-family: monospace;
+}
+
+/* Mini network visualization for status bar */
+.miniGraph {
+    width: 40px;
+    height: 15px;
+    margin-right: 8px;
+    display: flex;
+    align-items: flex-end;
+}
+
+.miniBar {
+    width: 4px;
+    margin: 0 1px;
+    transition: height 0.3s ease-out;
+}
+
+.miniBarIn {
+    composes: miniBar;
+    background-color: #bb86fc;
+}
+
+.miniBarOut {
+    composes: miniBar;
+    background-color: #03dac6;
+}
+
+/* Animation for pulse effect */
+@keyframes pulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+
+.barIn, .barOut, .miniBarIn, .miniBarOut {
+    animation: pulse 1.5s infinite ease-in-out;
+}

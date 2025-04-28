@@ -1,0 +1,263 @@
+.infoStreamPage {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: 20px;
+    background-color: #121212;
+    color: #f0f0f0;
+    font-family: 'Courier New', monospace;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(187, 134, 252, 0.3);
+}
+
+.header h1 {
+    font-size: 32px;
+    color: #bb86fc;
+    margin: 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.subtitle {
+    color: #03dac6;
+    font-size: 14px;
+    margin-top: 10px;
+    letter-spacing: 1px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.dataPanel {
+    background-color: rgba(35, 29, 41, 0.7);
+    border: 1px solid rgba(187, 134, 252, 0.2);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.dataPanel h2 {
+    color: #bb86fc;
+    font-size: 18px;
+    margin: 0 0 15px 0;
+    border-bottom: 1px solid rgba(187, 134, 252, 0.2);
+    padding-bottom: 8px;
+}
+
+.dataList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dataList li {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(187, 134, 252, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dataList li:hover {
+    background-color: rgba(187, 134, 252, 0.1);
+    border-color: rgba(187, 134, 252, 0.3);
+}
+
+.dataList li.activeProject {
+    background-color: rgba(187, 134, 252, 0.15);
+    border-color: rgba(187, 134, 252, 0.4);
+}
+
+.projectHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.projectName {
+    color: #bb86fc;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.projectStatus {
+    color: #03dac6;
+    font-size: 12px;
+}
+
+.projectSummary {
+    color: #ddd;
+    font-size: 14px;
+    margin: 5px 0 0 0;
+}
+
+.projectDetails {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-left: 2px solid #bb86fc;
+    font-size: 13px;
+}
+
+.projectDetails p {
+    margin: 5px 0;
+    color: #ddd;
+}
+
+.dataVisual {
+    background-color: rgba(35, 29, 41, 0.7);
+    border: 1px solid rgba(187, 134, 252, 0.2);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.dataVisual h2 {
+    color: #bb86fc;
+    font-size: 18px;
+    margin: 0 0 15px 0;
+    border-bottom: 1px solid rgba(187, 134, 252, 0.2);
+    padding-bottom: 8px;
+}
+
+.dataMap {
+    height: 300px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+}
+
+.mapPlaceholder {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+}
+
+.facilityNode {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+.nodePoint {
+    width: 12px;
+    height: 12px;
+    background-color: #03dac6;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(3, 218, 198, 0.7);
+    margin-bottom: 5px;
+}
+
+.facilityNode span {
+    font-size: 10px;
+    color: #03dac6;
+    text-shadow: 0 0 5px rgba(3, 218, 198, 0.7);
+}
+
+.connectionLines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.connectionLines line {
+    stroke: rgba(3, 218, 198, 0.4);
+    stroke-width: 1;
+}
+
+.researchResults {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.resultItem {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(187, 134, 252, 0.1);
+    border-radius: 5px;
+    padding: 12px;
+    transition: all 0.2s ease;
+}
+
+.resultItem:hover {
+    background-color: rgba(187, 134, 252, 0.1);
+    border-color: rgba(187, 134, 252, 0.3);
+}
+
+.resultHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(187, 134, 252, 0.1);
+    padding-bottom: 5px;
+}
+
+.resultTitle {
+    color: #bb86fc;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.resultDate {
+    color: #888;
+    font-size: 12px;
+}
+
+.resultItem p {
+    color: #ddd;
+    font-size: 13px;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.footer {
+    margin-top: 40px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(187, 134, 252, 0.2);
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+}
+
+.statusIndicator {
+    color: #03dac6;
+    margin-top: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .projectHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .projectStatus {
+        margin-top: 5px;
+    }
+
+    .resultHeader {
+        flex-direction: column;
+    }
+
+    .resultDate {
+        margin-top: 5px;
+    }
+}

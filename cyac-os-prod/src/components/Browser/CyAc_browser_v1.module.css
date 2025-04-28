@@ -1,212 +1,374 @@
+/* CyAc_browser_v1_responsive.module.css - Enhanced responsive version */
+
+/* Browser container */
 .browser {
     width: 100%;
-    height: 100%;
+    height: -webkit-fill-available;
     display: flex;
     flex-direction: column;
-    background-color: #0a0a0a;
-    color: #33ff33;
+    background-color: #121212;
+    color: #f0f0f0;
     font-family: 'Courier New', monospace;
-    overflow: hidden;
+    border: 1px solid #333;
 }
 
-.toolbar {
+/* Browser header with tabs */
+.browserHeader {
     display: flex;
-    height: 40px;
-    padding: 5px;
-    background-color: #1a1a1a;
-    border-bottom: 1px solid #33ff33;
-    gap: 10px;
-}
-
-.navigationButtons {
-    display: flex;
-    gap: 5px;
-}
-
-.navButton {
-    width: 30px;
     height: 30px;
-    background-color: transparent;
-    border: 1px solid #33ff33;
-    color: #33ff33;
+    background-color: #191919;
+    border-bottom: 1px solid #333;
+}
+
+/* Tab container */
+.tabContainer {
+    display: flex;
+    align-items: center;
+    padding: 0 0.5vw;
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+.tabContainer::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome/Safari/Edge */
+}
+
+.activeTab {
+    height: calc(5vh - 4px);
+    max-height: 36px;
+    min-height: 26px;
+    padding: 0 1vw;
+    display: flex;
+    align-items: center;
+    background-color: #231d29;
+    color: #bb86fc;
+    border-top: 2px solid #bb86fc;
+    font-weight: bold;
+    font-size: clamp(10px, 1.4vw, 14px);
+    margin-right: 1px;
+    min-width: 80px;
+    max-width: 150px;
+    flex: 0 0 auto;
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+}
+
+.inactiveTab {
+    height: 36px; /* Same fixed height as active tab */
+    background-color: #191919;
+    color: #888;
+    opacity: 0.8;
+    border-top: 2px solid transparent;
+    min-width: 80px;
+    max-width: 150px;
+}
+
+.tabTitle {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.closeTabBtn {
+    margin-left: 5px;
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 0 5px;
+    font-size: clamp(10px, 1.4vw, 14px);
+}
+
+.closeTabBtn:hover {
+    color: #cf6679;
+}
+
+/* New tab button */
+.newTabButton {
+    width: 20px;
+    height: 20px;
+    margin-left: 8px;
+    background-color: rgba(187, 134, 252, 0.1);
+    border: 1px solid rgba(187, 134, 252, 0.3);
+    color: #bb86fc;
+    font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 14px;
-    border-radius: 3px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+    align-self: center;
+}
+
+.newTabButton:hover {
+    background-color: rgba(187, 134, 252, 0.2);
+}
+
+/* Toolbar containing nav buttons and URL bar */
+.toolbar {
+    display: flex;
+    height: clamp(36px, 6vh, 48px);
+    padding: clamp(5px, 1vh, 8px);
+    background-color: #231d29;
+    border-bottom: 1px solid #333;
+    gap: clamp(5px, 1vw, 10px);
+}
+
+/* Navigation buttons */
+.navigationButtons {
+    display: flex;
+    gap: clamp(3px, 0.5vw, 5px);
+}
+
+.navButton {
+    width: clamp(24px, 4vw, 32px);
+    height: clamp(24px, 4vh, 32px);
+    background-color: rgba(187, 134, 252, 0.1);
+    border: 1px solid rgba(187, 134, 252, 0.3);
+    color: #bb86fc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: clamp(10px, 1.4vw, 14px);
+    border-radius: 4px;
     transition: background-color 0.2s;
 }
 
 .navButton:hover:not(:disabled) {
-    background-color: rgba(51, 255, 51, 0.2);
+    background-color: rgba(187, 134, 252, 0.2);
 }
 
-.navButton:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
+/* Address bar */
 .addressBar {
     flex: 1;
     display: flex;
     gap: 5px;
 }
 
+.urlInputWrapper {
+    flex: 1;
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(187, 134, 252, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.urlProtocol {
+    display: flex;
+    align-items: center;
+    padding: 0 clamp(3px, 0.8vw, 8px);
+    font-size: clamp(10px, 1.4vw, 14px);
+    color: #888;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-right: 1px solid rgba(187, 134, 252, 0.2);
+}
+
 .urlInput {
     flex: 1;
-    background-color: #000;
-    border: 1px solid #33ff33;
-    color: #33ff33;
-    padding: 5px 10px;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: #bb86fc;
+    padding: 0 clamp(5px, 1vw, 10px);
     font-family: 'Courier New', monospace;
-    font-size: 14px;
+    font-size: clamp(10px, 1.4vw, 14px);
+    width: 100%;
+    min-width: 0;
+    height: 100%;
 }
 
 .goButton {
-    width: 40px;
-    background-color: transparent;
-    border: 1px solid #33ff33;
-    color: #33ff33;
+    width: clamp(30px, 5vw, 40px);
+    background-color: rgba(187, 134, 252, 0.1);
+    border: 1px solid rgba(187, 134, 252, 0.3);
+    color: #bb86fc;
     cursor: pointer;
     font-family: 'Courier New', monospace;
     font-weight: bold;
     transition: background-color 0.2s;
-    border-radius: 3px;
+    border-radius: 4px;
+    font-size: clamp(10px, 1.4vw, 14px);
 }
 
-.goButton:hover {
-    background-color: rgba(51, 255, 51, 0.2);
-}
-
+/* Main content area */
 .browserContent {
     flex: 1;
-    overflow: auto;
     position: relative;
-    background-color: #0a0a0a;
+    background-color: #121212;
+    display: flex;
+    flex-direction: column;
 }
 
-.loadingIndicator {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+/* New Tab page with speed dials */
+.newtabContent {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(10px, 2vh, 20px);
+    background-color: #121212;
+    background-image:
+            radial-gradient(circle at 10% 20%, rgba(187, 134, 252, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 90% 80%, rgba(3, 218, 198, 0.03) 0%, transparent 50%);
+}
+
+.newtabHeader {
+    text-align: center;
+    margin-bottom: clamp(20px, 4vh, 40px);
+    padding-bottom: clamp(10px, 2vh, 20px);
+    border-bottom: 1px solid rgba(187, 134, 252, 0.1);
+}
+
+.newtabTitle {
+    font-size: clamp(18px, 3vw, 28px);
+    margin: 0;
+    background: linear-gradient(90deg, #bb86fc, #03dac6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 8px rgba(187, 134, 252, 0.5);
+    letter-spacing: 2px;
+}
+
+.newtabSubtitle {
+    font-size: clamp(10px, 1.4vw, 14px);
+    color: #888;
+    margin-top: 10px;
+    letter-spacing: 1px;
+}
+
+/* Speed dial grid */
+.speedDialContainer {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.speedDialGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(clamp(80px, 15vw, 150px), 1fr));
+    grid-auto-rows: 1fr;
+    gap: clamp(8px, 2vw, 20px);
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+    padding: clamp(10px, 2vw, 20px);
+    overflow: hidden;
+}
+
+/* Make grid items square */
+.speedDialGrid::before {
+    content: '';
+    width: 0;
+    padding-bottom: 100%;
+    grid-row: 1 / 1;
+    grid-column: 1 / 1;
+}
+
+.speedDialGrid > *:first-child {
+    grid-row: 1 / 1;
+    grid-column: 1 / 1;
+}
+
+.speedDialItem {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    padding: clamp(8px, 1.5vw, 15px);
+    background-color: rgba(35, 29, 41, 0.6);
+    border: 1px solid rgba(187, 134, 252, 0.2);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    aspect-ratio: 1;
 }
 
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid rgba(51, 255, 51, 0.3);
-    border-top: 4px solid #33ff33;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+.speedDialItem:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(187, 134, 252, 0.2);
+    border-color: rgba(187, 134, 252, 0.5);
+    background-color: rgba(35, 29, 41, 0.8);
 }
 
-.loadingText {
-    font-size: 14px;
-    color: #33ff33;
-    max-width: 80%;
-    text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.emptySpeedDial {
+    background-color: transparent;
+    border: 1px dashed rgba(187, 134, 252, 0.1);
+    cursor: default;
 }
 
-.pageContent {
-    padding: 15px;
+.speedDialIcon {
+    font-size: clamp(20px, 3.6vw, 36px);
+    margin-bottom: clamp(5px, 1vw, 10px);
+    text-shadow: 0 0 10px rgba(187, 134, 252, 0.7);
+    width: clamp(40px, 6.4vw, 64px);
+    height: clamp(40px, 6.4vw, 64px);
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    align-items: center;
+    justify-content: center;
 }
 
-.pageHeader {
-    text-align: center;
-    border-bottom: 1px solid rgba(51, 255, 51, 0.3);
-    padding-bottom: 15px;
-}
-
-.pageHeader h1 {
-    margin: 0;
-    font-size: 24px;
-    color: #33ff33;
-    letter-spacing: 2px;
-}
-
-.url {
-    font-size: 12px;
-    color: #888;
-    margin-top: 5px;
-}
-
-.pageBody {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-}
-
-.section {
-    border: 1px solid rgba(51, 255, 51, 0.3);
-    padding: 15px;
-    border-radius: 4px;
-    background-color: rgba(0, 0, 0, 0.3);
-}
-
-.section h2 {
-    margin: 0 0 15px 0;
-    font-size: 18px;
-    color: #33ff33;
-    border-bottom: 1px solid rgba(51, 255, 51, 0.3);
-    padding-bottom: 5px;
-}
-
-.cyacLogo {
-    text-align: center;
-    font-size: 36px;
+.speedDialName {
+    font-size: clamp(10px, 1.6vw, 16px);
     font-weight: bold;
-    margin: 30px 0;
-    color: #33ff33;
-    text-shadow: 0 0 10px rgba(51, 255, 51, 0.5);
-    letter-spacing: 3px;
+    color: #bb86fc;
+    margin-bottom: clamp(2px, 0.5vw, 5px);
+    text-align: center;
 }
 
-.tagline {
-    font-size: 12px;
-    font-weight: normal;
-    margin-top: 5px;
-    letter-spacing: 1px;
-    opacity: 0.7;
+.speedDialUrl {
+    font-size: clamp(8px, 1.2vw, 12px);
+    color: #888;
+    margin-bottom: clamp(5px, 1vw, 10px);
+    text-align: center;
 }
 
-.announcements {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+.speedDialDesc {
+    font-size: clamp(8px, 1.2vw, 12px);
+    color: #ccc;
+    text-align: center;
+    line-height: 1.4;
 }
 
-.announcements li {
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(51, 255, 51, 0.1);
-}
-
-.announcements li:last-child {
-    border-bottom: none;
-}
-
-.statusBar {
-    height: 25px;
-    background-color: #1a1a1a;
-    border-top: 1px solid #33ff33;
+/* Footer */
+.newtabFooter {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 10px;
-    font-size: 12px;
+    padding-top: clamp(10px, 2vh, 20px);
+    border-top: 1px solid rgba(187, 134, 252, 0.1);
+    flex-wrap: wrap;
+}
+
+.newtabClock {
+    font-size: clamp(14px, 1.8vw, 18px);
+    color: #bb86fc;
+    font-weight: bold;
+    margin-right: clamp(15px, 3vw, 30px);
+}
+
+/* Status bar */
+.statusBar {
+    height: clamp(20px, 3vh, 30px);
+    background-color: #191919;
+    border-top: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 clamp(8px, 1.5vw, 15px);
+    font-size: clamp(8px, 1.2vw, 12px);
 }
 
 .status {
@@ -214,46 +376,93 @@
 }
 
 .securityIndicator {
-    color: #33ff33;
+    color: #03dac6;
     display: flex;
     align-items: center;
 }
 
 .securityIndicator::before {
     content: '•';
-    font-size: 16px;
+    font-size: clamp(12px, 1.6vw, 16px);
     margin-right: 5px;
 }
 
-/* Animations */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.securityText {
+    display: inline-block;
+    white-space: nowrap;
 }
 
-/* Mobile styles */
+/* Mini network visualization for status bar */
+.miniNetworkDisplay {
+    width: clamp(30px, 4vw, 40px);
+    height: clamp(10px, 1.5vh, 15px);
+    margin-right: clamp(4px, 0.8vw, 8px);
+    display: flex;
+    align-items: flex-end;
+}
+
+.miniBarIn,
+.miniBarOut {
+    width: clamp(3px, 0.4vw, 4px);
+    height: clamp(6px, 0.8vh, 8px);
+    margin: 0 1px;
+    animation: pulse 2s infinite alternate;
+}
+
+.miniBarIn {
+    background-color: #bb86fc;
+}
+
+.miniBarOut {
+    background-color: #03dac6;
+    animation-delay: 0.5s;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { height: clamp(2px, 0.3vh, 3px); opacity: 0.7; }
+    100% { height: clamp(8px, 1.2vh, 12px); opacity: 1; }
+}
+
+/* Hide page indicators on smaller screens */
 @media (max-width: 768px) {
-    .toolbar {
-        height: 50px;
+    .pageIndicator {
+        display: none;
     }
 
-    .navButton {
-        width: 40px;
-        height: 40px;
-        font-size: 16px;
+    .pageNavBtn {
+        display: none;
+    }
+}
+
+/* Ensure all speedDialItems are perfectly square with equal dimensions */
+@supports (aspect-ratio: 1 / 1) {
+    .speedDialItem {
+        aspect-ratio: 1 / 1;
+    }
+}
+
+@supports not (aspect-ratio: 1 / 1) {
+    .speedDialItem {
+        position: relative;
     }
 
-    .urlInput,
-    .goButton {
-        font-size: 16px;
-        padding: 8px 10px;
+    .speedDialItem::before {
+        content: "";
+        display: block;
+        padding-top: 100%;
     }
 
-    .pageHeader h1 {
-        font-size: 20px;
-    }
-
-    .cyacLogo {
-        font-size: 28px;
+    .speedDialItem > * {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: clamp(8px, 1.5vw, 15px);
     }
 }

@@ -1,0 +1,264 @@
+.darknetPage {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: 20px;
+    background-color: #121212;
+    color: #f0f0f0;
+    font-family: 'Courier New', monospace;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(187, 134, 252, 0.3);
+}
+
+.header h1 {
+    font-size: 32px;
+    color: #bb86fc;
+    margin: 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.subtitle {
+    color: #03dac6;
+    font-size: 14px;
+    margin-top: 10px;
+    letter-spacing: 1px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.accessTerminal {
+    background-color: #0a0a0a;
+    border: 1px solid #333;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.terminalHeader {
+    background-color: #231d29;
+    padding: 10px 15px;
+    color: #bb86fc;
+    font-weight: bold;
+    font-size: 14px;
+    border-bottom: 1px solid #444;
+}
+
+.terminalContent {
+    padding: 15px;
+    font-size: 14px;
+    color: #03dac6;
+    font-family: 'Courier New', monospace;
+    max-height: 300px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #444 #0a0a0a;
+}
+
+.terminalContent::-webkit-scrollbar {
+    width: 8px;
+}
+
+.terminalContent::-webkit-scrollbar-track {
+    background: #0a0a0a;
+}
+
+.terminalContent::-webkit-scrollbar-thumb {
+    background-color: #444;
+    border-radius: 4px;
+}
+
+.terminalLine {
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.prompt {
+    color: #bb86fc;
+    margin-right: 5px;
+}
+
+.terminalInput {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #03dac6;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    width: 100%;
+    padding: 0;
+    margin: 0 5px;
+}
+
+.terminalInputLine {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background-color: #03dac6;
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+    vertical-align: middle;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.marketplaceSection {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.marketHeader {
+    background-color: rgba(35, 29, 41, 0.8);
+    border: 1px solid rgba(187, 134, 252, 0.2);
+    border-radius: 5px;
+    padding: 10px 15px;
+}
+
+.marketHeader h2 {
+    color: #bb86fc;
+    font-size: 18px;
+    margin: 0 0 10px 0;
+}
+
+.marketCategories {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.categoryButton {
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(187, 134, 252, 0.2);
+    color: #888;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+    border-radius: 3px;
+    transition: all 0.2s;
+}
+
+.categoryButton:hover {
+    background-color: rgba(187, 134, 252, 0.1);
+    color: #ddd;
+}
+
+.activeCategory {
+    background-color: rgba(187, 134, 252, 0.2);
+    border-color: rgba(187, 134, 252, 0.5);
+    color: #bb86fc;
+}
+
+.marketGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.marketItem {
+    background-color: rgba(35, 29, 41, 0.7);
+    border: 1px solid rgba(187, 134, 252, 0.2);
+    border-radius: 5px;
+    padding: 15px;
+    transition: all 0.2s ease;
+}
+
+.marketItem:hover {
+    border-color: rgba(187, 134, 252, 0.5);
+    box-shadow: 0 0 10px rgba(187, 134, 252, 0.2);
+    transform: translateY(-2px);
+}
+
+.itemName {
+    color: #bb86fc;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.itemPrice {
+    color: #03dac6;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.itemSeller {
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.itemDescription {
+    color: #ddd;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.itemButton {
+    background-color: rgba(3, 218, 198, 0.1);
+    border: 1px solid rgba(3, 218, 198, 0.3);
+    color: #03dac6;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+    border-radius: 3px;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.itemButton:hover {
+    background-color: rgba(3, 218, 198, 0.2);
+    border-color: rgba(3, 218, 198, 0.5);
+}
+
+.footer {
+    margin-top: 40px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(187, 134, 252, 0.2);
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+}
+
+.statusIndicator {
+    color: #03dac6;
+    margin-top: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .marketGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .marketCategories {
+        flex-wrap: wrap;
+    }
+
+    .categoryButton {
+        flex: 1;
+        min-width: calc(33.33% - 10px);
+        text-align: center;
+        padding: 8px 5px;
+    }
+}

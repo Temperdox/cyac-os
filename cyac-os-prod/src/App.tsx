@@ -46,6 +46,7 @@ const App: React.FC = () => {
     const [isHardwareAccelerated, setIsHardwareAccelerated] = useState<boolean>(true);
     const [terminalHeight, setTerminalHeight] = useState<number>(200);
     const [terminalVisible, setTerminalVisible] = useState<boolean>(true);
+    const [windowOrder, setWindowOrder] = useState<string[]>([]);
 
     // Check if current path is the auth callback
     const isAuthCallback = window.location.pathname.includes('/auth/callback') ||
@@ -189,6 +190,28 @@ const App: React.FC = () => {
         launchProgram(program);
     };
 
+    // Bring a window to front of the stack
+    const bringToFront = (id: string) => {
+        // Update window order by removing the window from its current position
+        // and adding it to the end (top of the visual stack)
+        setWindowOrder(prev => {
+            const newOrder = prev.filter(wId => wId !== id);
+            return [...newOrder, id];
+        });
+    };
+
+    // Handle window focus
+    const handleWindowFocus = (id: string) => {
+        // Only update if not already the active window
+        if (id !== activeWindowId) {
+            setActiveWindowId(id);
+            FocusManager.setFocus('window', id);
+        }
+
+        // Always bring window to front when focused
+        bringToFront(id);
+    };
+
     // Launch a program from program object
     const launchProgram = (program: Program) => {
         // Check if program component exists
@@ -225,6 +248,9 @@ const App: React.FC = () => {
 
         // Set focus to the window
         FocusManager.setFocus('window', uniqueId);
+
+        // Add to window order (on top)
+        setWindowOrder(prev => [...prev, uniqueId]);
     };
 
     // Handle item click in quick menu
@@ -265,6 +291,9 @@ const App: React.FC = () => {
 
                 // Set focus to the window
                 FocusManager.setFocus('window', uniqueId);
+
+                // Add to window order (on top)
+                setWindowOrder(prev => [...prev, uniqueId]);
             } catch (error) {
                 console.error('Error opening file:', error);
                 ToastManager.show({
@@ -289,8 +318,13 @@ const App: React.FC = () => {
                     w.id === id ? { ...w, minimized: false } : w
                 )
             );
+
+            // Set active window
             setActiveWindowId(id);
             FocusManager.setFocus('window', id);
+
+            // Bring window to front
+            bringToFront(id);
         } else if (activeWindowId === id) {
             // Minimize window if already active
             setOpenWindows(prev =>
@@ -298,12 +332,19 @@ const App: React.FC = () => {
                     w.id === id ? { ...w, minimized: true } : w
                 )
             );
+
+            // Clear active window
             setActiveWindowId(undefined);
             FocusManager.setFocus('terminal');
+
+            // No need to update window order for minimized windows
         } else {
             // Make window active
             setActiveWindowId(id);
             FocusManager.setFocus('window', id);
+
+            // Bring window to front
+            bringToFront(id);
         }
     };
 
@@ -312,19 +353,34 @@ const App: React.FC = () => {
         const windowToClose = openWindows.find(w => w.id === id);
         const windowTitle = windowToClose?.title || 'Window';
 
+        // Remove window from open windows
         setOpenWindows(prev => prev.filter(w => w.id !== id));
+
+        // Remove from window order
+        setWindowOrder(prev => prev.filter(wId => wId !== id));
 
         // If closing the active window, clear active window ID
         if (activeWindowId === id) {
-            setActiveWindowId(undefined);
+            // Find the next window to focus based on window order
+            const visibleWindows = openWindows.filter(w => !w.minimized && w.id !== id);
 
-            // Find the next window to focus, or focus terminal if none
-            const remainingWindows = openWindows.filter(w => w.id !== id && !w.minimized);
-            if (remainingWindows.length > 0) {
-                const nextWindow = remainingWindows[remainingWindows.length - 1];
-                setActiveWindowId(nextWindow.id);
-                FocusManager.setFocus('window', nextWindow.id);
+            if (visibleWindows.length > 0) {
+                // Get the topmost window from window order
+                const remainingIds = windowOrder.filter(wId =>
+                    wId !== id &&
+                    visibleWindows.some(w => w.id === wId)
+                );
+
+                if (remainingIds.length > 0) {
+                    const topmostId = remainingIds[remainingIds.length - 1];
+                    setActiveWindowId(topmostId);
+                    FocusManager.setFocus('window', topmostId);
+                } else {
+                    setActiveWindowId(undefined);
+                    FocusManager.setFocus('terminal');
+                }
             } else {
+                setActiveWindowId(undefined);
                 FocusManager.setFocus('terminal');
             }
         }
@@ -342,15 +398,26 @@ const App: React.FC = () => {
 
         // If minimizing the active window, clear active window ID
         if (activeWindowId === id) {
-            setActiveWindowId(undefined);
+            // Find the next window to focus based on window order
+            const visibleWindows = openWindows.filter(w => !w.minimized && w.id !== id);
 
-            // Find the next window to focus, or focus terminal if none
-            const remainingWindows = openWindows.filter(w => w.id !== id && !w.minimized);
-            if (remainingWindows.length > 0) {
-                const nextWindow = remainingWindows[remainingWindows.length - 1];
-                setActiveWindowId(nextWindow.id);
-                FocusManager.setFocus('window', nextWindow.id);
+            if (visibleWindows.length > 0) {
+                // Get the topmost window from window order
+                const remainingIds = windowOrder.filter(wId =>
+                    wId !== id &&
+                    visibleWindows.some(w => w.id === wId)
+                );
+
+                if (remainingIds.length > 0) {
+                    const topmostId = remainingIds[remainingIds.length - 1];
+                    setActiveWindowId(topmostId);
+                    FocusManager.setFocus('window', topmostId);
+                } else {
+                    setActiveWindowId(undefined);
+                    FocusManager.setFocus('terminal');
+                }
             } else {
+                setActiveWindowId(undefined);
                 FocusManager.setFocus('terminal');
             }
         }
@@ -373,8 +440,12 @@ const App: React.FC = () => {
             )
         );
 
+        // Set as active window
         setActiveWindowId(id);
         FocusManager.setFocus('window', id);
+
+        // Bring to front
+        bringToFront(id);
     };
 
     // If we're on the auth callback page, render the callback component
@@ -418,6 +489,12 @@ const App: React.FC = () => {
                 {/* Windows rendered as overlays */}
                 {openWindows
                     .filter(window => !window.minimized)
+                    // Sort windows based on their position in the windowOrder array
+                    .sort((a, b) => {
+                        const aIndex = windowOrder.indexOf(a.id);
+                        const bIndex = windowOrder.indexOf(b.id);
+                        return aIndex - bIndex; // Lower index renders first (at the bottom)
+                    })
                     .map(window => (
                         <Window
                             key={window.id}
@@ -427,6 +504,7 @@ const App: React.FC = () => {
                             onClose={() => handleWindowClose(window.id)}
                             onMinimize={() => handleWindowMinimize(window.id)}
                             onMaximize={() => handleWindowMaximize(window.id)}
+                            onFocus={() => handleWindowFocus(window.id)}
                             initialMaximized={window.props?.isMaximized}
                             terminalHeight={terminalVisible ? terminalHeight : 0}
                             terminalVisible={terminalVisible}
@@ -471,6 +549,7 @@ const App: React.FC = () => {
                 }}
                 onCloseAll={() => {
                     setOpenWindows([]);
+                    setWindowOrder([]);
                     setActiveWindowId(undefined);
                     FocusManager.setFocus('terminal');
                 }}

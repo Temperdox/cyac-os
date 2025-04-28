@@ -104,7 +104,6 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
                 // Simulate loading more images with a delay
                 await new Promise(resolve => setTimeout(resolve, 800));
 
-                // For demo purposes, we'll generate some placeholder images if we don't have an API
                 const newImages: ImageData[] = [];
 
                 // Generate placeholder images if we're on first page and have no initial images

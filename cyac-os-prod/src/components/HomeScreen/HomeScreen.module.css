@@ -23,7 +23,7 @@
     z-index: 0;
     pointer-events: auto; /* Allow clicks for ripple effect */
     mix-blend-mode: screen;
-    filter: brightness(20%);
+    filter: brightness(30%);
 }
 
 /* Logo */

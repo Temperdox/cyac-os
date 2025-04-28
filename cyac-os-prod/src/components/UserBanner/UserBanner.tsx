@@ -4,10 +4,12 @@ import { DiscordAuthService } from '../../services/DiscordAuthService';
 
 interface UserBannerProps {
     onLogout?: () => void;
+    isMobile?: boolean;
 }
 
 const UserBanner: React.FC<UserBannerProps> = ({
                                                    onLogout,
+                                                   isMobile = false
                                                }) => {
     const [user, setUser] = useState<any>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -70,7 +72,7 @@ const UserBanner: React.FC<UserBannerProps> = ({
     };
 
     return (
-        <div className={styles.userAuthBanner}>
+        <div className={`${styles.userAuthBanner} ${isMobile ? styles.mobile : ''}`}>
             {/* Banner background with gradient overlay - shown only when logged in */}
             {isAuthenticated && (
                 <div
@@ -101,16 +103,19 @@ const UserBanner: React.FC<UserBannerProps> = ({
                             </div>
                         </div>
 
+                        {/* Badges container for better mobile layout */}
+                        <div className={styles.badgesContainer}>
+                            {/* Display DEV tag if user is a developer */}
+                            {isDev && <div className={styles.devTag}>DEV</div>}
+
+                            {/* Display SUDO badge if user has sudo privileges */}
+                            {hasSudo && <div className={styles.sudoBadge}>SUDO</div>}
+                        </div>
+
                         {/* Styled logout button */}
                         <button className={styles.authBtn} onClick={handleAuthAction}>
                             LOGOUT
                         </button>
-
-                        {/* Display SUDO badge if user has sudo privileges */}
-                        {hasSudo && <div className={styles.sudoBadge}>SUDO</div>}
-
-                        {/* Display DEV tag if user is a developer */}
-                        {isDev && <div className={styles.devTag}>DEV</div>}
                     </>
                 ) : (
                     // Logged out view - Guest user

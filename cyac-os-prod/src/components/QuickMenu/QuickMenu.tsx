@@ -33,6 +33,7 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
     const [settingsPage, setSettingsPage] = useState<'main' | 'themes' | 'effects'>('main');
+    const [isSearchFocused, setIsSearchFocused] = useState(false);
 
     const menuRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
@@ -99,14 +100,14 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
             }
         };
 
-        if (isOpen) {
+        if (isOpen && !isMobile) { // Only add event listener on desktop
             document.addEventListener('mousedown', handleClickOutside);
         }
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [isOpen, onClose]);
+    }, [isOpen, onClose, isMobile]);
 
     // Handle keyboard events
     useEffect(() => {
@@ -119,6 +120,10 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
                     case 'Escape':
                         if (showSettingsMenu) {
                             handleBackFromSettings();
+                        } else if (searchResults) {
+                            // Clear search first
+                            setSearchQuery('');
+                            setSearchResults(null);
                         } else {
                             onClose();
                         }
@@ -161,6 +166,13 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
             }
         };
     }, [searchQuery, isOpen]);
+
+    // Scroll to top when content changes
+    useEffect(() => {
+        if (contentRef.current) {
+            contentRef.current.scrollTop = 0;
+        }
+    }, [currentPath, searchResults]);
 
     // Handle login/logout
     const handleAuthAction = () => {
@@ -260,6 +272,11 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
         setCurrentPath(path);
         setSearchResults(null);
         setSearchQuery('');
+
+        // Unfocus search input on mobile when navigating
+        if (isMobile && document.activeElement === searchInputRef.current) {
+            searchInputRef.current?.blur();
+        }
     };
 
     // Go back to the previous path
@@ -470,18 +487,38 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
                         <div className={styles.sectionHeader}>WINDOW CONTROLS</div>
                         <ul className={styles.menuList}>
                             <li
-                                className={styles.menuItem + "minimizeAll"}
+                                className={styles.menuItem}
                                 onClick={() => handleWindowCommand('minimizeAll')}
                             >
-                                MINIMIZE ALL
+                                <span className={styles.minimizeAll}>MINIMIZE ALL</span>
                             </li>
                             <li
-                                className={styles.menuItem + "closeAll"}
+                                className={styles.menuItem}
                                 onClick={() => handleWindowCommand('closeAll')}
                             >
-                                CLOSE ALL
+                                <span className={styles.closeAll}>CLOSE ALL</span>
                             </li>
                         </ul>
+                    </div>
+                )}
+
+                {/* Mobile-specific back button for settings */}
+                {isMobile && (
+                    <div className={styles.mobileFooter}>
+                        <button
+                            className={styles.footerButton}
+                            onClick={handleBackFromSettings}
+                        >
+                            <span className={styles.buttonIcon}>◄</span>
+                            <span>BACK</span>
+                        </button>
+                        <button
+                            className={styles.footerButton}
+                            onClick={onClose}
+                        >
+                            <span className={styles.buttonIcon}>×</span>
+                            <span>CLOSE</span>
+                        </button>
                     </div>
                 )}
 
@@ -529,23 +566,27 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
                         >
                             <span className={styles.settingsIcon}>⚙️</span>
                         </button>
-                        <button
-                            className={styles.closeButton}
-                            onClick={onClose}
-                            title="Close"
-                        >
-                            <span className={styles.closeIcon}>×</span>
-                        </button>
+                        {!isMobile && (
+                            <button
+                                className={styles.closeButton}
+                                onClick={onClose}
+                                title="Close"
+                            >
+                                <span className={styles.closeIcon}>×</span>
+                            </button>
+                        )}
                     </div>
                 </div>
 
-                <div className={styles.searchBar}>
+                <div className={`${styles.searchBar} ${isSearchFocused ? styles.searchFocused : ''}`}>
                     <input
                         ref={searchInputRef}
                         type="text"
                         placeholder="Search files and programs..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
+                        onFocus={() => setIsSearchFocused(true)}
+                        onBlur={() => setIsSearchFocused(false)}
                         className={styles.searchInput}
                     />
                     {searchQuery && (
@@ -654,28 +695,34 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
                 )}
             </div>
 
-            {/* Window controls section */}
-            <div className={styles.menuControls}>
-                <div className={styles.sectionHeader}>WINDOW CONTROLS</div>
-                <ul className={styles.menuList}>
-                    <li
-                        className={styles.menuItem + "minimizeAll"}
-                        onClick={() => handleWindowCommand('minimizeAll')}
-                    >
-                        MINIMIZE ALL
-                    </li>
-                    <li
-                        className={styles.menuItem + "closeAll"}
-                        onClick={() => handleWindowCommand('closeAll')}
-                    >
-                        CLOSE ALL
-                    </li>
-                </ul>
-            </div>
+            {/* Window controls section - only show on desktop or if not at the very bottom */}
+            {(!isMobile || currentPath !== '/home/user') && (
+                <div className={styles.menuControls}>
+                    <div className={styles.sectionHeader}>WINDOW CONTROLS</div>
+                    <ul className={styles.menuList}>
+                        <li
+                            className={styles.menuItem}
+                            onClick={() => handleWindowCommand('minimizeAll')}
+                        >
+                            <span className={styles.minimizeAll}>MINIMIZE ALL</span>
+                        </li>
+                        <li
+                            className={styles.menuItem}
+                            onClick={() => handleWindowCommand('closeAll')}
+                        >
+                            <span className={styles.closeAll}>CLOSE ALL</span>
+                        </li>
+                    </ul>
+                </div>
+            )}
 
-            {/* User Banner */}
-            <UserBanner onLogout={handleAuthAction} />
+            {/* User Banner - pass isMobile prop */}
+            <UserBanner
+                onLogout={handleAuthAction}
+                isMobile={isMobile}
+            />
 
+            {/* Mobile footer navigation bar - fixed position at bottom */}
             {isMobile && (
                 <div className={styles.mobileFooter}>
                     <button className={styles.footerButton} onClick={() => navigateTo('/home/user')}>
@@ -690,9 +737,9 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
                         <span className={styles.buttonIcon}>📄</span>
                         <span>DOCS</span>
                     </button>
-                    <button className={styles.footerButton} onClick={() => handleWindowCommand('minimizeAll')}>
-                        <span className={styles.buttonIcon}>▼</span>
-                        <span>MINIMIZE</span>
+                    <button className={styles.footerButton} onClick={onClose}>
+                        <span className={styles.buttonIcon}>×</span>
+                        <span>CLOSE</span>
                     </button>
                 </div>
             )}
