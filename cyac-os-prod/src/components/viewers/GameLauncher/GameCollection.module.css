@@ -1,0 +1,103 @@
+.collection {
+    margin-bottom: 2rem;
+}
+
+.header {
+    margin-bottom: 0.5rem;
+}
+
+.title {
+    margin: 0.5rem 0;
+    font-size: 1.4rem;
+    color: #33ff33;
+    letter-spacing: 1px;
+    text-shadow: 0 0 5px rgba(51, 255, 51, 0.5);
+}
+
+.description {
+    margin: 0;
+    font-size: 0.9rem;
+    color: rgba(51, 255, 51, 0.8);
+    margin-bottom: 0.5rem;
+}
+
+.carouselContainer {
+    position: relative;
+    width: 100%;
+}
+
+.gameList {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 0.5rem 0;
+    scrollbar-width: thin;
+    scrollbar-color: #33ff33 rgba(0, 0, 0, 0.2);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.gameList::-webkit-scrollbar {
+    height: 6px;
+}
+
+.gameList::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.gameList::-webkit-scrollbar-thumb {
+    background-color: rgba(51, 255, 51, 0.5);
+    border-radius: 3px;
+}
+
+.gameCardWrapper {
+    flex: 0 0 auto;
+    width: 180px;
+    margin-right: 1.5rem;
+}
+
+.scrollButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 80px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1;
+    opacity: 0.8;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.scrollButton:hover {
+    opacity: 1;
+    background-color: rgba(51, 255, 51, 0.2);
+}
+
+.scrollLeft {
+    left: -10px;
+    border-radius: 0 4px 4px 0;
+}
+
+.scrollRight {
+    right: -10px;
+    border-radius: 4px 0 0 4px;
+}
+
+@media (max-width: 768px) {
+    .scrollButton {
+        width: 24px;
+        height: 60px;
+        font-size: 1rem;
+    }
+
+    .gameCardWrapper {
+        width: 150px;
+        margin-right: 1rem;
+    }
+}

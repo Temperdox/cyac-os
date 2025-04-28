@@ -24,37 +24,37 @@ const TextViewer: React.FC<TextViewerProps> = ({ content }) => {
 
         // Process colored text with [color]text[/color] syntax
         processedContent = processedContent.replace(
-            /\[([a-z]+)\](.*?)\[\/\1\]/g,
+            /\[([a-z]+)](.*?)\[\/\1]/g,
             (_, color, text) => `<span style="color: ${color}">${text}</span>`
         );
 
         // Process highlighted text with [highlight=color]text[/highlight] syntax
         processedContent = processedContent.replace(
-            /\[highlight=([a-z#0-9]+)\](.*?)\[\/highlight\]/g,
+            /\[highlight=([a-z#0-9]+)](.*?)\[\/highlight]/g,
             (_, color, text) => `<span style="background-color: ${color}">${text}</span>`
         );
 
         // Process font sizes with [size=n]text[/size] syntax
         processedContent = processedContent.replace(
-            /\[size=(\d+)\](.*?)\[\/size\]/g,
+            /\[size=(\d+)](.*?)\[\/size]/g,
             (_, size, text) => `<span style="font-size: ${size}px">${text}</span>`
         );
 
         // Process underline with [u]text[/u] syntax
         processedContent = processedContent.replace(
-            /\[u\](.*?)\[\/u\]/g,
+            /\[u](.*?)\[\/u]/g,
             (_, text) => `<span style="text-decoration: underline">${text}</span>`
         );
 
         // Process strikethrough with [s]text[/s] syntax (alternative to markdown ~~text~~)
         processedContent = processedContent.replace(
-            /\[s\](.*?)\[\/s\]/g,
+            /\[s](.*?)\[\/s]/g,
             (_, text) => `<span style="text-decoration: line-through">${text}</span>`
         );
 
         // Process terminal-style formatting tags
         // [r]red text[/r], [g]green text[/g], [b]blue text[/b], [y]yellow text[/y], [c]cyan text[/c]
-        processedContent = processedContent.replace(/\[r\](.*?)\[\/r\]/g, '<span style="color: #ff3333">$1</span>');
+        processedContent = processedContent.replace(/\[r](.*?)\[\/r]/g, '<span style="color: #ff3333">$1</span>');
         processedContent = processedContent.replace(/\[g\](.*?)\[\/g\]/g, '<span style="color: #33ff33">$1</span>');
         processedContent = processedContent.replace(/\[b\](.*?)\[\/b\]/g, '<span style="color: #3333ff">$1</span>');
         processedContent = processedContent.replace(/\[y\](.*?)\[\/y\]/g, '<span style="color: #ffff33">$1</span>');

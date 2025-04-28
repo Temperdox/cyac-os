@@ -1,0 +1,117 @@
+.gameCard {
+    position: relative;
+    height: 240px;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(51, 255, 51, 0.5);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gameCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(51, 255, 51, 0.3);
+    border-color: #33ff33;
+}
+
+.cover {
+    height: 70%;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.cover::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent 80%, rgba(0, 0, 0, 0.8));
+}
+
+.info {
+    height: 30%;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.title {
+    margin: 0;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #33ff33;
+}
+
+.meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: rgba(51, 255, 51, 0.7);
+}
+
+.developer {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60%;
+}
+
+.date {
+    text-align: right;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    text-align: center;
+    animation: fadeIn 0.2s ease;
+}
+
+.description {
+    margin: 0 0 1rem 0;
+    font-size: 0.9rem;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.playButton {
+    padding: 0.5rem 1.5rem;
+    background-color: #33ff33;
+    color: #000;
+    border: none;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.playButton:hover {
+    background-color: #66ff66;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

@@ -3,6 +3,7 @@ import { siteData as factionsData } from './Factions/Factions';
 import { siteData as propagandaData } from './Propaganda/Propaganda';
 import { siteData as infostreamData } from './Infostream/Infostream';
 import { siteData as darknetData } from './Darknet/Darknet';
+import { siteData as starfallData } from './Starfall/Starfall';
 import {JSX} from "react";
 
 // Site data interface
@@ -18,8 +19,15 @@ export const SITES: SiteData[] = [
     factionsData,
     propagandaData,
     infostreamData,
-    darknetData
+    darknetData,
+    starfallData
 ];
 
 // Export individual site data
-export { factionsData, propagandaData, infostreamData, darknetData };
+export {
+    factionsData,
+    propagandaData,
+    infostreamData,
+    darknetData,
+    starfallData
+};

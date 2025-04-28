@@ -1,0 +1,356 @@
+.snakeGame {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #000500;
+    color: #33ff33;
+    font-family: 'Courier New', monospace;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+}
+
+/* Game Header */
+.gameHeader {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 15px;
+    border-bottom: 1px solid #33ff33;
+    box-sizing: border-box;
+}
+
+.title {
+    font-size: 28px;
+    margin: 0;
+    color: #33ff33;
+    text-shadow: 0 0 10px rgba(51, 255, 51, 0.5);
+    letter-spacing: 2px;
+}
+
+.status {
+    font-size: 18px;
+    color: #33ff33;
+    letter-spacing: 1px;
+}
+
+/* Score Panel */
+.scorePanel {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 5px 15px;
+    box-sizing: border-box;
+}
+
+.scoreItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid #33ff33;
+    border-radius: 4px;
+    padding: 5px 15px;
+    flex: 1;
+    max-width: 200px;
+    margin: 0 5px;
+}
+
+.scoreLabel {
+    font-size: 12px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+    letter-spacing: 1px;
+}
+
+.scoreValue {
+    font-size: 22px;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(51, 255, 51, 0.5);
+}
+
+/* Game Area */
+.gameArea {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+    max-height: calc(100% - 180px);  /* Allow room for header, score panel, controls */
+}
+
+.gameCanvas {
+    position: relative;
+    border: 2px solid #33ff33;
+    border-radius: 4px;
+    box-shadow: 0 0 15px rgba(51, 255, 51, 0.3);
+    overflow: hidden;
+    max-width: 100%;
+    max-height: 100%;
+    aspect-ratio: 1 / 1;  /* Force square aspect ratio */
+}
+
+.canvas {
+    display: block;
+    background-color: #000;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;  /* Keep pixel art crisp when scaled */
+}
+
+/* Message Overlays */
+.messageOverlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: #33ff33;
+    font-size: 20px;
+    text-align: center;
+    white-space: nowrap;
+    z-index: 10;
+}
+
+.gameOverOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 20;
+}
+
+.gameOverOverlay h2 {
+    font-size: 32px;
+    color: #ff3333;
+    margin: 0 0 15px 0;
+    text-shadow: 0 0 10px rgba(255, 51, 51, 0.7);
+}
+
+.pauseOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 20;
+}
+
+.pauseOverlay h2 {
+    font-size: 32px;
+    color: #ffff33;
+    margin: 0 0 15px 0;
+    text-shadow: 0 0 10px rgba(255, 255, 51, 0.7);
+}
+
+.newHighScore {
+    color: #ffff33;
+    font-size: 18px;
+    text-shadow: 0 0 10px rgba(255, 255, 51, 0.7);
+    margin: 5px 0 15px 0;
+    animation: pulse 1s infinite;
+}
+
+/* Controls Panel */
+.controlsPanel {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0;
+    box-sizing: border-box;
+}
+
+.buttonRow {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.gameButton {
+    background-color: #003300;
+    color: #33ff33;
+    border: 1px solid #33ff33;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1;
+    max-width: 160px;
+    min-width: 100px;
+}
+
+.gameButton:hover {
+    background-color: #004400;
+    box-shadow: 0 0 10px rgba(51, 255, 51, 0.5);
+}
+
+/* Touch Controls */
+.touchControls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.controlsRow {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.directionButton {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(51, 255, 51, 0.2);
+    border: 2px solid #33ff33;
+    color: #33ff33;
+    font-size: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+}
+
+.directionButton:active {
+    background-color: rgba(51, 255, 51, 0.4);
+    transform: scale(0.95);
+}
+
+.spacer {
+    width: 50px;
+    height: 50px;
+}
+
+/* Instructions */
+.instructions {
+    font-size: 14px;
+    text-align: center;
+    color: rgba(51, 255, 51, 0.8);
+    padding: 5px 0;
+    width: 100%;
+    box-sizing: border-box;
+    border-top: 1px solid rgba(51, 255, 51, 0.3);
+}
+
+.key {
+    display: inline-block;
+    padding: 2px 6px;
+    background-color: rgba(51, 255, 51, 0.2);
+    border: 1px solid rgba(51, 255, 51, 0.5);
+    border-radius: 3px;
+    margin: 0 3px;
+}
+
+/* CRT scanline effect */
+.snakeGame::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+            rgba(51, 255, 51, 0.03) 50%,
+            rgba(0, 0, 0, 0.03) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.15;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 600px) {
+    .gameHeader {
+        padding: 3px 10px;
+    }
+
+    .title {
+        font-size: 22px;
+    }
+
+    .status {
+        font-size: 14px;
+    }
+
+    .scorePanel {
+        padding: 3px 10px;
+    }
+
+    .scoreItem {
+        padding: 3px 10px;
+    }
+
+    .scoreValue {
+        font-size: 18px;
+    }
+
+    .gameButton {
+        padding: 6px 12px;
+        font-size: 14px;
+        min-width: 80px;
+    }
+
+    .directionButton {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .spacer {
+        width: 40px;
+        height: 40px;
+    }
+
+    .instructions {
+        font-size: 12px;
+    }
+}
+
+/* For very small screens */
+@media (max-width: 400px) {
+    .buttonRow {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .gameButton {
+        margin-bottom: 5px;
+        width: 100%;
+        max-width: 200px;
+    }
+}

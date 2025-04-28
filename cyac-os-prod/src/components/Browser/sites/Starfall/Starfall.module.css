@@ -1,0 +1,163 @@
+/* Starfall.module.css */
+
+/* Main container */
+.sitePage {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    background-color: #0a0a14;
+    color: #f0f0f0;
+    font-family: 'Courier New', monospace;
+}
+
+/* Header section */
+.header {
+    text-align: center;
+    padding: 20px 20px 15px;
+    border-bottom: 1px solid rgba(0, 191, 255, 0.3);
+    background-color: rgba(0, 0, 20, 0.6);
+}
+
+.header h1 {
+    font-size: 32px;
+    color: #00bfff;
+    margin: 0;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(0, 191, 255, 0.7);
+}
+
+.subtitle {
+    color: #7b68ee;
+    font-size: 14px;
+    margin-top: 10px;
+    letter-spacing: 1px;
+}
+
+/* Main content area */
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Spline container - takes full width and most height */
+.splineContainer {
+    width: 100%;
+    height: 75vh;
+    background-color: #000;
+    position: relative;
+}
+
+/* Make sure the spline viewer fills the container */
+.splineContainer :global(spline-viewer) {
+    width: 100%;
+    height: 100%;
+}
+
+.section {
+    background-color: rgba(0, 10, 30, 0.7);
+    border: 1px solid rgba(0, 191, 255, 0.2);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px;
+    transition: all 0.3s ease;
+}
+
+.section:hover {
+    border-color: rgba(0, 191, 255, 0.5);
+    box-shadow: 0 0 15px rgba(0, 191, 255, 0.2);
+}
+
+.section h2 {
+    color: #00bfff;
+    font-size: 20px;
+    margin: 0 0 15px 0;
+    letter-spacing: 1px;
+}
+
+.section p {
+    color: #ddd;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+/* Footer section */
+.footer {
+    margin-top: auto;
+    padding: 15px;
+    border-top: 1px solid rgba(0, 191, 255, 0.2);
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    background-color: rgba(0, 0, 20, 0.6);
+}
+
+.statusIndicator {
+    color: #7b68ee;
+    margin-top: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .subtitle {
+        font-size: 12px;
+    }
+
+    .splineContainer {
+        height: 60vh;
+    }
+
+    .section {
+        padding: 15px;
+        margin: 15px;
+    }
+
+    .section h2 {
+        font-size: 18px;
+    }
+
+    .section p {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 15px 10px 10px;
+    }
+
+    .header h1 {
+        font-size: 20px;
+    }
+
+    .subtitle {
+        font-size: 10px;
+    }
+
+    .splineContainer {
+        height: 50vh;
+    }
+
+    .section {
+        padding: 12px;
+        margin: 10px;
+    }
+
+    .section h2 {
+        font-size: 16px;
+    }
+
+    .section p {
+        font-size: 12px;
+    }
+}

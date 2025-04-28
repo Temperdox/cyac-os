@@ -1,0 +1,92 @@
+{
+  "version": "1.0.0",
+  "collections": [
+    {
+      "id": "arcade",
+      "name": "Arcade",
+      "description": "Classic arcade-style games",
+      "sortOrder": 1
+    },
+    {
+      "id": "puzzle",
+      "name": "Puzzle",
+      "description": "Brain teasers and thinking games",
+      "sortOrder": 2
+    },
+    {
+      "id": "strategy",
+      "name": "Strategy",
+      "description": "Strategic planning and resource management",
+      "sortOrder": 3
+    },
+    {
+      "id": "adventure",
+      "name": "Adventure",
+      "description": "Exploration and story-driven games",
+      "sortOrder": 4
+    },
+    {
+      "id": "retro",
+      "name": "Retro",
+      "description": "Classic games reimagined for modern systems",
+      "sortOrder": 5
+    }
+  ],
+  "games": [
+    {
+      "id": "tic-tac-toe",
+      "title": "Tic Tac Toe",
+      "description": "Classic game of X and O. Get three in a row to win!",
+      "coverImage": "/game-covers/tic-tac-toe.png",
+      "component": "/components/viewers/GameLauncher/Games/TicTacToe",
+      "developer": "CyberAcme",
+      "releaseDate": "2025",
+      "collections": ["arcade", "puzzle"],
+      "features": ["singleplayer", "multiplayer", "ai-opponent"]
+    },
+    {
+      "id": "tetris",
+      "title": "Tetris",
+      "description": "Classic block-stacking puzzle game",
+      "coverImage": "/game-covers/tetris.png",
+      "component": "/components/viewers/GameLauncher/Games/Tetris",
+      "developer": "CyberAcme",
+      "releaseDate": "2025",
+      "collections": ["arcade", "puzzle"],
+      "features": ["singleplayer", "high-scores"]
+    },
+    {
+      "id": "snake",
+      "title": "Snake",
+      "description": "Control a snake to eat apples and grow longer",
+      "coverImage": "/game-covers/snake.png",
+      "component": "/components/viewers/GameLauncher/Games/Snake",
+      "developer": "CyberAcme",
+      "releaseDate": "2025",
+      "collections": ["arcade", "retro"],
+      "features": ["singleplayer", "high-scores"]
+    },
+    {
+      "id": "chess",
+      "title": "Chess",
+      "description": "The classic strategy board game",
+      "coverImage": "/game-covers/chess.png",
+      "component": "/components/viewers/GameLauncher/Games/Chess",
+      "developer": "CyberAcme",
+      "releaseDate": "2025",
+      "collections": ["strategy", "puzzle"],
+      "features": ["singleplayer", "multiplayer", "ai-opponent"]
+    },
+    {
+      "id": "pong",
+      "title": "Pong",
+      "description": "The original arcade classic",
+      "coverImage": "/game-covers/pong.png",
+      "component": "/components/viewers/GameLauncher/Games/Pong",
+      "developer": "CyberAcme",
+      "releaseDate": "2025",
+      "collections": ["arcade", "retro"],
+      "features": ["singleplayer", "multiplayer"]
+    }
+  ]
+}

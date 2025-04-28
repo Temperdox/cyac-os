@@ -33,8 +33,8 @@ const MarkdownGuide: React.FC = () => {
       "}\n" +
       "```\n\n" +
       "## Blockquotes\n\n" +
-      "> This is a blockquote. It can span\n" +
-      "> multiple lines and is useful for\n" +
+      "> This is a blockquote. It can span\n\n" +
+      "> multiple lines and is useful for\n\n" +
       "> highlighting important information.\n\n" +
       "## Tables\n\n" +
       "| Header 1 | Header 2 | Header 3 |\n" +

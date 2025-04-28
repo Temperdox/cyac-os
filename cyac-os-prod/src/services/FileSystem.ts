@@ -83,17 +83,29 @@ export class FileSystem {
                                             name: 'games',
                                             type: 'directory',
                                             children: {
-                                                'tetris': {
-                                                    name: 'tetris',
-                                                    type: 'program',
-                                                    component: '/components/programs/games/Tetris',
-                                                    description: 'Classic Tetris Game'
+                                                'gamesLibrary': {
+                                                    name: 'games library',
+                                                    type: 'directory',
+                                                    children: {
+                                                        'tetris': {
+                                                            name: 'tetris',
+                                                            type: 'program',
+                                                            component: '/components/programs/games/Tetris',
+                                                            description: 'Classic Tetris Game'
+                                                        },
+                                                        'snake': {
+                                                            name: 'snake',
+                                                            type: 'program',
+                                                            component: '/components/programs/games/Snake',
+                                                            description: 'Classic Snake Game'
+                                                        }
+                                                    },
                                                 },
-                                                'snake': {
-                                                    name: 'snake',
+                                                'GameLauncher': {
+                                                    name: 'GameLauncher',
                                                     type: 'program',
-                                                    component: '/components/programs/games/Snake',
-                                                    description: 'Classic Snake Game'
+                                                    component: '/components/viewers/GameLauncher',
+                                                    description: 'CyberAcme Game Center'
                                                 }
                                             }
                                         },

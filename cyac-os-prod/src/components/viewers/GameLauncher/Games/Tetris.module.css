@@ -1,0 +1,297 @@
+.tetrisGame {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #000500;
+    color: #33ff33;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+/* Header */
+.gameHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 15px;
+    background-color: #000500;
+    border-bottom: 1px solid #33ff33;
+    min-height: 30px;
+    flex-shrink: 0;
+}
+
+.gameHeader h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #33ff33;
+    text-shadow: 0 0 10px rgba(51, 255, 51, 0.7);
+    letter-spacing: 2px;
+}
+
+.gameStatus {
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+
+.paused {
+    color: #ffff33; /* Yellow for paused */
+}
+
+.playing {
+    color: #33ff33; /* Green for playing */
+}
+
+/* Game area layout */
+.gameArea {
+    flex: 1;
+    display: flex;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #000500;
+    justify-content: center;
+}
+
+/* Classic Tetris board with fixed ratio */
+.tetrisBoard {
+    display: grid;
+    grid-template-rows: repeat(20, 1fr);
+    grid-template-columns: repeat(10, 1fr);
+    border: 2px solid #33ff33;
+    background-color: #000800;
+    margin-right: 10px;
+    height: auto;
+    aspect-ratio: 10/20; /* Classic 10x20 Tetris grid ratio */
+    box-shadow: 0 0 20px rgba(51, 255, 51, 0.2);
+    max-height: calc(100% - 20px);
+    width: auto;
+}
+
+.tetrisRow {
+    display: contents; /* Let the grid handle the layout */
+}
+
+.tetrisCell {
+    aspect-ratio: 1/1;
+    border: 1px solid rgba(51, 255, 51, 0.2);
+    box-sizing: border-box;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.tetrisCell.filled {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+.tetrisCell.ghost {
+    opacity: 0.3;
+    border: 1px dashed rgba(255, 255, 255, 0.7);
+}
+
+/* Side information panel */
+.gameInfo {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #000800;
+    border: 1px solid #33ff33;
+    width: 160px;
+    flex-shrink: 0;
+}
+
+.infoLabel {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #33ff33;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.infoValue {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Score sections */
+.scoreSection,
+.levelSection,
+.linesSection,
+.highScoreSection {
+    margin-bottom: 10px;
+}
+
+/* Next piece preview */
+.nextPieceSection {
+    margin-bottom: 20px;
+}
+
+.nextPieceGrid {
+    display: grid;
+    grid-template-rows: repeat(4, 15px);
+    grid-template-columns: repeat(4, 15px);
+    margin: 0 auto;
+    border: 1px solid #33ff33;
+    background-color: #000800;
+}
+
+.nextPieceGrid .tetrisCell {
+    width: 15px;
+    height: 15px;
+}
+
+/* Controls info */
+.controlsInfo {
+    margin-top: auto;
+    font-size: 0.8rem;
+    border-top: 1px solid rgba(51, 255, 51, 0.3);
+    padding-top: 10px;
+    margin-top: 15px;
+}
+
+.controlsInfo .infoLabel {
+    text-align: center;
+}
+
+.controlsList {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 5px;
+}
+
+/* Bottom controls */
+.gameControls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    border-top: 1px solid #33ff33;
+    flex-shrink: 0;
+}
+
+.gameButton {
+    background: linear-gradient(to bottom, #003300, #001100);
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    padding: 8px 25px;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 150px;
+}
+
+.gameButton:hover {
+    background: linear-gradient(to bottom, #004400, #002200);
+    box-shadow: 0 0 10px rgba(51, 255, 51, 0.5);
+}
+
+.gameButton.pause {
+    background: linear-gradient(to bottom, #440000, #330000);
+    border-color: #ff3333;
+    color: #ff3333;
+}
+
+.gameButton.resume {
+    background: linear-gradient(to bottom, #444400, #333300);
+    border-color: #ffff33;
+    color: #ffff33;
+}
+
+.gameButton.start {
+    background: linear-gradient(to bottom, #004400, #002200);
+    border-color: #33ff33;
+    color: #33ff33;
+    font-weight: bold;
+}
+
+/* Add CRT scanline effect */
+.tetrisGame::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+            rgba(51, 255, 51, 0.03) 50%,
+            rgba(0, 0, 0, 0.03) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.15;
+}
+
+/* Responsive design for different window sizes */
+@media (max-width: 500px) {
+    .gameArea {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .tetrisBoard {
+        margin-right: 0;
+        margin-bottom: 10px;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .gameInfo {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        align-items: flex-start;
+    }
+
+    .scoreSection,
+    .levelSection,
+    .linesSection {
+        margin-right: 10px;
+        min-width: 80px;
+    }
+
+    .nextPieceSection {
+        margin-bottom: 5px;
+    }
+
+    .controlsInfo {
+        display: none;
+    }
+}
+
+@media (max-height: 500px) {
+    .gameHeader {
+        padding: 2px 10px;
+        min-height: 24px;
+    }
+
+    .gameHeader h2 {
+        font-size: 1.2rem;
+    }
+
+    .gameControls {
+        padding: 5px;
+    }
+
+    .gameButton {
+        padding: 5px 15px;
+        font-size: 0.9rem;
+        min-width: 120px;
+    }
+
+    .infoValue {
+        margin-bottom: 8px;
+    }
+
+    .controlsInfo {
+        display: none;
+    }
+}

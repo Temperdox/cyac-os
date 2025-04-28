@@ -5,64 +5,35 @@
     width: 100%;
     height: 100%;
     background-color: #000;
-    color: #ff3333;  /* Changed to red to match your screenshot */
     font-family: 'Courier New', monospace;
-    z-index: 9999;
+    font-weight: normal;
+    z-index: 300;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     overflow: hidden;
 }
 
-.bootOff {
-    width: 100%;
-    height: 100%;
-    background-color: #000;
-}
-
-.bootScreen {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    box-sizing: border-box;
-    overflow: hidden;
-    position: relative;
-}
-
-/* Add CRT scanline effect with red tint */
-.bootScreen::after {
-    content: " ";
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 0, 0, 0.02), rgba(255, 0, 0, 0.06));
-    background-size: 100% 2px, 3px 100%;
-    pointer-events: none;
-    z-index: 2;
-}
-
+/* Header styling similar to the screenshot */
 .bootHeader {
     display: flex;
     justify-content: space-between;
-    padding: 10px 0;
+    padding: 12px 20px;
+    background-color: #000;
     border-bottom: 1px solid #ff3333;
-    margin-bottom: 20px;
+    margin-bottom: 4px;
 }
 
-.company {
-    font-weight: bold;
-    font-size: 18px;
+.companyName {
     color: #ff3333;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 1px;
 }
 
 .biosVersion {
-    color: #ffaa33;
+    color: #ffaa33; /* Amber color for BIOS version */
+    font-size: 18px;
+    letter-spacing: 1px;
 }
 
 .bootContent {
@@ -70,151 +41,212 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    position: relative; /* Position relative for absolute positioning of progress bar */
 }
 
-.messagesContainer {
-    flex: 1;
+.consoleContainer {
+    width: 100%;
+    height: 100%;
     overflow-y: auto;
-    padding: 10px 0;
+    overflow-x: hidden;
+    padding: 4px 20px;
+    box-sizing: border-box;
     font-size: 14px;
     line-height: 1.3;
+    letter-spacing: 0.5px;
+    margin-bottom: 40px; /* Make space for the progress bar */
 }
 
-.message {
-    margin-bottom: 4px;
+/* Add terminal scanline effect */
+.consoleContainer::after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 40px; /* Adjusted to not cover progress bar */
+    background: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0.3) 50%,
+            rgba(0, 0, 0, 0) 100%
+    );
+    background-size: 100% 3px;
+    pointer-events: none;
+    z-index: 2;
+    animation: scanline 0.5s linear infinite;
+}
+
+@keyframes scanline {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 0 100%;
+    }
+}
+
+.logLine {
+    margin: 0;
+    padding: 0;
     white-space: pre-wrap;
-    animation: fadeIn 0.2s ease-in-out;
-    color: #ff3333;  /* Changed to red to match screenshot */
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
 }
 
-.progressContainer {
-    margin-top: auto;
-    padding: 20px 0;
+/* Define colors for different log types */
+.debugLog {
+    color: #33ff33; /* Green for debug logs [D] */
+}
+
+.errorLog {
+    color: #ff3333; /* Red for error logs [E] */
+}
+
+.infoLog {
+    color: #ffaa33; /* Orange/gold for info logs [I] */
+}
+
+.systemLog {
+    color: #33ffff; /* Cyan for system logs [S] */
+}
+
+.warningLog {
+    color: #ffff33; /* Yellow for warning logs [W] */
+}
+
+.verboseLog {
+    color: #ff66ff; /* Pink/magenta for verbose logs [V] */
+}
+
+.defaultLog {
+    color: #aaaaaa; /* Gray for any other log types */
+}
+
+/* NEW Fixed position progress bar at bottom */
+.progressBarContainer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
     display: flex;
-    align-items: center;
-}
-
-.progressLabel {
-    width: 120px;
-    text-align: right;
-    margin-right: 10px;
-    color: #ff3333;  /* Red for the label */
-}
-
-.progressBar {
-    flex: 1;
-    height: 20px;
-    background-color: #111;
-    border: 1px solid #ff3333;  /* Red border */
-    border-radius: 2px;
-    overflow: hidden;
-}
-
-.progressFill {
-    height: 100%;
-    background-color: #ff3333;  /* Red progress bar */
-    box-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
-    transition: width 0.2s ease-out;
-}
-
-.progressPercentage {
-    width: 50px;
-    text-align: right;
-    margin-left: 10px;
-    color: #ff3333;  /* Red for percentage */
-}
-
-.bootComplete {
-    display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    animation: fadeIn 1s ease-in-out;
+    padding: 0 20px;
+    background-color: #000;
+    border-top: 1px solid #222;
+    animation: fadeIn 0.3s ease-in;
 }
 
-.logoContainer {
+.progressBarLabel {
+    color: #33ffff; /* Cyan for progress label */
+    margin-right: 10px;
+    font-size: 14px;
+    min-width: 120px; /* Fixed width for label */
+}
+
+.progressBarVisual {
+    color: #33ff33; /* Green for progress visualization */
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+/* Boot complete screen */
+.bootComplete {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    margin-bottom: 30px;
+    justify-content: center;
+    animation: powerOn 0.5s ease-out;
+    background-color: #000;
 }
 
-.logo {
-    font-size: 48px;
-    font-weight: bold;
-    background: linear-gradient(to right, #33ff33, #aaff33);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 20px rgba(51, 255, 51, 0.3);
-    margin-bottom: 10px;
+@keyframes powerOn {
+    0% {
+        background-color: #000;
+    }
+    50% {
+        background-color: #111;
+    }
+    100% {
+        background-color: #000;
+    }
 }
 
-.version {
-    font-size: 18px;
-    color: #aaff33;
-}
-
-.ready {
-    font-size: 24px;
-    font-weight: bold;
-    color: #ff3333;  /* Changed to red */
-    opacity: 0;
-    animation: blinkIn 2s forwards;
-}
-
-/* Animations */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
-@keyframes blinkIn {
-    0% { opacity: 0; }
-    50% { opacity: 1; }
-    60% { opacity: 0; }
-    70% { opacity: 1; }
-    80% { opacity: 0; }
+.systemReady {
+    font-size: 36px;
+    font-weight: bold;
+    color: #ff3333; /* Same red as the red logs */
+    text-shadow: 0 0 10px rgba(255, 51, 51, 0.8);
+    animation: blink 1s infinite;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    49% { opacity: 1; }
+    50% { opacity: 0.5; }
     100% { opacity: 1; }
 }
 
-/* Mobile styles */
+/* Implement scrolling glow effect */
+.consoleContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.consoleContainer::-webkit-scrollbar-track {
+    background: #000;
+}
+
+.consoleContainer::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+.consoleContainer::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Mobile optimization */
 @media (max-width: 768px) {
     .bootHeader {
-        padding: 5px 0;
-        margin-bottom: 10px;
+        padding: 8px 12px;
     }
 
-    .company {
-        font-size: 16px;
+    .companyName, .biosVersion {
+        font-size: 14px;
     }
 
-    .messagesContainer {
+    .consoleContainer {
+        font-size: 12px;
+        margin-bottom: 30px;
+    }
+
+    .logLine {
         font-size: 12px;
     }
 
-    .progressContainer {
-        padding: 10px 0;
+    .progressBarContainer {
+        height: 30px;
     }
 
-    .progressLabel {
-        width: 100px;
+    .progressBarLabel, .progressBarVisual {
+        font-size: 12px;
     }
 
-    .progressBar {
-        height: 16px;
-    }
-
-    .logo {
-        font-size: 36px;
-    }
-
-    .version {
-        font-size: 16px;
-    }
-
-    .ready {
-        font-size: 20px;
+    .systemReady {
+        font-size: 24px;
     }
 }

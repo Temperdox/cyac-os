@@ -15,14 +15,14 @@ const ComponentTextViewer: React.FC<ComponentTextViewerProps> = ({ componentPath
 
     if (!Component) {
         return (
-            <div style={{ color: '#ff3333', padding: '20px' }}>
+            <div style={{color: '#ff3333', padding: '20px'}}>
                 Error: Component not found: {componentPath}
             </div>
         );
     }
 
     // Render the component
-    return <Component />;
+    return <Component/>;
 };
 
 export default ComponentTextViewer;

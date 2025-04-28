@@ -17,6 +17,7 @@ import { AuthService } from './services/AuthService';
 import { FocusManager } from './services/FocusManager';
 import DiscordCallback from './components/auth/DiscordCallback/DiscordCallback';
 import dynamicComponents from './utils/dynamicComponents.tsx';
+import { initializeGameLauncher } from './components/viewers/GameLauncher/registerGames';
 
 // Interface for open windows
 interface OpenWindow {
@@ -127,6 +128,8 @@ const App: React.FC = () => {
                     message: 'File system initialization failed. Some features may not work properly.',
                     duration: 5000
                 });
+            }).then(() => {
+                initializeGameLauncher();
             });
 
             // Initialize authentication service
@@ -241,6 +244,26 @@ const App: React.FC = () => {
             minimized: false,
             props: displayMode === 'fullscreen' ? { isFullscreen: true } : {}
         };
+
+        // Special handling for games
+        if (program.component.includes('/GameLauncher/Games/')) {
+            // Add onExit callback for games to return to launcher or close window
+            newWindow.props = {
+                ...newWindow.props,
+                onExit: () => {
+                    handleWindowClose(uniqueId);
+                }
+            };
+        }
+
+        // Special handling for GameLauncher
+        if (program.component === '/components/viewers/GameLauncher') {
+            // Add onLaunchGame prop
+            newWindow.props = {
+                ...newWindow.props,
+                onLaunchGame: launchProgram  // Pass the launchProgram function
+            };
+        }
 
         // Add the new window to the list of open windows
         setOpenWindows(prev => [...prev, newWindow]);
@@ -518,13 +541,13 @@ const App: React.FC = () => {
     }
 
     // Render power button or boot sequence if not booted yet
-    if (!powered) {
+    /*if (!powered) {
         return <PowerButton onPowerOn={handlePowerOn} />;
     }
 
     if (!booted) {
         return <BootSequence onComplete={handleBootComplete} />;
-    }
+    }*/
 
     // Calculate available height for content based on terminal visibility
     const contentHeight = `calc(100% - 40px - ${terminalVisible ? terminalHeight : 0}px)`;
@@ -538,6 +561,10 @@ const App: React.FC = () => {
 
             {/* CRT Effects - Always included, with hardware acceleration param */}
             <CrtEffects isHardwareAccelerated={isHardwareAccelerated} />
+
+            {/* Power and Boot under CRT Effects */}
+            {!powered && <PowerButton onPowerOn={handlePowerOn} />}
+            {powered && !booted && <BootSequence onComplete={handleBootComplete} />}
 
             {/* Toast Notification Container */}
             <ToastContainer />
