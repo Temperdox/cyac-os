@@ -198,6 +198,60 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
             onCommandExecute(command);
         } else {
             console.warn('Command execution function not available');
+
+            // Handle file viewing directly if command executor is not available
+            if (command.includes('cat ')) {
+                try {
+                    // Parse the command to get file path
+                    const parts = command.split('&&').map(part => part.trim());
+
+                    if (parts.length > 1) {
+                        // Handle "cd /path && cat file.txt" format
+                        const cdCommand = parts[0];
+                        const dirPath = cdCommand.replace('cd ', '').trim();
+
+                        const catCommand = parts[1];
+                        const fileName = catCommand.replace('cat ', '').trim();
+
+                        // Handle file directly
+                        handleFileDirectly(dirPath, fileName);
+                    } else {
+                        // Handle "cat file.txt" format in current directory
+                        const fileName = command.replace('cat ', '').trim();
+                        handleFileDirectly(currentPath, fileName);
+                    }
+                } catch (error) {
+                    console.error('Error processing file command:', error);
+                }
+            }
+        }
+    };
+
+    const handleFileDirectly = (dirPath: string, fileName: string) => {
+        try {
+            // Create the full path
+            const fullPath = FileSystem.resolvePath(`${dirPath}/${fileName}`, currentPath);
+
+            // Get the file content - this may throw if file doesn't exist
+            const content = FileSystem.getFileContent(fullPath);
+
+            // Create a file item object to pass to onNavigate
+            const fileItem = {
+                name: fileName,
+                type: 'file',
+                content: content, // Pass content directly to avoid needing to fetch it again
+                parentPath: dirPath
+            };
+
+            // Navigate directly using onNavigate
+            onNavigate(fullPath, fileItem);
+
+            // Close menu after navigation on desktop
+            if (!isMobile) {
+                onClose();
+            }
+        } catch (error) {
+            console.error(`Error handling file: ${dirPath}/${fileName}`, error);
         }
     };
 
@@ -320,9 +374,16 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
             // Navigate to directory
             navigateTo(`${item.parentPath || currentPath}/${item.name}`);
         } else if (item.type === 'file') {
-            // Execute command to open file
+            // Get the target directory
             const targetDir = searchResults ? item.parentPath : currentPath;
-            executeCommand(`cd ${targetDir} && cat ${item.name}`);
+
+            if (onCommandExecute) {
+                // If command executor is available, use it
+                executeCommand(`cd ${targetDir} && cat ${item.name}`);
+            } else {
+                // Otherwise handle file directly
+                handleFileDirectly(targetDir, item.name);
+            }
 
             // Close menu after navigation on desktop
             if (!isMobile) {

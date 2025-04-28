@@ -1,10 +1,22 @@
 .container {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 24px;
+    right: 24px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    z-index: 100;
+    gap: 12px;
+    z-index: 400; /* Higher than windows to ensure toasts are always visible */
     pointer-events: none;
+    max-height: calc(100vh - 100px);
+    overflow: hidden;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+    .container {
+        bottom: 60px; /* Give more space from bottom on mobile for taskbar */
+        right: 16px;
+        left: 16px;
+        align-items: center;
+    }
 }

@@ -45,6 +45,21 @@ export class FileSystem {
                                             name: 'readme.txt',
                                             type: 'file',
                                             content: 'Welcome to CyberAcme OS v3.6.0\n\nThis terminal provides access to various resources and tools.\nType "help" for a list of available commands.\n\nCYBERACME CORPORATION - THE FUTURE IS OUR CODE'
+                                        },
+                                        'MarkdownGuide.txt': {
+                                            name: 'MarkdownGuide.txt',
+                                            type: 'file',
+                                            component: '/components/viewers/TextViewer/Documents/MarkdownGuide',
+                                       },
+                                        'CyberAcmeOsSystemManual.txt': {
+                                            name: 'CyberAcmeOsSystemManual.txt',
+                                            type: 'file',
+                                            component: '/components/viewers/TextViewer/Documents/CyberAcmeOsSystemManual',
+                                        },
+                                        'TerminalColorFormatter.txt': {
+                                            name: 'TerminalColorFormatter.txt',
+                                            type: 'file',
+                                            component: '/components/viewers/TextViewer/Documents/TerminalColorFormatter',
                                         }
                                     }
                                 },
@@ -230,8 +245,22 @@ export class FileSystem {
                 throw new Error(`Not a file: ${path}`);
             }
 
-            return item.content || '';
+            // If the file has direct content, return it
+            if (item.content) {
+                return item.content;
+            }
+
+            // If the file has a component path but no content, load content from component
+            if (item.component) {
+                // For component-based files, we return a placeholder that indicates this
+                // is a special component file. The App.tsx will handle this differently.
+                return `[COMPONENT_FILE:${item.component}]`;
+            }
+
+            // No content available
+            return '';
         } catch (error) {
+            console.error('Error getting file content:', error);
             throw error;
         }
     }

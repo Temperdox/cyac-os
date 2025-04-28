@@ -186,7 +186,6 @@
 }
 
 .goButton {
-    width: clamp(30px, 5vw, 40px);
     background-color: rgba(187, 134, 252, 0.1);
     border: 1px solid rgba(187, 134, 252, 0.3);
     color: #bb86fc;
@@ -196,6 +195,7 @@
     transition: background-color 0.2s;
     border-radius: 4px;
     font-size: clamp(10px, 1.4vw, 14px);
+    text-align: center;
 }
 
 /* Main content area */

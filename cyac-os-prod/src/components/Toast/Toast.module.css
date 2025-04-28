@@ -1,24 +1,35 @@
 .toast {
     display: flex;
     align-items: center;
-    padding: 12px 15px;
-    background-color: rgba(0, 0, 0, 0.8);
-    border-radius: 4px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
-    margin-bottom: 10px;
-    animation: slideIn 0.3s ease-out forwards;
+    padding: 14px 16px;
+    background-color: rgba(0, 17, 34, 0.9);
+    border-radius: 6px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 102, 204, 0.2);
+    margin-bottom: 12px;
+    animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     position: relative;
-    min-width: 300px;
+    min-width: 320px;
     max-width: 450px;
     border-left: 4px solid;
     pointer-events: auto;
+    backdrop-filter: blur(5px);
+    font-family: 'Courier New', monospace;
+}
+
+.toast.exiting {
+    animation: slideOut 0.3s cubic-bezier(0.7, 0, 0.84, 0) forwards;
 }
 
 .iconContainer {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 12px;
+    margin-right: 14px;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid;
 }
 
 .icon {
@@ -27,8 +38,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    font-size: 14px;
+    font-size: 16px;
+    text-shadow: 0 0 8px currentColor;
 }
 
 .content {
@@ -37,70 +48,122 @@
 
 .message {
     font-size: 14px;
-    line-height: 1.4;
+    line-height: 1.5;
+    letter-spacing: 0.5px;
 }
 
 .closeButton {
     background: none;
     border: none;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
     opacity: 0.7;
-    transition: opacity 0.2s;
-    margin-left: 10px;
+    transition: opacity 0.2s, transform 0.1s;
+    margin-left: 12px;
     padding: 0;
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: inherit;
+    font-weight: bold;
+    border-radius: 4px;
 }
 
 .closeButton:hover {
     opacity: 1;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.closeButton:active {
+    transform: scale(0.92);
+}
+
+/* Progress bar for toast timeout */
+.progressBar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background-color: rgba(255, 255, 255, 0.3);
+    width: 100%;
+    transform-origin: left;
 }
 
 /* Toast types */
 .info {
     border-left-color: #3399ff;
-    color: white;
+    color: #99ccff;
+}
+
+.info .iconContainer {
+    border-color: #3399ff;
 }
 
 .info .icon {
     color: #3399ff;
 }
 
+.info .progressBar {
+    background-color: rgba(51, 153, 255, 0.3);
+}
+
 .success {
     border-left-color: #33ff33;
-    color: white;
+    color: #99ff99;
+}
+
+.success .iconContainer {
+    border-color: #33ff33;
 }
 
 .success .icon {
     color: #33ff33;
 }
 
+.success .progressBar {
+    background-color: rgba(51, 255, 51, 0.3);
+}
+
 .warning {
     border-left-color: #ffaa33;
-    color: white;
+    color: #ffcc99;
+}
+
+.warning .iconContainer {
+    border-color: #ffaa33;
 }
 
 .warning .icon {
     color: #ffaa33;
 }
 
+.warning .progressBar {
+    background-color: rgba(255, 170, 51, 0.3);
+}
+
 .error {
     border-left-color: #ff3333;
-    color: white;
+    color: #ff9999;
+}
+
+.error .iconContainer {
+    border-color: #ff3333;
 }
 
 .error .icon {
     color: #ff3333;
 }
 
+.error .progressBar {
+    background-color: rgba(255, 51, 51, 0.3);
+}
+
 /* Animations */
 @keyframes slideIn {
     from {
-        transform: translateX(100%);
+        transform: translateX(120%);
         opacity: 0;
     }
     to {
@@ -115,7 +178,16 @@
         opacity: 1;
     }
     to {
-        transform: translateX(100%);
+        transform: translateX(120%);
         opacity: 0;
+    }
+}
+
+@keyframes progressAnimation {
+    from {
+        transform: scaleX(1);
+    }
+    to {
+        transform: scaleX(0);
     }
 }

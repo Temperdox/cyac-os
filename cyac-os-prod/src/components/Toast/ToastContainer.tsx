@@ -3,53 +3,53 @@ import Toast from './Toast';
 import styles from './ToastContainer.module.css';
 import { ToastMessage } from '../../services/ToastManager';
 
-// Singleton for global toast management
-class ToastEmitter {
-    private static instance: ToastEmitter;
-    private listeners: ((toast: ToastMessage) => void)[] = [];
-
-    private constructor() {}
-
-    public static getInstance(): ToastEmitter {
-        if (!ToastEmitter.instance) {
-            ToastEmitter.instance = new ToastEmitter();
-        }
-        return ToastEmitter.instance;
-    }
-
-    public addListener(listener: (toast: ToastMessage) => void): void {
-        this.listeners.push(listener);
-    }
-
-    public removeListener(listener: (toast: ToastMessage) => void): void {
-        this.listeners = this.listeners.filter(l => l !== listener);
-    }
-
-    public emit(toast: ToastMessage): void {
-        this.listeners.forEach(listener => listener(toast));
-    }
-}
-
-// Global function to show a toast
-export const showToast = (toast: ToastMessage): void => {
-    ToastEmitter.getInstance().emit(toast);
-};
-
 const ToastContainer: React.FC = () => {
     const [toasts, setToasts] = useState<(ToastMessage & { id: string })[]>([]);
     const idCounter = React.useRef(0);
 
+    // Add sound effect for toasts
+    const playToastSound = (type: string) => {
+        try {
+            const soundFile = type === 'error'
+                ? '/sounds/error.mp3'
+                : type === 'warning'
+                    ? '/sounds/warning.mp3'
+                    : '/sounds/notification.mp3';
+
+            const audio = new Audio(soundFile);
+            audio.volume = 0.4;
+            audio.play().catch(err => console.warn('Could not play toast sound', err));
+        } catch (error) {
+            console.warn('Failed to play toast sound:', error);
+        }
+    };
+
     useEffect(() => {
-        const handleToast = (toast: ToastMessage) => {
+        const handleToast = (event: Event) => {
+            const toast = (event as CustomEvent<ToastMessage>).detail;
+
+            // Generate a unique ID if none provided
             const id = toast.id || `toast-${Date.now()}-${idCounter.current++}`;
-            setToasts(prev => [...prev, { ...toast, id }]);
+
+            // Limit to 5 visible toasts at a time
+            setToasts(prev => {
+                // If we have too many toasts, remove the oldest ones
+                const newToasts = [...prev, { ...toast, id }];
+                if (newToasts.length > 5) {
+                    return newToasts.slice(newToasts.length - 5);
+                }
+                return newToasts;
+            });
+
+            // Play sound effect
+            playToastSound(toast.type);
         };
 
-        const emitter = ToastEmitter.getInstance();
-        emitter.addListener(handleToast);
+        // Listen for toast events
+        window.addEventListener('toast', handleToast);
 
         return () => {
-            emitter.removeListener(handleToast);
+            window.removeEventListener('toast', handleToast);
         };
     }, []);
 
@@ -65,7 +65,7 @@ const ToastContainer: React.FC = () => {
                     id={toast.id}
                     type={toast.type}
                     message={toast.message}
-                    duration={toast.duration}
+                    duration={toast.duration || 5000}
                     onClose={removeToast}
                 />
             ))}

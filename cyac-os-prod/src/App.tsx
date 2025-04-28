@@ -16,7 +16,7 @@ import { AudioManager } from './services/AudioManager';
 import { AuthService } from './services/AuthService';
 import { FocusManager } from './services/FocusManager';
 import DiscordCallback from './components/auth/DiscordCallback/DiscordCallback';
-import dynamicComponents from './utils/dynamicComponents';
+import dynamicComponents from './utils/dynamicComponents.tsx';
 
 // Interface for open windows
 interface OpenWindow {
@@ -58,13 +58,13 @@ const App: React.FC = () => {
             ToastManager.show({
                 type: 'success',
                 message: `Logged in as ${result.username}`,
-                duration: 3000
+                duration: 30000
             });
         } else {
             ToastManager.show({
                 type: 'error',
                 message: 'Login failed',
-                duration: 3000
+                duration: 30000
             });
         }
 
@@ -270,30 +270,94 @@ const App: React.FC = () => {
             });
         } else if (item.type === 'file') {
             try {
-                const content = FileSystem.getFileContent(`${path}`);
+                // Check if file has a component path
+                if (item.component && dynamicComponents[item.component]) {
+                    // Launch using the component directly
+                    const ComponentToLaunch = dynamicComponents[item.component];
 
-                // Generate a unique ID for this file window
-                const timestamp = new Date().getTime();
-                const uniqueId = `file_${item.name}_${timestamp}`;
+                    // Generate a unique ID for this file window
+                    const timestamp = new Date().getTime();
+                    const uniqueId = `file_${item.name}_${timestamp}`;
 
-                // Create a new window for the file
-                const newWindow: OpenWindow = {
-                    id: uniqueId,
-                    title: item.name,
-                    component: dynamicComponents['/components/viewers/TextViewer'],
-                    props: { content },
-                    minimized: false
-                };
+                    // Create a new window using the component
+                    const newWindow: OpenWindow = {
+                        id: uniqueId,
+                        title: item.name,
+                        component: ComponentToLaunch,
+                        minimized: false
+                    };
 
-                // Add the new window to the list of open windows
-                setOpenWindows(prev => [...prev, newWindow]);
-                setActiveWindowId(uniqueId);
+                    // Add the window
+                    setOpenWindows(prev => [...prev, newWindow]);
+                    setActiveWindowId(uniqueId);
 
-                // Set focus to the window
-                FocusManager.setFocus('window', uniqueId);
+                    // Set focus to the window
+                    FocusManager.setFocus('window', uniqueId);
 
-                // Add to window order (on top)
-                setWindowOrder(prev => [...prev, uniqueId]);
+                    // Add to window order
+                    setWindowOrder(prev => [...prev, uniqueId]);
+                } else {
+                    // Regular file without component - use content with TextViewer
+                    const content = FileSystem.getFileContent(`${path}`);
+
+                    // Check if this is a component-based file (using our special marker)
+                    if (content.startsWith('[COMPONENT_FILE:')) {
+                        // Extract component path
+                        const componentPath = content.substring(16, content.length - 1);
+
+                        // Get the component
+                        const ComponentToLaunch = dynamicComponents[componentPath];
+
+                        if (!ComponentToLaunch) {
+                            throw new Error(`Component not found: ${componentPath}`);
+                        }
+
+                        // Generate a unique ID for this file window
+                        const timestamp = new Date().getTime();
+                        const uniqueId = `file_${item.name}_${timestamp}`;
+
+                        // Create a new window using the component
+                        const newWindow: OpenWindow = {
+                            id: uniqueId,
+                            title: item.name,
+                            component: ComponentToLaunch,
+                            minimized: false
+                        };
+
+                        // Add the window
+                        setOpenWindows(prev => [...prev, newWindow]);
+                        setActiveWindowId(uniqueId);
+
+                        // Set focus to the window
+                        FocusManager.setFocus('window', uniqueId);
+
+                        // Add to window order
+                        setWindowOrder(prev => [...prev, uniqueId]);
+                    } else {
+                        // Regular text content, use TextViewer
+                        const timestamp = new Date().getTime();
+                        const uniqueId = `file_${item.name}_${timestamp}`;
+
+                        // Create a new window for the file
+                        const newWindow: OpenWindow = {
+                            id: uniqueId,
+                            title: item.name,
+                            component: dynamicComponents['/components/viewers/TextViewer'],
+                            props: { content },
+                            minimized: false
+                        };
+
+                        // Add the new window to the list of open windows
+                        setOpenWindows(prev => [...prev, newWindow]);
+                        setActiveWindowId(uniqueId);
+
+                        // Set focus to the window
+                        FocusManager.setFocus('window', uniqueId);
+
+                        // Add to window order (on top)
+                        setWindowOrder(prev => [...prev, uniqueId]);
+                    }
+                }
             } catch (error) {
                 console.error('Error opening file:', error);
                 ToastManager.show({

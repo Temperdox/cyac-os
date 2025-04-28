@@ -25,28 +25,138 @@
     border: 1px solid rgba(51, 255, 51, 0.2);
 }
 
+.markdownContent {
+    flex: 1;
+    word-break: break-word;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #33ff33;
+    overflow: auto;
+    margin: 0;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    border: 1px solid rgba(51, 255, 51, 0.2);
+}
+
+/* Markdown specific styles */
+.markdownContent h1,
+.markdownContent h2,
+.markdownContent h3,
+.markdownContent h4,
+.markdownContent h5,
+.markdownContent h6 {
+    color: #33ff33;
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+.markdownContent h1 {
+    font-size: 1.8em;
+    border-bottom: 1px solid rgba(51, 255, 51, 0.3);
+    padding-bottom: 4px;
+}
+
+.markdownContent h2 {
+    font-size: 1.5em;
+    border-bottom: 1px solid rgba(51, 255, 51, 0.2);
+    padding-bottom: 3px;
+}
+
+.markdownContent a {
+    color: #4da6ff;
+    text-decoration: none;
+}
+
+.markdownContent a:hover {
+    text-decoration: underline;
+}
+
+/* Improved Code Blocks */
+.markdownContent pre {
+    background-color: #1a1a1a !important;
+    border-radius: 4px;
+    margin: 16px 0;
+    padding: 0;
+    overflow: auto;
+    border: 1px solid rgba(51, 255, 51, 0.2);
+}
+
+.markdownContent pre > div {
+    margin: 0 !important;
+    border-radius: 0;
+}
+
+.inlineCode {
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    color: #33ff33;
+}
+
+.markdownContent blockquote {
+    border-left: 3px solid #33ff33;
+    margin-left: 0;
+    padding-left: 10px;
+    color: rgba(51, 255, 51, 0.8);
+}
+
+.markdownContent table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+}
+
+.markdownContent th,
+.markdownContent td {
+    border: 1px solid rgba(51, 255, 51, 0.3);
+    padding: 8px;
+    text-align: left;
+}
+
+.markdownContent th {
+    background-color: rgba(51, 255, 51, 0.1);
+}
+
+.markdownContent ul,
+.markdownContent ol {
+    padding-left: 20px;
+}
+
+.markdownContent img {
+    max-width: 100%;
+    height: auto;
+}
+
 /* Scrollbar styling */
-.content::-webkit-scrollbar {
+.content::-webkit-scrollbar,
+.markdownContent::-webkit-scrollbar {
     width: 8px;
     height: 8px;
 }
 
-.content::-webkit-scrollbar-track {
+.content::-webkit-scrollbar-track,
+.markdownContent::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.2);
 }
 
-.content::-webkit-scrollbar-thumb {
+.content::-webkit-scrollbar-thumb,
+.markdownContent::-webkit-scrollbar-thumb {
     background: rgba(51, 255, 51, 0.3);
     border-radius: 4px;
 }
 
-.content::-webkit-scrollbar-thumb:hover {
+.content::-webkit-scrollbar-thumb:hover,
+.markdownContent::-webkit-scrollbar-thumb:hover {
     background: rgba(51, 255, 51, 0.5);
 }
 
 /* Mobile styles */
 @media (max-width: 768px) {
-    .content {
+    .content,
+    .markdownContent {
         font-size: 12px;
         padding: 8px;
     }
