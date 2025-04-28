@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './TaskBar.module.css';
+import IconRenderer from "../QuickMenu/IconRenderer.tsx";
 /*import { FocusManager } from '../services/FocusManager';*/
 
 interface TaskBarProps {
@@ -7,6 +8,7 @@ interface TaskBarProps {
         id: string;
         title: string;
         minimized?: boolean;
+        icon?: string;
     }>;
     onItemClick: (id: string) => void;
     onQuickMenuToggle: () => void;
@@ -94,17 +96,19 @@ const TaskBar: React.FC<TaskBarProps> = ({
                     <button
                         key={item.id}
                         className={`${styles.taskButton} 
-              ${item.minimized ? styles.minimized : ''} 
-              ${activeWindowId === item.id ? styles.active : ''}`}
+                ${item.minimized ? styles.minimized : ''} 
+                ${activeWindowId === item.id ? styles.active : ''}`}
                         onClick={(e) => handleItemClick(item.id, e)}
                         onMouseEnter={() => !isMobile && setHoveredItem(item.id)}
                         onMouseLeave={() => !isMobile && setHoveredItem(null)}
                         aria-label={item.title}
                     >
                         <div className={styles.taskButtonContent}>
-              <span className={styles.taskButtonIcon}>
-                {item.minimized ? '△' : '▢'}
-              </span>
+                            <IconRenderer
+                                icon={item.icon}
+                                defaultIcon={item.minimized ? '△' : '▢'}
+                                className={styles.taskButtonIcon}
+                            />
                             <span className={styles.taskButtonText}>{item.title}</span>
                         </div>
                     </button>

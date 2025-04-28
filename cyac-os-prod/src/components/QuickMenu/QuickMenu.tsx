@@ -5,6 +5,7 @@ import { FocusManager } from '../../services/FocusManager';
 import UserBanner from '../UserBanner/UserBanner';
 import CrtSettingsPanel from '../CrtEffects/CrtSettingsPanel.tsx';
 import { DiscordAuthService } from '../../services/DiscordAuthService';
+import IconRenderer from "./IconRenderer.tsx";
 
 interface QuickMenuProps {
     isOpen: boolean;
@@ -685,9 +686,15 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
                                             onClick={() => handleItemClick(item)}
                                         >
                                             <div className={styles.itemIcon}>
-                                                <span className={styles.folderIcon}>
-                                                    {canAccess(item) ? '📁' : '🔒'}
-                                                </span>
+                                                {!canAccess(item) ? (
+                                                    <span className={styles.folderIcon}>🔒</span>
+                                                ) : (
+                                                    <IconRenderer
+                                                        icon={item.icon}
+                                                        defaultIcon="📁"
+                                                        className={styles.folderIcon}
+                                                    />
+                                                )}
                                             </div>
                                             <div className={styles.itemName}>{item.name}</div>
                                             {searchResults && (
@@ -710,9 +717,14 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
                                             onClick={() => handleItemClick(item)}
                                         >
                                             <div className={styles.itemIcon}>
-                                                <span className={styles.programIcon}>
-                                                    {item.type === 'program' ? '⚙️' : item.type === 'scene' ? '🖼️' : '🪟'}
-                                                </span>
+                                                <IconRenderer
+                                                    icon={item.icon}
+                                                    defaultIcon={
+                                                        item.type === 'program' ? '⚙️' :
+                                                            item.type === 'scene' ? '🖼️' : '🪟'
+                                                    }
+                                                    className={styles.programIcon}
+                                                />
                                             </div>
                                             <div className={styles.itemName}>{item.name}</div>
                                             {item.description && (
@@ -738,7 +750,11 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
                                             onClick={() => handleItemClick(item)}
                                         >
                                             <div className={styles.itemIcon}>
-                                                <span className={styles.fileIcon}>📄</span>
+                                                <IconRenderer
+                                                    icon={item.icon}
+                                                    defaultIcon="📄"
+                                                    className={styles.fileIcon}
+                                                />
                                                 {item.matchesContent && (
                                                     <span className={styles.matchBadge}>Match</span>
                                                 )}

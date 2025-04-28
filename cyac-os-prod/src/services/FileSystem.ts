@@ -15,6 +15,7 @@ interface FileSystemItem {
     component?: string; // Path to component for programs, scenes, subscenes
     restricted?: boolean; // Whether item requires authentication
     description?: string; // Description of the item
+    icon?: string; // Custom icon path or emoji
 }
 
 // File system schema definition
@@ -75,7 +76,8 @@ export class FileSystem {
                                                     name: 'CyAc_browser_v1',
                                                     type: 'program',
                                                     component: '/components/Browser/CyAc_browser_v1',
-                                                    description: 'CyberAcme Web Browser v1.0'
+                                                    description: 'CyberAcme Web Browser v1.0',
+                                                    icon: "/assets/images/icons/CyAcBrowserIcon.png",
                                                 }
                                             }
                                         },
@@ -88,15 +90,21 @@ export class FileSystem {
                                                     type: 'directory',
                                                     children: {
                                                         'tetris': {
-                                                            name: 'tetris',
+                                                            name: 'Tetris',
                                                             type: 'program',
-                                                            component: '/components/programs/games/Tetris',
+                                                            component: '/components/programs/GameLauncher/games/Tetris',
                                                             description: 'Classic Tetris Game'
                                                         },
                                                         'snake': {
-                                                            name: 'snake',
+                                                            name: 'Snake',
                                                             type: 'program',
-                                                            component: '/components/programs/games/Snake',
+                                                            component: '/components/programs/GameLauncher/games/Snake',
+                                                            description: 'Classic Snake Game'
+                                                        },
+                                                        'tictactoe': {
+                                                            name: 'TicTacToe',
+                                                            type: 'program',
+                                                            component: '/components/programs/GameLauncher/games/TicTacToe',
                                                             description: 'Classic Snake Game'
                                                         }
                                                     },

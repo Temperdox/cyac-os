@@ -98,6 +98,11 @@ const App: React.FC = () => {
         }
     }, []);
 
+    useEffect(() => {
+        // Initialize authentication service before other use states
+        AuthService.initialize();
+    }, []);
+
     // Detect mobile devices
     useEffect(() => {
         const checkIsMobile = () => {
@@ -132,8 +137,6 @@ const App: React.FC = () => {
                 initializeGameLauncher();
             });
 
-            // Initialize authentication service
-            AuthService.initialize();
         }
     }, [powered]);
 
@@ -147,6 +150,10 @@ const App: React.FC = () => {
         } catch (error) {
             console.warn('Failed to play power-on sound:', error);
         }
+
+        if (AuthService.isAuthenticated()) {
+            handleBootComplete();
+        }
     };
 
     // Handle boot completion
@@ -156,11 +163,12 @@ const App: React.FC = () => {
         // Set focus to terminal after boot
         setTimeout(() => {
             FocusManager.setFocus('terminal');
+            let res = (AuthService.isAuthenticated())? 'back!' : 'to CyberAcme OS.';
 
             // Welcome toast
             ToastManager.show({
                 type: 'info',
-                message: 'System booted successfully. Welcome to CyberAcme OS.',
+                message: `System booted successfully. Welcome ${res}`,
                 duration: 5000
             });
         }, 100);
@@ -564,7 +572,7 @@ const App: React.FC = () => {
 
             {/* Power and Boot under CRT Effects */}
             {!powered && <PowerButton onPowerOn={handlePowerOn} />}
-            {powered && !booted && <BootSequence onComplete={handleBootComplete} />}
+            {powered && !booted && !AuthService.isAuthenticated() && <BootSequence onComplete={handleBootComplete} />}
 
             {/* Toast Notification Container */}
             <ToastContainer />

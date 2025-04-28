@@ -7,8 +7,8 @@
 	"name": "cyac-os-prod",
 	"main": "worker/index.ts",
 	"compatibility_date": "2025-04-26",
-	"site": {
-		"bucket": "./public"
+	"assets": {
+		"not_found_handling": "single-page-application"
 	},
 	"observability": {
 		"enabled": true

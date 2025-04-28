@@ -25,7 +25,7 @@ export function registerGames(): void {
         }
 
         // Register individual games in the games directory for direct access
-        const gamesPath = '/home/user/programs/games';
+        const gamesPath = '/home/user/programs/games/gamesLibrary';
 
         // TicTacToe
         FileSystem.registerComponent(

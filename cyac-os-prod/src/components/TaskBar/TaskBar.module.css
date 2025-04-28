@@ -266,3 +266,22 @@
         display: none;
     }
 }
+
+.icon-image {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    vertical-align: middle;
+}
+
+.itemIcon .icon-image {
+    display: inline-block;
+}
+
+/* For TaskBar.module.css */
+.taskButtonIcon .icon-image {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    margin-right: 4px;
+}
