@@ -44,9 +44,18 @@ const UserBanner: React.FC<UserBannerProps> = ({
     }, []);
 
     // Handle login/logout
-    const handleAuthAction = () => {
+    const handleAuthAction = async () => {
         if (isAuthenticated) {
-            // Logout
+            // Perform the actual logout
+            await DiscordAuthService.logout();
+
+            // Force an immediate state update
+            setIsAuthenticated(false);
+            setUser(null);
+            setHasSudo(false);
+            setIsDev(false);
+
+            // Then call the parent's callback
             if (onLogout) onLogout();
         } else {
             // Direct login via Discord OAuth

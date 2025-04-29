@@ -1,0 +1,314 @@
+.connectionAnimation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
+    z-index: 10;
+}
+
+.crtScreen {
+    width: clamp(280px, 90%, 800px);
+    height: clamp(300px, 80%, 600px);
+    background-color: #121212;
+    border: 2px solid #333;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    border-radius: clamp(3px, 1vw, 5px);
+}
+
+.terminal {
+    padding: clamp(15px, 5vw, 30px);
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.prompt {
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-size: clamp(12px, 4vw, 18px);
+    line-height: 1.4;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    margin-bottom: 2vh;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.warning {
+    color: #ff3e3e;
+    text-shadow: 0 0 5px rgba(255, 62, 62, 0.5);
+    animation: warningPulse 1s infinite alternate;
+    font-weight: bold;
+}
+
+/* Reduced animation complexity */
+@keyframes warningPulse {
+    from { opacity: 0.8; }
+    to { opacity: 1; }
+}
+
+.cursor {
+    color: #00ff00;
+    animation: cursorBlink 1.2s steps(2) infinite;
+}
+
+.blinkingCursor {
+    animation: cursorBlink 1.2s steps(2) infinite;
+}
+
+@keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* CRT effects - conditionally applied based on device capability */
+@media (prefers-reduced-motion: no-preference) {
+    .scanlines {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+                to bottom,
+                rgba(18, 16, 16, 0) 50%,
+                rgba(0, 0, 0, 0.15) 50%
+        );
+        background-size: 100% 8px; /* Larger scanlines, less resource intensive */
+        pointer-events: none;
+        z-index: 2;
+        opacity: 0.7;
+    }
+
+    .flicker {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(18, 16, 16, 0.1);
+        opacity: 0;
+        pointer-events: none;
+        z-index: 3;
+        animation: screenFlicker 2s steps(3) infinite;
+    }
+}
+
+/* Simplify animation for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .scanlines {
+        background-size: 100% 16px;
+        opacity: 0.4;
+    }
+
+    .flicker {
+        display: none;
+    }
+
+    .warningIcon {
+        animation: none !important;
+    }
+
+    .warning {
+        animation: none !important;
+    }
+
+    .connectionLine.active::before {
+        animation: none !important;
+    }
+
+    .node.connected {
+        animation: none !important;
+    }
+}
+
+@keyframes screenFlicker {
+    0%, 100% { opacity: 0; }
+    95% { opacity: 0; }
+    98% { opacity: 0.1; }
+}
+
+/* Progress bar */
+.progressBar {
+    height: clamp(4px, 1.5vh, 8px);
+    width: 100%;
+    background-color: rgba(0, 255, 0, 0.1);
+    border: 1px solid rgba(0, 255, 0, 0.3);
+    margin: clamp(10px, 3vh, 25px) 0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background-color: rgba(0, 255, 0, 0.5);
+    transition: width 0.5s linear; /* Simpler transition */
+}
+
+/* Connection diagram */
+.connectionDiagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: clamp(40px, 10vh, 60px);
+    margin-top: clamp(10px, 3vh, 20px);
+    position: relative;
+}
+
+.node {
+    width: clamp(16px, 6vw, 30px);
+    height: clamp(16px, 6vw, 30px);
+    border-radius: 50%;
+    background-color: #1a1a1a;
+    border: 2px solid rgba(0, 255, 0, 0.5);
+    position: relative;
+}
+
+.node:first-child {
+    background-color: rgba(0, 255, 0, 0.2);
+}
+
+.node.connected {
+    background-color: rgba(0, 255, 0, 0.3);
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+    animation: pulseNode 1.5s infinite alternate;
+}
+
+@keyframes pulseNode {
+    from { opacity: 0.8; }
+    to { opacity: 1; }
+}
+
+.connectionLine {
+    height: clamp(2px, 0.8vh, 4px);
+    flex: 1;
+    margin: 0 clamp(8px, 2vw, 15px);
+    background-color: rgba(0, 255, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.connectionLine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 255, 0, 0.6); /* Simplified gradient */
+}
+
+.connectionLine.active::before {
+    animation: dataTransfer 3s linear infinite;
+}
+
+@keyframes dataTransfer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.warningIcon {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: clamp(16px, 5vw, 24px);
+    height: clamp(16px, 5vw, 24px);
+    border-radius: 50%;
+    background-color: #ff3e3e;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: clamp(12px, 4vw, 18px);
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.warningIcon.visible {
+    opacity: 1;
+}
+
+/* Mobile optimizations */
+@media (max-width: 576px) {
+    .terminal {
+        padding: 15px;
+        justify-content: flex-start;
+        padding-top: 25%;
+    }
+
+    .prompt {
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .connectionDiagram {
+        margin-top: 30px;
+        height: 40px;
+    }
+
+    .progressBar {
+        margin: 15px 0;
+    }
+}
+
+/* Simple loading indicator for low-end devices */
+.simpleLoading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: #121212;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    padding: 20px;
+    text-align: center;
+}
+
+.simpleLoadingText {
+    font-size: clamp(14px, 4vw, 18px);
+    margin-bottom: 20px;
+}
+
+.simpleProgressBar {
+    width: 80%;
+    max-width: 300px;
+    height: 6px;
+    background-color: rgba(0, 255, 0, 0.1);
+    border: 1px solid rgba(0, 255, 0, 0.3);
+    margin: 0 auto 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.simpleProgressFill {
+    height: 100%;
+    background-color: #00ff00;
+    width: 30%;
+    position: absolute;
+    left: -30%;
+    top: 0;
+    animation: simpleProgress 1.5s infinite linear;
+}
+
+@keyframes simpleProgress {
+    0% { left: -30%; }
+    100% { left: 100%; }
+}
+
+.securityStatus {
+    margin-top: 15px;
+    color: #ff3e3e;
+    font-size: clamp(12px, 3vw, 16px);
+}

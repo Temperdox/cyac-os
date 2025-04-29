@@ -31,7 +31,7 @@
     height: 100px;
     border-radius: 50%;
     background-color: #111;
-    border: 3px solid #ff3333;
+    border: 3px solid #33ff33;
     color: #ff3333;
     cursor: pointer;
     display: flex;
@@ -39,7 +39,7 @@
     justify-content: center;
     transition: all 0.3s ease;
     position: relative;
-    box-shadow: 0 0 20px rgba(255, 51, 51, 0.3);
+    box-shadow: 0 0 20px rgba(51, 231, 255, 0.3);
     outline: none;
 }
 
@@ -51,7 +51,7 @@
     right: 0;
     bottom: 0;
     border-radius: 50%;
-    box-shadow: 0 0 10px rgba(255, 51, 51, 0.5) inset;
+    box-shadow: 0 0 10px rgba(51, 231, 255, 0.5) inset;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -59,12 +59,12 @@
 .powerSymbol {
     width: 50px;
     height: 50px;
-    color: #ff3333;
+    color: #33ff33;
 }
 
 .powerButton.hover {
     transform: scale(1.05);
-    box-shadow: 0 0 30px rgba(255, 51, 51, 0.5);
+    box-shadow: 0 0 30px rgba(95, 255, 51, 0.5);
 }
 
 .powerButton.hover::before {
@@ -72,7 +72,7 @@
 }
 
 .powerButton.glowing {
-    box-shadow: 0 0 30px rgba(255, 51, 51, 0.7);
+    box-shadow: 0 0 30px rgba(51, 231, 255, 0.7);
 }
 
 .powerButton.pressed {

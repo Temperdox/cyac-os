@@ -13,6 +13,10 @@
     overflow: hidden;
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
 /* Header styling similar to the screenshot */
 .bootHeader {
     display: flex;
@@ -55,6 +59,7 @@
     line-height: 1.3;
     letter-spacing: 0.5px;
     margin-bottom: 40px; /* Make space for the progress bar */
+    scroll-behavior: smooth; /* Added for smooth scrolling */
 }
 
 /* Add terminal scanline effect */
@@ -124,32 +129,38 @@
     color: #aaaaaa; /* Gray for any other log types */
 }
 
-/* NEW Fixed position progress bar at bottom */
-.progressBarContainer {
-    position: absolute;
+/* Updated progress bar style to match screenshots */
+.progressBarFixed {
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 40px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the content horizontally */
+    background-color: #000;
+    border-top: 1px solid #111;
+    z-index: 10;
+}
+
+.progressBarContent {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 20px;
-    background-color: #000;
-    border-top: 1px solid #222;
-    animation: fadeIn 0.3s ease-in;
 }
 
 .progressBarLabel {
-    color: #33ffff; /* Cyan for progress label */
+    color: #33ffff; /* Cyan for progress label as shown in screenshots */
     margin-right: 10px;
     font-size: 14px;
-    min-width: 120px; /* Fixed width for label */
+    text-transform: uppercase; /* Match the all-caps style in screenshots */
 }
 
 .progressBarVisual {
-    color: #33ff33; /* Green for progress visualization */
+    color: #33ff33; /* Green for progress bars as shown in screenshots */
     font-size: 14px;
+    font-family: 'Courier New', monospace;
     letter-spacing: 1px;
 }
 
@@ -238,8 +249,8 @@
         font-size: 12px;
     }
 
-    .progressBarContainer {
-        height: 30px;
+    .progressBarFixed {
+        height: 20px;
     }
 
     .progressBarLabel, .progressBarVisual {

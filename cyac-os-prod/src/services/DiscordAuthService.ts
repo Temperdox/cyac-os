@@ -1,4 +1,5 @@
 // src/services/DiscordAuthService.ts
+import { AuthService } from './AuthService';
 
 // Configuration - update these values for your environment
 const CONFIG = {
@@ -64,13 +65,17 @@ export class DiscordAuthService {
     }
 
     /**
-     * Logout user by clearing stored tokens
+     * Logout user by clearing stored tokens and also calling AuthService.logout()
      */
     public static logout(): void {
+        // Clear Discord specific tokens
         localStorage.removeItem(CONFIG.STORAGE_KEY_TOKEN);
         localStorage.removeItem(CONFIG.STORAGE_KEY_USER);
         localStorage.removeItem(CONFIG.STORAGE_KEY_EXPIRES);
         localStorage.removeItem(CONFIG.STORAGE_KEY_FAKE_PRIVILEGE);
+
+        // Also log out from the main AuthService
+        AuthService.logout();
     }
 
     /**
@@ -94,7 +99,7 @@ export class DiscordAuthService {
                 this.setUserPrivileges(data.user);
             }
 
-            // ← reuse your helper here
+            // Save auth data
             this.saveAuthData(data);
 
             return true;
@@ -308,6 +313,9 @@ export class DiscordAuthService {
         // Save user info
         if (data.user) {
             localStorage.setItem(CONFIG.STORAGE_KEY_USER, JSON.stringify(data.user));
+
+            // Also login with the main AuthService
+            AuthService.loginWithDiscord(data.user);
         }
     }
 

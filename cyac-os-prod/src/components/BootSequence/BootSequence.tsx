@@ -57,6 +57,13 @@ const CyberAcmeBootProgress: React.FC<BootSequenceProps> = ({ onComplete }) => {
     // Helper function to create a delay
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+    // Helper function to ensure auto-scrolling
+    const scrollToBottom = () => {
+        if (logContainerRef.current) {
+            logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
+        }
+    };
+
     // Create a colored log line element
     const createLogLine = (lineType: string, content: string) => {
         let className;
@@ -135,12 +142,22 @@ const CyberAcmeBootProgress: React.FC<BootSequenceProps> = ({ onComplete }) => {
         return [logLine, registerLine];
     };
 
-    // Progress bar update
+    // Progress bar update with fixed design to match screenshots
     const runProgressBar = async (type: string, targetPercent: number, startMsg: string, completeMsg: string, stalled: boolean = false) => {
         // Add start message
-        setLogLines(prev => [...prev, createLogLine('[I]', `[I] (${Math.floor(Math.random() * 100000)}): ${startMsg}`)]);
+        setLogLines(prev => {
+            const newLines = [...prev, createLogLine('[I]', `[I] (${Math.floor(Math.random() * 100000)}): ${startMsg}`)];
+            setTimeout(scrollToBottom, 50);
+            return newLines;
+        });
+
         await delay(300);
-        setLogLines(prev => [...prev, createLogLine('[I]', `[I] (${Math.floor(Math.random() * 100000)}): ${startMsg}`)]);
+
+        setLogLines(prev => {
+            const newLines = [...prev, createLogLine('[I]', `[I] (${Math.floor(Math.random() * 100000)}): ${startMsg}`)];
+            setTimeout(scrollToBottom, 50);
+            return newLines;
+        });
 
         // Show progress bar
         setProgressType(type);
@@ -160,37 +177,85 @@ const CyberAcmeBootProgress: React.FC<BootSequenceProps> = ({ onComplete }) => {
         // Show some processing logs during the progress
         await delay(500);
         const timestamp = `(${Math.floor(Math.random() * 100000)})`;
-        setLogLines(prev => [...prev, createLogLine('[D]', `[D] ${timestamp}: CHECKING ${type} INTEGRITY...`)]);
+        setLogLines(prev => {
+            const newLines = [...prev, createLogLine('[D]', `[D] ${timestamp}: CHECKING ${type} INTEGRITY...`)];
+            setTimeout(scrollToBottom, 50);
+            return newLines;
+        });
+
         await delay(200);
-        setLogLines(prev => [...prev, createLogLine('[D]', `[D] (${Math.floor(Math.random() * 100000)}): CHECKING ${type} INTEGRITY...`)]);
+
+        setLogLines(prev => {
+            const newLines = [...prev, createLogLine('[D]', `[D] (${Math.floor(Math.random() * 100000)}): CHECKING ${type} INTEGRITY...`)];
+            setTimeout(scrollToBottom, 50);
+            return newLines;
+        });
 
         await delay(700);
         const timestamp2 = `(${Math.floor(Math.random() * 100000)})`;
-        setLogLines(prev => [...prev, createLogLine('[S]', `[S] ${timestamp2}: VALIDATING ${type} CONFIGURATION...`)]);
+        setLogLines(prev => {
+            const newLines = [...prev, createLogLine('[S]', `[S] ${timestamp2}: VALIDATING ${type} CONFIGURATION...`)];
+            setTimeout(scrollToBottom, 50);
+            return newLines;
+        });
+
         await delay(200);
-        setLogLines(prev => [...prev, createLogLine('[S]', `[S] (${Math.floor(Math.random() * 100000)}): VALIDATING ${type} CONFIGURATION...`)]);
+
+        setLogLines(prev => {
+            const newLines = [...prev, createLogLine('[S]', `[S] (${Math.floor(Math.random() * 100000)}): VALIDATING ${type} CONFIGURATION...`)];
+            setTimeout(scrollToBottom, 50);
+            return newLines;
+        });
 
         // If stalled, show warning and keep the progress bar at the target percentage
         if (stalled) {
             await delay(800);
             const timestamp3 = `(${Math.floor(Math.random() * 100000)})`;
-            setLogLines(prev => [...prev, createLogLine('[W]', `[W] ${timestamp3}: ${type} SCAN STALLED AT ${targetPercent}%`)]);
+            setLogLines(prev => {
+                const newLines = [...prev, createLogLine('[W]', `[W] ${timestamp3}: ${type} SCAN STALLED AT ${targetPercent}%`)];
+                setTimeout(scrollToBottom, 50);
+                return newLines;
+            });
+
             await delay(200);
-            setLogLines(prev => [...prev, createLogLine('[W]', `[W] (${Math.floor(Math.random() * 100000)}): ${type} SCAN STALLED AT ${targetPercent}%`)]);
+
+            setLogLines(prev => {
+                const newLines = [...prev, createLogLine('[W]', `[W] (${Math.floor(Math.random() * 100000)}): ${type} SCAN STALLED AT ${targetPercent}%`)];
+                setTimeout(scrollToBottom, 50);
+                return newLines;
+            });
 
             await delay(900);
             const timestamp4 = `(${Math.floor(Math.random() * 100000)})`;
-            setLogLines(prev => [...prev, createLogLine('[W]', `[W] ${timestamp4}: ATTEMPTING RETRY...`)]);
+            setLogLines(prev => {
+                const newLines = [...prev, createLogLine('[W]', `[W] ${timestamp4}: ATTEMPTING RETRY...`)];
+                setTimeout(scrollToBottom, 50);
+                return newLines;
+            });
+
             await delay(200);
-            setLogLines(prev => [...prev, createLogLine('[W]', `[W] (${Math.floor(Math.random() * 100000)}): ATTEMPTING RETRY...`)]);
+
+            setLogLines(prev => {
+                const newLines = [...prev, createLogLine('[W]', `[W] (${Math.floor(Math.random() * 100000)}): ATTEMPTING RETRY...`)];
+                setTimeout(scrollToBottom, 50);
+                return newLines;
+            });
 
             await delay(1000);
             const timestamp5 = `(${Math.floor(Math.random() * 100000)})`;
-            setLogLines(prev => [...prev, createLogLine('[I]', `[I] ${timestamp5}: ALTERNATIVE ${type} VERIFICATION METHOD INITIALIZING`)]);
+            setLogLines(prev => {
+                const newLines = [...prev, createLogLine('[I]', `[I] ${timestamp5}: ALTERNATIVE ${type} VERIFICATION METHOD INITIALIZING`)];
+                setTimeout(scrollToBottom, 50);
+                return newLines;
+            });
 
             await delay(1200);
             const timestamp6 = `(${Math.floor(Math.random() * 100000)})`;
-            setLogLines(prev => [...prev, createLogLine('[S]', `[S] ${timestamp6}: VERIFICATION COMPLETED USING FALLBACK METHOD`)]);
+            setLogLines(prev => {
+                const newLines = [...prev, createLogLine('[S]', `[S] ${timestamp6}: VERIFICATION COMPLETED USING FALLBACK METHOD`)];
+                setTimeout(scrollToBottom, 50);
+                return newLines;
+            });
         } else {
             // Complete the progress to 100% if not stalled
             for (let i = 1; i <= (100 - targetPercent) / 5; i++) {
@@ -200,7 +265,11 @@ const CyberAcmeBootProgress: React.FC<BootSequenceProps> = ({ onComplete }) => {
 
             await delay(800);
             const timestamp3 = `(${Math.floor(Math.random() * 100000)})`;
-            setLogLines(prev => [...prev, createLogLine('[D]', `[D] ${timestamp3}: ${type} CHECK: COMPLETE`)]);
+            setLogLines(prev => {
+                const newLines = [...prev, createLogLine('[D]', `[D] ${timestamp3}: ${type} CHECK: COMPLETE`)];
+                setTimeout(scrollToBottom, 50);
+                return newLines;
+            });
         }
 
         // Hide progress bar after completion
@@ -208,12 +277,11 @@ const CyberAcmeBootProgress: React.FC<BootSequenceProps> = ({ onComplete }) => {
         setShowProgress(false);
 
         // Add completion message
-        setLogLines(prev => [...prev, createLogLine('[I]', `[I] (${Math.floor(Math.random() * 100000)}): ${completeMsg}`)]);
-
-        // Scroll to bottom
-        if (logContainerRef.current) {
-            logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
-        }
+        setLogLines(prev => {
+            const newLines = [...prev, createLogLine('[I]', `[I] (${Math.floor(Math.random() * 100000)}): ${completeMsg}`)];
+            setTimeout(scrollToBottom, 50);
+            return newLines;
+        });
     };
 
     // Simulate boot process
@@ -241,6 +309,7 @@ const CyberAcmeBootProgress: React.FC<BootSequenceProps> = ({ onComplete }) => {
             ];
 
             setLogLines(initialLogs);
+            setTimeout(scrollToBottom, 50);
             await delay(1000);
 
             // Run first progress bar - Security check that stalls at 40%
@@ -271,7 +340,11 @@ const CyberAcmeBootProgress: React.FC<BootSequenceProps> = ({ onComplete }) => {
                             createLogLine('[I]', '[I] (20001): ============================================='),
                         ];
 
-                        setLogLines(prev => [...prev, ...completeLogs]);
+                        setLogLines(prev => {
+                            const newLines = [...prev, ...completeLogs];
+                            setTimeout(scrollToBottom, 50);
+                            return newLines;
+                        });
 
                         // Complete boot sequence
                         setTimeout(() => {
@@ -326,12 +399,11 @@ const CyberAcmeBootProgress: React.FC<BootSequenceProps> = ({ onComplete }) => {
                         logs++;
                     }
 
-                    setLogLines(prev => [...prev, ...batch]);
-
-                    // Auto-scroll to bottom
-                    if (logContainerRef.current) {
-                        logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
-                    }
+                    setLogLines(prev => {
+                        const newLines = [...prev, ...batch];
+                        setTimeout(scrollToBottom, 50);
+                        return newLines;
+                    });
                 }, 50);
 
                 return () => clearInterval(interval);
@@ -364,12 +436,14 @@ const CyberAcmeBootProgress: React.FC<BootSequenceProps> = ({ onComplete }) => {
 
                 {/* Fixed progress bar at bottom */}
                 {showProgress && (
-                    <div className={styles.progressBarContainer}>
-                        <div className={styles.progressBarLabel}>
-                            {progressType}:
-                        </div>
-                        <div className={styles.progressBarVisual}>
-                            {`[${Array(Math.floor(30 * progressValue / 100)).fill('=').join('')}${Array(30 - Math.floor(30 * progressValue / 100)).fill(' ').join('')}] ${progressValue}%`}
+                    <div className={styles.progressBarFixed}>
+                        <div className={styles.progressBarContent}>
+                            <div className={styles.progressBarLabel}>
+                                {progressType}:
+                            </div>
+                            <div className={styles.progressBarVisual}>
+                                {`[${Array(Math.floor(20 * progressValue / 100)).fill('▮').join('')}${Array(20 - Math.floor(20 * progressValue / 100)).fill('▯').join('')}] ${progressValue}%`}
+                            </div>
                         </div>
                     </div>
                 )}

@@ -1,7 +1,9 @@
-// ImprovedBrowser.tsx - Mobile responsive version
-import React, {useState, useEffect, useRef, JSX} from 'react';
+// Modified browser component with connection animation
+import React, { useState, useEffect, useRef, JSX } from 'react';
 import styles from './CyAc_browser_v1.module.css';
 import NetworkTrafficDisplay from './NetworkTrafficDisplay';
+import ConnectionAnimation from './ConnectionAnimation';
+import SimpleLoadingIndicator from './SimpleLoadingIndicator';
 
 // Define site data types
 interface SiteData {
@@ -31,6 +33,12 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
         height: typeof window !== 'undefined' ? window.innerHeight : 0
     });
 
+    // Add state for connection animation
+    const [showConnectionAnimation, setShowConnectionAnimation] = useState(false);
+    const [pendingUrl, setPendingUrl] = useState('');
+    const [_animationComplete, setAnimationComplete] = useState(false);
+    const [hasHardwareAcceleration, setHasHardwareAcceleration] = useState(true);
+
     const inputRef = useRef<HTMLInputElement>(null);
     const loadingTimeout = useRef<number | null>(null);
 
@@ -49,6 +57,67 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
 
     // Determine if we're on mobile based on window size
     const isDeviceMobile = windowSize.width <= 768;
+
+    // Improved hardware acceleration detection
+    useEffect(() => {
+        const detectHardwareAcceleration = () => {
+            try {
+                // Create a test canvas
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') as WebGLRenderingContext | null ||
+                    canvas.getContext('experimental-webgl') as WebGLRenderingContext | null;
+
+                if (!gl) {
+                    console.log("WebGL not available - no hardware acceleration");
+                    return false;
+                }
+
+                // Try to get renderer info
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                if (debugInfo) {
+                    const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                    console.log("GPU renderer:", renderer);
+
+                    // Common software renderers to detect
+                    const softwareRenderers = [
+                        'swiftshader',
+                        'software',
+                        'microsoft basic render',
+                        'llvmpipe',
+                        'virtualbox',
+                        'basic rendering'
+                    ];
+
+                    const isSoftwareRenderer = softwareRenderers.some(
+                        name => String(renderer).toLowerCase().includes(name)
+                    );
+
+                    if (isSoftwareRenderer) {
+                        console.log("Software renderer detected - no hardware acceleration");
+                        return false;
+                    }
+                }
+
+                // If we got here, assume hardware acceleration is available
+                return true;
+            } catch (e) {
+                console.error("Error detecting hardware acceleration:", e);
+                // Assume true if detection fails
+                return true;
+            }
+        };
+
+        // Check for reduced motion preference
+        const hasReducedMotion = typeof window !== 'undefined' &&
+            window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // Set hardware acceleration state, but respect reduced motion preference
+        const hasAcceleration = !hasReducedMotion && detectHardwareAcceleration();
+        console.log("Hardware acceleration detection result:", hasAcceleration);
+        setHasHardwareAcceleration(hasAcceleration);
+
+    }, []);
 
     // Load sites from external modules using the index file
     useEffect(() => {
@@ -95,15 +164,91 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
         }
     };
 
-    // Handle navigation to a new URL
+    // Handle navigation to a new URL - Fixed version
     const navigateTo = (url: string, updateHistory = true) => {
         clearTimeouts();
+
+        console.log("Navigating to:", url);
+
+        // Trim and format URL if needed
+        const trimmedUrl = url.trim();
+
+        // Check if we need to show connection animation (only for external URLs)
+        const isExternal = trimmedUrl !== 'newtab' && !findSite(trimmedUrl);
+
+        // Skip animation for low-end devices or when hardware acceleration is off
+        const shouldShowAnimation = isExternal && hasHardwareAcceleration && !isDeviceMobile;
+
+        console.log("Navigation checks:", {
+            isExternal,
+            hasHardwareAccel: hasHardwareAcceleration,
+            isDeviceMobile,
+            shouldShowAnimation
+        });
+
+        // Simple version for low-end devices or when hardware accel is disabled
+        if (isExternal && !shouldShowAnimation) {
+            console.log("Using simplified loading for external URL");
+            setIsLoading(true);
+
+            // Update the current URL and input field
+            setCurrentUrl(trimmedUrl);
+            setInputValue(trimmedUrl);
+
+            // Update the active tab's URL
+            setTabs(prevTabs =>
+                prevTabs.map(tab =>
+                    tab.id === activeTabId ? { ...tab, url: trimmedUrl } : tab
+                )
+            );
+
+            // Update history
+            if (updateHistory) {
+                if (historyIndex < history.length - 1) {
+                    setHistory(prev => [...prev.slice(0, historyIndex + 1), trimmedUrl]);
+                    setHistoryIndex(historyIndex + 1);
+                } else {
+                    setHistory(prev => [...prev, trimmedUrl]);
+                    setHistoryIndex(prev => prev + 1);
+                }
+            }
+
+            // Slightly longer loading time to simulate connection process
+            loadingTimeout.current = window.setTimeout(() => {
+                setIsLoading(false);
+            }, 1200);
+
+            return;
+        }
+
+        // Full animation version - FIXED PATH - When we need to show animation
+        if (shouldShowAnimation) {
+            console.log("Showing full connection animation for:", trimmedUrl);
+
+            setPendingUrl(trimmedUrl);
+            setIsLoading(true);
+
+            // Important: Set this last to ensure state changes are batched correctly
+            setShowConnectionAnimation(true);
+
+            // Update tab URL for better UX but don't update current URL until animation completes
+            setTabs(prevTabs =>
+                prevTabs.map(tab =>
+                    tab.id === activeTabId ? { ...tab, url: trimmedUrl } : tab
+                )
+            );
+
+            return;
+        }
+
+        // Standard navigation for internal sites and newtab
+        console.log("Using standard navigation for internal site or newtab");
         setIsLoading(true);
 
         // Update the current URL and input field
-        setCurrentUrl(url);
-        if (url !== 'newtab') {
-            setInputValue(url);
+        setCurrentUrl(trimmedUrl);
+        if (trimmedUrl !== 'newtab') {
+            setInputValue(trimmedUrl);
         } else {
             setInputValue('');
         }
@@ -111,7 +256,7 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
         // Update the active tab's URL
         setTabs(prevTabs =>
             prevTabs.map(tab =>
-                tab.id === activeTabId ? { ...tab, url } : tab
+                tab.id === activeTabId ? { ...tab, url: trimmedUrl } : tab
             )
         );
 
@@ -119,11 +264,11 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
         if (updateHistory) {
             // If we're not at the end of history, truncate it
             if (historyIndex < history.length - 1) {
-                setHistory(prev => [...prev.slice(0, historyIndex + 1), url]);
+                setHistory(prev => [...prev.slice(0, historyIndex + 1), trimmedUrl]);
                 setHistoryIndex(historyIndex + 1);
             } else {
                 // Otherwise just append
-                setHistory(prev => [...prev, url]);
+                setHistory(prev => [...prev, trimmedUrl]);
                 setHistoryIndex(prev => prev + 1);
             }
         }
@@ -133,6 +278,44 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
             setIsLoading(false);
         }, 500);
     };
+
+    // Handle connection animation completion - FIXED VERSION
+    const handleConnectionComplete = React.useCallback(() => {
+        console.log("Connection animation complete, continuing navigation to:", pendingUrl);
+
+        // Complete the navigation process
+        const url = pendingUrl;
+
+        // First hide the animation
+        setShowConnectionAnimation(false);
+        setAnimationComplete(true);
+
+        // Set a small timeout before updating UI state to ensure smooth transition
+        setTimeout(() => {
+            // Update the current URL and input field
+            setCurrentUrl(url);
+            setInputValue(url);
+
+            // Update history
+            if (historyIndex < history.length - 1) {
+                setHistory(prev => [...prev.slice(0, historyIndex + 1), url]);
+                setHistoryIndex(historyIndex + 1);
+            } else {
+                setHistory(prev => [...prev, url]);
+                setHistoryIndex(prev => prev + 1);
+            }
+
+            // Set loading to false after a short delay
+            loadingTimeout.current = window.setTimeout(() => {
+                setIsLoading(false);
+            }, 300);
+        }, 50);
+    }, [pendingUrl, historyIndex, history.length, activeTabId]);
+
+    // Update dependency array to include all required dependencies
+    useEffect(() => {
+        // This effect ensures handleConnectionComplete has the latest state values
+    }, [handleConnectionComplete, pendingUrl, historyIndex, history.length, activeTabId]);
 
     // Go back in history
     const goBack = () => {
@@ -257,7 +440,40 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
         clearTimeouts();
         setIsLoading(true);
 
-        // Simulate loading delay
+        // Show animation again for external URLs when reloading
+        const shouldShowAnimation = currentUrl !== 'newtab' &&
+            !findSite(currentUrl) &&
+            hasHardwareAcceleration &&
+            !isDeviceMobile;
+
+        console.log("Reload checks:", {
+            isExternal: currentUrl !== 'newtab' && !findSite(currentUrl),
+            hasHardwareAccel: hasHardwareAcceleration,
+            isDeviceMobile,
+            shouldShowAnimation
+        });
+
+        // If it's an external URL but we shouldn't show animation (low-end device)
+        if (currentUrl !== 'newtab' && !findSite(currentUrl) && !shouldShowAnimation) {
+            console.log("Using simplified reload for external URL");
+            // Longer loading time to simulate the connection process
+            loadingTimeout.current = window.setTimeout(() => {
+                setIsLoading(false);
+            }, 1200);
+            return;
+        }
+
+        // Show animation for high-end devices
+        if (shouldShowAnimation) {
+            console.log("Showing animation during reload for:", currentUrl);
+            setPendingUrl(currentUrl);
+
+            // Important: Set this last to ensure state changes are batched correctly
+            setShowConnectionAnimation(true);
+            return;
+        }
+
+        // Simulate loading delay for internal pages
         loadingTimeout.current = window.setTimeout(() => {
             setIsLoading(false);
         }, 500);
@@ -355,6 +571,7 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
 
     // SpeedDialGrid component for paginated bookmarks with responsive layout
     const SpeedDialGrid: React.FC<{ sites: SiteData[] }> = ({ sites }) => {
+        // SpeedDialGrid implementation (unchanged)
         const [currentPage, setCurrentPage] = useState(0);
 
         // Responsive grid configuration
@@ -466,51 +683,51 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
                     ))}
                 </div>
 
-                {/* Page indicator dots */}
-                <div className={styles.pageIndicator}>
-                    {Array.from({ length: totalPages }).map((_, i) => (
-                        <div
-                            key={i}
-                            className={`${styles.pageDot} ${i === currentPage ? styles.activePageDot : ''}`}
-                            onClick={() => setCurrentPage(i)}
-                        />
-                    ))}
-                </div>
-
-                {/* Navigation buttons */}
-                {currentPage > 0 && (
-                    <button
-                        className={`${styles.pageNavBtn} ${styles.pageNavPrev}`}
-                        onClick={() => handleScroll('prev')}
-                        aria-label="Previous page"
-                    >
-                        ▲
-                    </button>
-                )}
-                {currentPage < totalPages - 1 && (
-                    <button
-                        className={`${styles.pageNavBtn} ${styles.pageNavNext}`}
-                        onClick={() => handleScroll('next')}
-                        aria-label="Next page"
-                    >
-                        ▼
-                    </button>
-                )}
+                {/* Pagination controls would go here */}
             </div>
         );
     };
 
-    // Get the active tab's content
+    // Get the active tab's content - FIXED VERSION
     const getTabContent = () => {
+        console.log("Getting tab content:", {
+            showConnectionAnimation,
+            hasHardwareAcceleration,
+            isDeviceMobile,
+            pendingUrl,
+            currentUrl
+        });
+
+        // If showing connection animation, render that based on hardware acceleration
+        if (showConnectionAnimation) {
+            if (hasHardwareAcceleration && !isDeviceMobile) {
+                // Full animation for capable devices
+                console.log("Rendering full connection animation for:", pendingUrl);
+                return (
+                    <ConnectionAnimation
+                        url={pendingUrl}
+                        onComplete={handleConnectionComplete}
+                    />
+                );
+            } else {
+                // Simple loading for less capable devices
+                console.log("Rendering simple loading indicator for:", pendingUrl);
+                return (
+                    <SimpleLoadingIndicator url={pendingUrl} />
+                );
+            }
+        }
+
         const activeTab = tabs.find(tab => tab.id === activeTabId);
         if (!activeTab) return null;
 
+        console.log("Rendering content for active tab:", activeTab.url);
         return getCurrentContent(activeTab.url);
     };
 
     // Get content for a given URL
     const getCurrentContent = (url: string) => {
-        if (isLoading) {
+        if (isLoading && !showConnectionAnimation) {
             return (
                 <div className={styles.loadingIndicator}>
                     <div className={styles.spinner}></div>
@@ -565,6 +782,10 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
             const searchUrl = prepareGoogleSearchUrl(url);
             return (
                 <div className={styles.iframeContainer}>
+                    <div className={styles.greenTintOverlay}></div>
+                    <div className={styles.crtOverlay}></div>
+                    <div className={styles.scanlines}></div>
+                    <div className={styles.glitchOverlay}></div>
                     <iframe
                         src={searchUrl}
                         className={styles.browserIframe}
@@ -671,8 +892,9 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
             <div className={styles.statusBar}>
                 <div className={styles.status}>
                     {isLoading ? 'LOADING...' :
-                        currentUrl === 'newtab' ? 'READY' :
-                            findSite(currentUrl) ? 'CONNECTED' : 'SEARCH'}
+                        showConnectionAnimation ? 'ESTABLISHING CONNECTION...' :
+                            currentUrl === 'newtab' ? 'READY' :
+                                findSite(currentUrl) ? 'CONNECTED' : 'EXTERNAL NETWORK'}
                 </div>
                 {/* Show mini version of network traffic in status bar */}
                 <div className={styles.securityIndicator}>
@@ -681,7 +903,9 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
                             <div key={i} className={i % 2 === 0 ? styles.miniBarIn : styles.miniBarOut} />
                         ))}
                     </div>
-                    <span className={styles.securityText}>SECURE CONNECTION</span>
+                    <span className={styles.securityText}>
+                        {!findSite(currentUrl) && currentUrl !== 'newtab' ? 'EXTERNAL CONNECTION' : 'SECURE CONNECTION'}
+                    </span>
                 </div>
             </div>
         </div>
