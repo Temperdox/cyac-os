@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styles from './TaskBar.module.css';
 import IconRenderer from "../QuickMenu/IconRenderer.tsx";
-/*import { FocusManager } from '../services/FocusManager';*/
+// Removing this import as we'll render the calendar in App.tsx instead
+// import RetroCalendar from '../RetroCalendar/RetroCalendar';
 
 interface TaskBarProps {
     items: Array<{
@@ -15,6 +16,9 @@ interface TaskBarProps {
     onTerminalFocus: () => void;
     onClockClick?: () => void;
     activeWindowId?: string;
+    // Add these new props to work with App.tsx
+    isCalendarOpen?: boolean;
+    setIsCalendarOpen?: (isOpen: boolean) => void;
 }
 
 const TaskBar: React.FC<TaskBarProps> = ({
@@ -24,9 +28,13 @@ const TaskBar: React.FC<TaskBarProps> = ({
                                              onTerminalFocus,
                                              onClockClick,
                                              activeWindowId,
+                                             isCalendarOpen,
+                                             setIsCalendarOpen
                                          }) => {
     const [currentTime, setCurrentTime] = useState<string>('');
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+    // We no longer need this local state as we'll use the one from App.tsx
+    // const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
 
     // Update time every second
     useEffect(() => {
@@ -56,23 +64,36 @@ const TaskBar: React.FC<TaskBarProps> = ({
     const handleQuickMenuClick = (e: React.MouseEvent) => {
         e.stopPropagation();
         onQuickMenuToggle();
+        // Close calendar if open
+        if (isCalendarOpen && setIsCalendarOpen) {
+            setIsCalendarOpen(false);
+        }
     };
 
     // Handle taskbar item click
     const handleItemClick = (id: string, e: React.MouseEvent) => {
         e.stopPropagation();
         onItemClick(id);
+        // Close calendar if open
+        if (isCalendarOpen && setIsCalendarOpen) {
+            setIsCalendarOpen(false);
+        }
     };
 
     // Handle terminal button click
     const handleTerminalButtonClick = (e: React.MouseEvent) => {
         e.stopPropagation();
         onTerminalFocus();
+        // Close calendar if open
+        if (isCalendarOpen && setIsCalendarOpen) {
+            setIsCalendarOpen(false);
+        }
     };
 
     // Handle clock button click
     const handleClockClick = (e: React.MouseEvent) => {
         e.stopPropagation();
+        // Just call the onClockClick prop, which will handle the calendar toggle
         if (onClockClick) {
             onClockClick();
         }
@@ -139,6 +160,8 @@ const TaskBar: React.FC<TaskBarProps> = ({
                     <span className={styles.clockText}>{currentTime}</span>
                 </button>
             </div>
+
+            {/* Calendar popup - Removed from here, will be rendered at the App level */}
 
             {/* Preview when hovering over a taskbar item (on desktop only) */}
             {!isMobile && hoveredItem && (

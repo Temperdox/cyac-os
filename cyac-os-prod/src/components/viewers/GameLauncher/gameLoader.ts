@@ -136,8 +136,6 @@ export async function loadGameData(): Promise<GameLoaderResponse> {
 
                     // If no manifest, scan the directory for games
                     try {
-                        // Placeholder for directory scanning
-                        // In a real system, this would scan the directory and load each game's metadata
                         console.warn('Directory scanning not implemented in this version');
 
                         // For now, we'll use our fallback games

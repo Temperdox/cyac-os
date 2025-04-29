@@ -20,8 +20,6 @@ export function registerGames(): void {
         // Create games directory if it doesn't exist yet
         if (!FileSystem.exists('/home/user/programs/games')) {
             console.log('Creating games directory...');
-            // In a real implementation, we would create the directory here
-            // For now, we'll rely on the default directory structure
         }
 
         // Register individual games in the games directory for direct access

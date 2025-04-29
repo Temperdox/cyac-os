@@ -14,8 +14,6 @@ export const gameMetadata = {
 };
 
 // Direction types
-/*type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';*/
-
 // Position interface
 interface Position {
     x: number;
@@ -205,12 +203,12 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
         };
 
         // Allow the DOM to render first
-        window.setTimeout(initGame, 100);
+        setTimeout(initGame, 100);
 
         // Handle window resize with debounce
         const handleResizeWithDebounce = () => {
             if (resizeTimeoutRef.current) {
-                window.clearTimeout(resizeTimeoutRef.current);
+                clearTimeout(resizeTimeoutRef.current);
             }
 
             resizeTimeoutRef.current = window.setTimeout(() => {
@@ -230,13 +228,13 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
         // Clean up on unmount
         return () => {
             if (gameLoopInterval.current) {
-                window.clearInterval(gameLoopInterval.current);
+                clearInterval(gameLoopInterval.current);
             }
             if (specialFoodTimerRef.current) {
-                window.clearTimeout(specialFoodTimerRef.current);
+                clearTimeout(specialFoodTimerRef.current);
             }
             if (resizeTimeoutRef.current) {
-                window.clearTimeout(resizeTimeoutRef.current);
+                clearTimeout(resizeTimeoutRef.current);
             }
             window.removeEventListener('resize', handleResizeWithDebounce);
         };
@@ -250,62 +248,55 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
     }, [containerDimensions]);
 
     // Calculate optimal grid size based on container
-    const calculateGridSize = (): void => {
+    const calculateGridSize = () => {
         if (!containerRef.current) return;
 
-        // Get the game area element
-        const gameAreaElement = document.querySelector(`.${styles.gameArea}`);
-        if (!gameAreaElement) return;
+        // Get container dimensions
+        const { width: containerWidth, height: containerHeight } = containerDimensions;
 
-        // Get the actual game area size
-        const gameAreaRect = gameAreaElement.getBoundingClientRect();
+        // Reserve space for UI elements
+        const titleHeight = 50;
+        const controlsHeight = 80;
+        const sidePadding = 30;
 
         // Calculate available space
-        // Subtract any padding/borders
-        const availableWidth = gameAreaRect.width - 10; // Subtracting padding
-        const availableHeight = gameAreaRect.height - 10; // Subtracting padding
+        const availableWidth = containerWidth - sidePadding * 2;
+        const availableHeight = containerHeight - titleHeight - controlsHeight;
 
-        // Use the smaller dimension to create a square
-        const gridPixelSize = Math.min(availableWidth, availableHeight);
+        // Use the smaller dimension for a square grid
+        const maxGridPixelSize = Math.min(availableWidth, availableHeight);
 
-        // Choose a cell size that divides evenly into the available space
-        // We'll target a grid with around 20x20 cells
-        let idealCellSize = 0;
-        let finalGridSize = 0;
-
-        // Try cell sizes from 10px to 20px to find the best fit
-        for (let testCellSize = 20; testCellSize >= 10; testCellSize--) {
-            const gridSize = Math.floor(gridPixelSize / testCellSize);
-            // We want a grid size that's an even number (ideally 20x20)
-            if (gridSize >= 10 && gridSize <= 30) {
-                idealCellSize = testCellSize;
-                finalGridSize = gridSize;
-                break;
-            }
+        // Ensure we have space
+        if (maxGridPixelSize <= 0) {
+            console.warn("Container too small for game grid");
+            return;
         }
 
-        // If we didn't find an ideal size, use a default
-        if (idealCellSize === 0) {
-            idealCellSize = 15;
-            finalGridSize = Math.floor(gridPixelSize / idealCellSize);
+        // Calculate cell size (aim for 20x20 grid)
+        let targetGridCells = 20;
+        let newCellSize = Math.floor(maxGridPixelSize / targetGridCells);
+
+        // Adjust if cells would be too small
+        if (newCellSize < 12) {
+            targetGridCells = Math.max(12, Math.floor(maxGridPixelSize / 12));
+            newCellSize = Math.floor(maxGridPixelSize / targetGridCells);
+        }
+        // If cells would be too big
+        else if (newCellSize > 20) {
+            targetGridCells = Math.floor(maxGridPixelSize / 20);
+            newCellSize = 20;
         }
 
-        console.log(`Grid: ${finalGridSize}x${finalGridSize}, Cell size: ${idealCellSize}px`);
+        // Ensure grid fits
+        const newGridSize = Math.floor(maxGridPixelSize / newCellSize);
 
-        // Update state
-        setCellSize(idealCellSize);
-        setGridSize(finalGridSize);
-        gridSizeRef.current = finalGridSize;
-
-        // Force canvas to redraw with new dimensions
-        if (canvasRef.current) {
-            canvasRef.current.width = finalGridSize * idealCellSize;
-            canvasRef.current.height = finalGridSize * idealCellSize;
-        }
+        setCellSize(newCellSize);
+        setGridSize(newGridSize);
+        gridSizeRef.current = newGridSize;
     };
 
     // Handle resize
-    const handleResize = (): void => {
+    const handleResize = () => {
         const oldGridSize = gridSizeRef.current;
         calculateGridSize();
         const newGridSize = gridSizeRef.current;
@@ -342,10 +333,10 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
     };
 
     // Spawn food at a random position
-    const spawnFood = (): void => {
+    const spawnFood = () => {
         // Clear previous special food timer
         if (specialFoodTimerRef.current) {
-            window.clearTimeout(specialFoodTimerRef.current);
+            clearTimeout(specialFoodTimerRef.current);
             specialFoodTimerRef.current = null;
         }
 
@@ -399,7 +390,7 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
                     setFood(f => {
                         if (f && f.type === FOOD_TYPES.SPECIAL) {
                             foodRef.current = null;
-                            window.setTimeout(() => {
+                            setTimeout(() => {
                                 if (!foodRef.current) spawnFood();
                             }, 100);
                             return null;
@@ -412,7 +403,7 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
     };
 
     // Update game state
-    const updateGame = (): void => {
+    const updateGame = () => {
         const currentSnake = [...snakeRef.current];
         const currentDirection = directionRef.current;
         const currentFood = foodRef.current;
@@ -464,11 +455,11 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
 
                     // Show level up message
                     setMessage(`Level ${lvl}!`);
-                    window.setTimeout(() => setMessage(''), 1500);
+                    setTimeout(() => setMessage(''), 1500);
 
                     // Update game loop
                     if (gameLoopInterval.current) {
-                        window.clearInterval(gameLoopInterval.current);
+                        clearInterval(gameLoopInterval.current);
                         startGameLoop();
                     }
                 }
@@ -483,7 +474,7 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
 
             // Clear special food timer
             if (currentFood.type === FOOD_TYPES.SPECIAL && specialFoodTimerRef.current) {
-                window.clearTimeout(specialFoodTimerRef.current);
+                clearTimeout(specialFoodTimerRef.current);
                 specialFoodTimerRef.current = null;
             }
 
@@ -500,9 +491,9 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
     };
 
     // Start game loop
-    const startGameLoop = (): void => {
+    const startGameLoop = () => {
         if (gameLoopInterval.current) {
-            window.clearInterval(gameLoopInterval.current);
+            clearInterval(gameLoopInterval.current);
         }
 
         gameLoopInterval.current = window.setInterval(() => {
@@ -513,10 +504,10 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
     };
 
     // Reset the game
-    const resetGame = (): void => {
+    const resetGame = () => {
         // Clear timers
         if (specialFoodTimerRef.current) {
-            window.clearTimeout(specialFoodTimerRef.current);
+            clearTimeout(specialFoodTimerRef.current);
             specialFoodTimerRef.current = null;
         }
 
@@ -553,14 +544,14 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
         foodRef.current = null;
 
         // Spawn new food and start game
-        window.setTimeout(() => {
+        setTimeout(() => {
             spawnFood();
             startGameLoop();
         }, 50);
     };
 
     // Toggle pause
-    const togglePause = (): void => {
+    const togglePause = () => {
         if (gameOverRef.current) {
             resetGame();
         } else {
@@ -571,7 +562,7 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
     };
 
     // Handle direction button clicks
-    const handleDirectionButtonClick = (dir: typeof DIRECTIONS.UP | typeof DIRECTIONS.DOWN | typeof DIRECTIONS.LEFT | typeof DIRECTIONS.RIGHT): void => {
+    const handleDirectionButtonClick = (dir: typeof DIRECTIONS.UP | typeof DIRECTIONS.DOWN | typeof DIRECTIONS.LEFT | typeof DIRECTIONS.RIGHT) => {
         // Prevent 180° turns
         const curr = directionRef.current;
 
@@ -587,7 +578,7 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
     };
 
     // Prevent default on button clicks
-    const handleButtonClick = (e: React.MouseEvent, callback: () => void): void => {
+    const handleButtonClick = (e: React.MouseEvent, callback: () => void) => {
         e.preventDefault();
         e.stopPropagation();
         callback();
@@ -601,19 +592,13 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        // Set canvas dimensions explicitly to match grid size * cell size
-        canvas.width = gridSize * cellSize;
-        canvas.height = gridSize * cellSize;
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Clear the canvas with black background
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Draw subtle grid
+        ctx.strokeStyle = '#222';
+        ctx.lineWidth = 0.5;
 
-        // Draw grid lines (subtle)
-        ctx.strokeStyle = '#111111';
-        ctx.lineWidth = 1;
-
-        // Draw vertical grid lines
         for (let x = 0; x <= gridSize; x++) {
             ctx.beginPath();
             ctx.moveTo(x * cellSize, 0);
@@ -621,7 +606,6 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
             ctx.stroke();
         }
 
-        // Draw horizontal grid lines
         for (let y = 0; y <= gridSize; y++) {
             ctx.beginPath();
             ctx.moveTo(0, y * cellSize);
@@ -629,82 +613,71 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
             ctx.stroke();
         }
 
-        // Draw the snake - each segment as a rounded rectangle
+        // Draw the snake
         snake.forEach((segment, index) => {
-            // Skip segments outside the grid boundaries
             if (
                 segment.x < 0 ||
                 segment.x >= gridSize ||
                 segment.y < 0 ||
                 segment.y >= gridSize
             ) {
-                return;
+                return; // Skip out-of-bounds segments
             }
 
-            // Calculate pixel position
-            const x = segment.x * cellSize;
-            const y = segment.y * cellSize;
-
-            // Calculate color gradient from head to tail
-            let green;
+            // Color gradient from head to tail
             if (index === 0) {
-                // Head is brightest
-                green = 255;
+                ctx.fillStyle = '#33ff33'; // Bright green for head
             } else {
-                // Body segments get darker toward the tail
-                green = Math.max(255 - (index * 10), 100);
+                const greenValue = Math.max(200 - (index * 6), 50);
+                ctx.fillStyle = `rgb(0, ${greenValue}, 0)`;
             }
 
-            // Set fill style based on position in snake
-            ctx.fillStyle = `rgb(0, ${green}, 0)`;
-
-            // Draw snake segment with rounded corners
-            const radius = Math.min(4, cellSize / 4);
-            const size = cellSize - 2; // Slight gap between cells
-
-            // Draw rounded rectangle
+            // Draw segment
             ctx.beginPath();
-            ctx.moveTo(x + radius, y);
-            ctx.arcTo(x + size, y, x + size, y + size, radius);
-            ctx.arcTo(x + size, y + size, x, y + size, radius);
-            ctx.arcTo(x, y + size, x, y, radius);
-            ctx.arcTo(x, y, x + size, y, radius);
-            ctx.closePath();
+            ctx.fillRect(
+                segment.x * cellSize + 1,
+                segment.y * cellSize + 1,
+                cellSize - 2,
+                cellSize - 2
+            );
             ctx.fill();
 
-            // Draw eyes only on the head
+            // Draw eyes on head
             if (index === 0) {
-                ctx.fillStyle = '#000000';
+                ctx.fillStyle = '#000';
 
-                // Calculate eye positions based on direction
-                const eyeSize = Math.max(2, cellSize / 8);
-                const eyePadding = Math.max(2, cellSize / 6);
-
+                // Eye positions based on direction
                 let leftEyeX, leftEyeY, rightEyeX, rightEyeY;
+                const eyeOffset = Math.max(2, Math.floor(cellSize / 6));
+                const eyeSize = Math.max(1, Math.floor(cellSize / 9));
 
-                if (direction.y === -1) { // UP
-                    leftEyeX = x + eyePadding * 2;
-                    leftEyeY = y + eyePadding;
-                    rightEyeX = x + cellSize - eyePadding * 2;
-                    rightEyeY = y + eyePadding;
-                } else if (direction.y === 1) { // DOWN
-                    leftEyeX = x + eyePadding * 2;
-                    leftEyeY = y + cellSize - eyePadding;
-                    rightEyeX = x + cellSize - eyePadding * 2;
-                    rightEyeY = y + cellSize - eyePadding;
-                } else if (direction.x === -1) { // LEFT
-                    leftEyeX = x + eyePadding;
-                    leftEyeY = y + eyePadding * 2;
-                    rightEyeX = x + eyePadding;
-                    rightEyeY = y + cellSize - eyePadding * 2;
-                } else { // RIGHT
-                    leftEyeX = x + cellSize - eyePadding;
-                    leftEyeY = y + eyePadding * 2;
-                    rightEyeX = x + cellSize - eyePadding;
-                    rightEyeY = y + cellSize - eyePadding * 2;
+                if (direction.y === -1) {
+                    // UP
+                    leftEyeX = segment.x * cellSize + eyeOffset * 2;
+                    leftEyeY = segment.y * cellSize + eyeOffset * 2;
+                    rightEyeX = segment.x * cellSize + cellSize - eyeOffset * 2;
+                    rightEyeY = segment.y * cellSize + eyeOffset * 2;
+                } else if (direction.y === 1) {
+                    // DOWN
+                    leftEyeX = segment.x * cellSize + eyeOffset * 2;
+                    leftEyeY = segment.y * cellSize + cellSize - eyeOffset * 2;
+                    rightEyeX = segment.x * cellSize + cellSize - eyeOffset * 2;
+                    rightEyeY = segment.y * cellSize + cellSize - eyeOffset * 2;
+                } else if (direction.x === -1) {
+                    // LEFT
+                    leftEyeX = segment.x * cellSize + eyeOffset * 2;
+                    leftEyeY = segment.y * cellSize + eyeOffset * 2;
+                    rightEyeX = segment.x * cellSize + eyeOffset * 2;
+                    rightEyeY = segment.y * cellSize + cellSize - eyeOffset * 2;
+                } else {
+                    // RIGHT
+                    leftEyeX = segment.x * cellSize + cellSize - eyeOffset * 2;
+                    leftEyeY = segment.y * cellSize + eyeOffset * 2;
+                    rightEyeX = segment.x * cellSize + cellSize - eyeOffset * 2;
+                    rightEyeY = segment.y * cellSize + cellSize - eyeOffset * 2;
                 }
 
-                // Draw the eyes
+                // Draw eyes
                 ctx.beginPath();
                 ctx.arc(leftEyeX, leftEyeY, eyeSize, 0, Math.PI * 2);
                 ctx.fill();
@@ -717,69 +690,52 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
 
         // Draw the food
         if (food) {
-            // Calculate pixel position
-            const x = food.x * cellSize;
-            const y = food.y * cellSize;
-
-            // Get the correct color based on food type
             ctx.fillStyle = food.type.color;
 
             if (food.type === FOOD_TYPES.NORMAL) {
-                // Regular food is a circle with glow
-                ctx.shadowColor = food.type.color;
-                ctx.shadowBlur = 6;
-
+                // Normal food is a circle
                 ctx.beginPath();
                 ctx.arc(
-                    x + cellSize / 2,
-                    y + cellSize / 2,
-                    cellSize / 3,
+                    food.x * cellSize + cellSize / 2,
+                    food.y * cellSize + cellSize / 2,
+                    cellSize / 2 - 2,
                     0,
                     Math.PI * 2
                 );
                 ctx.fill();
-
-                // Reset shadow
-                ctx.shadowBlur = 0;
             } else {
                 // Special food is a star
-                const centerX = x + cellSize / 2;
-                const centerY = y + cellSize / 2;
-                const outerRadius = cellSize / 2.5;
+                const centerX = food.x * cellSize + cellSize / 2;
+                const centerY = food.y * cellSize + cellSize / 2;
+                const outerRadius = cellSize / 2 - 2;
                 const innerRadius = outerRadius / 2;
                 const spikes = 5;
 
-                // Add glow effect
-                ctx.shadowColor = food.type.color;
-                ctx.shadowBlur = 10;
-
-                // Draw star
                 ctx.beginPath();
                 for (let i = 0; i < spikes * 2; i++) {
                     const radius = i % 2 === 0 ? outerRadius : innerRadius;
                     const angle = (Math.PI * i) / spikes;
-                    const starX = centerX + Math.sin(angle) * radius;
-                    const starY = centerY + Math.cos(angle) * radius;
+                    const x = centerX + radius * Math.sin(angle);
+                    const y = centerY + radius * Math.cos(angle);
 
                     if (i === 0) {
-                        ctx.moveTo(starX, starY);
+                        ctx.moveTo(x, y);
                     } else {
-                        ctx.lineTo(starX, starY);
+                        ctx.lineTo(x, y);
                     }
                 }
+
                 ctx.closePath();
                 ctx.fill();
 
-                // Reset shadow
+                // Add glow effect
+                ctx.shadowColor = food.type.color;
+                ctx.shadowBlur = 10;
+                ctx.stroke();
                 ctx.shadowBlur = 0;
             }
         }
-
-        // Draw a subtle border around the game area
-        ctx.strokeStyle = '#33ff33';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(0, 0, canvas.width, canvas.height);
-    }, [snake, food, direction, gridSize, cellSize]);
+    }, [snake, food, direction, gameOver, gridSize, cellSize]);
 
     return (
         <div className={styles.snakeGame} ref={containerRef}>
@@ -916,7 +872,7 @@ const Snake: React.FC<SnakeProps> = ({ onExit, hasKeyboardFocus = true }) => {
             </div>
 
             <div className={styles.instructions}>
-                <p><span className={styles.key}>←→↑↓</span> CONTROL SNAKE | <span className={styles.key}>SPACE</span> PAUSE | EAT APPLES TO GROW AND INCREASE YOUR SCORE</p>
+                <p><span className={styles.key}>←→↑↓</span> Control snake | <span className={styles.key}>Space</span> Pause | Eat apples to grow and increase your score</p>
             </div>
         </div>
     );

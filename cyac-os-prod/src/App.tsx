@@ -10,6 +10,7 @@ import QuickMenu from './components/QuickMenu/QuickMenu';
 import HomeScreen from './components/HomeScreen/HomeScreen';
 import CrtEffects from './components/CrtEffects/CrtEffects';
 import ToastContainer from './components/Toast/ToastContainer';
+import RetroCalendar from './components/RetroCalendar/RetroCalendar';
 import { ToastManager } from './services/ToastManager';
 import { FileSystem } from './services/FileSystem';
 import { AudioManager } from './services/AudioManager';
@@ -48,6 +49,7 @@ const App: React.FC = () => {
     const [terminalHeight, setTerminalHeight] = useState<number>(200);
     const [terminalVisible, setTerminalVisible] = useState<boolean>(true);
     const [windowOrder, setWindowOrder] = useState<string[]>([]);
+    const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
 
     // Check if current path is the auth callback
     const isAuthCallback = window.location.pathname.includes('/auth/callback') ||
@@ -183,6 +185,15 @@ const App: React.FC = () => {
             FocusManager.setFocus('quickMenu');
         } else {
             FocusManager.setFocus('terminal');
+        }
+    };
+
+    // Handle calendar toggle
+    const handleClockClick = () => {
+        setIsCalendarOpen(!isCalendarOpen);
+        // Close any other overlays when opening calendar
+        if (!isCalendarOpen && quickMenuOpen) {
+            setQuickMenuOpen(false);
         }
     };
 
@@ -549,13 +560,13 @@ const App: React.FC = () => {
     }
 
     // Render power button or boot sequence if not booted yet
-    /*if (!powered) {
+    if (!powered) {
         return <PowerButton onPowerOn={handlePowerOn} />;
     }
 
     if (!booted) {
         return <BootSequence onComplete={handleBootComplete} />;
-    }*/
+    }
 
     // Calculate available height for content based on terminal visibility
     const contentHeight = `calc(100% - 40px - ${terminalVisible ? terminalHeight : 0}px)`;
@@ -569,10 +580,6 @@ const App: React.FC = () => {
 
             {/* CRT Effects - Always included, with hardware acceleration param */}
             <CrtEffects isHardwareAccelerated={isHardwareAccelerated} />
-
-            {/* Power and Boot under CRT Effects */}
-            {!powered && <PowerButton onPowerOn={handlePowerOn} />}
-            {powered && !booted && !AuthService.isAuthenticated() && <BootSequence onComplete={handleBootComplete} />}
 
             {/* Toast Notification Container */}
             <ToastContainer />
@@ -664,8 +671,19 @@ const App: React.FC = () => {
                 onItemClick={handleTaskbarItemClick}
                 onQuickMenuToggle={handleQuickMenuToggle}
                 onTerminalFocus={handleTerminalToggle}
+                onClockClick={handleClockClick}
                 activeWindowId={activeWindowId}
+                isCalendarOpen={isCalendarOpen}
+                setIsCalendarOpen={setIsCalendarOpen}
             />
+
+            {/* Calendar overlay - rendered at the App level to ensure proper stacking */}
+            {isCalendarOpen && (
+                <RetroCalendar
+                    isOpen={isCalendarOpen}
+                    onClose={() => setIsCalendarOpen(false)}
+                />
+            )}
         </div>
     );
 };
