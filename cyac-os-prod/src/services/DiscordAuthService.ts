@@ -1,4 +1,3 @@
-// src/services/DiscordAuthService.ts
 import { AuthService } from './AuthService';
 
 // Configuration - update these values for your environment

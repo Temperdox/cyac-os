@@ -1,4 +1,3 @@
-// src/components/auth/DiscordCallback.tsx
 import React, { useEffect, useState } from 'react';
 import styles from './DiscordCallback.module.css';
 import { DiscordAuthService } from '../../../services/DiscordAuthService';

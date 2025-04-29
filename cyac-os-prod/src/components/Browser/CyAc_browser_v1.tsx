@@ -1,4 +1,3 @@
-// Modified browser component with connection animation
 import React, { useState, useEffect, useRef, JSX } from 'react';
 import styles from './CyAc_browser_v1.module.css';
 import NetworkTrafficDisplay from './NetworkTrafficDisplay';

@@ -1,4 +1,3 @@
-// BrowserImplementation.tsx - Updated implementation
 import React, { useState, useEffect } from 'react';
 import EnhancedMinimalBrowser from './CyAc_browser_v1';
 import { SITES } from './sites';

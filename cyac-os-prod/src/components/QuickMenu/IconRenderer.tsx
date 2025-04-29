@@ -1,4 +1,3 @@
-// IconRenderer.tsx
 import React from 'react';
 
 interface IconRendererProps {

@@ -1,6 +1,6 @@
 import { FileSystem } from './FileSystem';
 import { AuthService } from './AuthService';
-import { DiscordAuthService } from './DiscordAuthService'; // Fixed import without .ts extension
+import { DiscordAuthService } from './DiscordAuthService';
 
 // Command result interface
 interface CommandResult {

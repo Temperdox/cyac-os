@@ -1,5 +1,3 @@
-// FocusManager.ts
-
 /**
  * Focus element types for the application
  */
