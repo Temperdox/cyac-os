@@ -1,0 +1,101 @@
+@keyframes previewFadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -95%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -100%);
+    }
+}
+
+/* Window preview container */
+.taskbar-preview {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    background-color: #001122;
+    border: 1px solid #33ff33;
+    border-radius: 4px;
+    width: 220px;
+    height: 160px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8), 0 0 5px rgba(51, 255, 51, 0.5);
+    z-index: 99999;
+    overflow: hidden;
+    pointer-events: auto;
+    animation: previewFadeIn 0.15s ease-out;
+    margin-bottom: 10px;
+}
+
+/* Preview header */
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 8px;
+    background: linear-gradient(to bottom, #000b66, #00443a);
+    border-bottom: 1px solid #33ff33;
+    height: 28px;
+}
+
+.preview-title {
+    color: #33ff33;
+    font-size: 11px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.preview-close-btn {
+    background: none;
+    border: none;
+    color: #ff9999;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0 5px;
+    margin-left: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 18px;
+    width: 18px;
+    border-radius: 3px;
+}
+
+.preview-close-btn:hover {
+    background-color: rgba(255, 0, 0, 0.3);
+    color: #ffffff;
+}
+
+/* Preview content */
+.preview-content {
+    height: calc(100% - 28px);
+    overflow: hidden;
+    background-color: #000000;
+}
+
+/* Content container for the actual window content */
+.preview-actual-content {
+    width: 330%;
+    height: 330%;
+    transform: scale(0.3);
+    transform-origin: top left;
+    pointer-events: none;
+}
+
+/* Placeholder for preview content */
+.preview-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #33ff33;
+    font-size: 12px;
+    text-align: center;
+    padding: 10px;
+    background: radial-gradient(ellipse at center, #002200 0%, #000900 100%);
+    overflow: hidden;
+}

@@ -3,6 +3,8 @@ import styles from './CyAc_browser_v1.module.css';
 import NetworkTrafficDisplay from './NetworkTrafficDisplay';
 import ConnectionAnimation from './ConnectionAnimation';
 import SimpleLoadingIndicator from './SimpleLoadingIndicator';
+import PagePreview from './PagePreview';
+import GoogleSearchResults from './GoogleSearchResults';
 
 // Define site data types
 interface SiteData {
@@ -14,7 +16,7 @@ interface SiteData {
 }
 
 // Define the browser component
-const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: boolean }> = ({
+const CyAc_browser_v1: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: boolean }> = ({
                                                                                                   hasKeyboardFocus = false
                                                                                               }) => {
     // State for URL and navigation
@@ -27,6 +29,7 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
     const [tabs, setTabs] = useState<{ id: string, url: string }[]>([{ id: 'tab1', url: 'newtab' }]);
     const [activeTabId, setActiveTabId] = useState('tab1');
     const [sites, setSites] = useState<SiteData[]>([]);
+    const [ranAnimation, setRanAnimation] = useState<{[tabId: string]: boolean}>({});
     const [windowSize, setWindowSize] = useState({
         width: typeof window !== 'undefined' ? window.innerWidth : 0,
         height: typeof window !== 'undefined' ? window.innerHeight : 0
@@ -37,6 +40,9 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
     const [pendingUrl, setPendingUrl] = useState('');
     const [_animationComplete, setAnimationComplete] = useState(false);
     const [hasHardwareAcceleration, setHasHardwareAcceleration] = useState(true);
+
+    // Add state to track the last external URL to prevent repeated animations
+    const [lastExternalUrl, setLastExternalUrl] = useState<string>('');
 
     const inputRef = useRef<HTMLInputElement>(null);
     const loadingTimeout = useRef<number | null>(null);
@@ -150,11 +156,6 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
         ) || null;
     };
 
-    // Prepare Google search URL
-    const prepareGoogleSearchUrl = (query: string) => {
-        return `https://www.google.com/search?igu=1&q=${encodeURIComponent(query)}`;
-    };
-
     // Clear any loading timeouts
     const clearTimeouts = () => {
         if (loadingTimeout.current !== null) {
@@ -163,7 +164,7 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
         }
     };
 
-    // Handle navigation to a new URL - Fixed version
+    // Handle navigation to a new URL - Updated version
     const navigateTo = (url: string, updateHistory = true) => {
         clearTimeouts();
 
@@ -175,17 +176,43 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
         // Check if we need to show connection animation (only for external URLs)
         const isExternal = trimmedUrl !== 'newtab' && !findSite(trimmedUrl);
 
-        // Skip animation for low-end devices or when hardware acceleration is off
-        const shouldShowAnimation = isExternal && hasHardwareAcceleration && !isDeviceMobile;
+        if (!isExternal) {
+            setRanAnimation(prev => ({
+                ...prev,
+                [activeTabId]: false
+            }));
+        }
+
+        const alreadyRanAnimation = ranAnimation[activeTabId];
+
+        // Skip animation for low-end devices, when hardware acceleration is off,
+        // or if we're navigating to the same external URL again
+        const isSameExternalUrl = isExternal && trimmedUrl === lastExternalUrl;
+        const shouldShowAnimation = isExternal &&
+            hasHardwareAcceleration &&
+            !isDeviceMobile &&
+            !alreadyRanAnimation &&
+            !isSameExternalUrl;
 
         console.log("Navigation checks:", {
             isExternal,
+            alreadyRanAnimation,
+            isSameExternalUrl,
             hasHardwareAccel: hasHardwareAcceleration,
             isDeviceMobile,
             shouldShowAnimation
         });
 
-        // Simple version for low-end devices or when hardware accel is disabled
+        // Update the last external URL if this is an external navigation
+        if (isExternal) {
+            setLastExternalUrl(trimmedUrl);
+        } else {
+            // If navigating to an internal site, reset the lastExternalUrl
+            // This ensures the animation will show next time an external site is visited
+            setLastExternalUrl('');
+        }
+
+        // Simple version for low-end devices or when hardware accel is disabled or same URL
         if (isExternal && !shouldShowAnimation) {
             console.log("Using simplified loading for external URL");
             setIsLoading(true);
@@ -220,9 +247,15 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
             return;
         }
 
-        // Full animation version - FIXED PATH - When we need to show animation
+        // Full animation version - When we need to show animation
         if (shouldShowAnimation) {
             console.log("Showing full connection animation for:", trimmedUrl);
+
+            // Set the animation as having run for this tab
+            setRanAnimation(prev => ({
+                ...prev,
+                [activeTabId]: true
+            }));
 
             setPendingUrl(trimmedUrl);
             setIsLoading(true);
@@ -396,6 +429,11 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
         setInputValue('');
         setHistoryIndex(0);
         setHistory(['newtab']);
+        // Initialize animation state for the new tab
+        setRanAnimation(prev => ({
+            ...prev,
+            [newTabId]: false
+        }));
     };
 
     // Switch to a different tab
@@ -434,27 +472,40 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
         }
     };
 
-    // Reload the current page
+    // Reload the current page - Updated version
     const reload = () => {
         clearTimeouts();
         setIsLoading(true);
 
+        // Get the animation state for the active tab
+        const alreadyRanAnimation = ranAnimation[activeTabId];
+
         // Show animation again for external URLs when reloading
-        const shouldShowAnimation = currentUrl !== 'newtab' &&
-            !findSite(currentUrl) &&
+        // But ONLY if this is not the same external URL or we've since visited an internal URL
+        const isExternal = currentUrl !== 'newtab' && !findSite(currentUrl);
+        const isSameExternalUrl = isExternal && currentUrl === lastExternalUrl;
+        const shouldShowAnimation = isExternal &&
             hasHardwareAcceleration &&
-            !isDeviceMobile;
+            !isDeviceMobile &&
+            !alreadyRanAnimation &&
+            !isSameExternalUrl;
 
         console.log("Reload checks:", {
-            isExternal: currentUrl !== 'newtab' && !findSite(currentUrl),
+            isExternal,
+            alreadyRanAnimation,
+            isSameExternalUrl,
             hasHardwareAccel: hasHardwareAcceleration,
             isDeviceMobile,
             shouldShowAnimation
         });
 
-        // If it's an external URL but we shouldn't show animation (low-end device)
-        if (currentUrl !== 'newtab' && !findSite(currentUrl) && !shouldShowAnimation) {
+        // If it's an external URL but we shouldn't show animation
+        if (isExternal && !shouldShowAnimation) {
             console.log("Using simplified reload for external URL");
+            // Update the last external URL
+            if (isExternal) {
+                setLastExternalUrl(currentUrl);
+            }
             // Longer loading time to simulate the connection process
             loadingTimeout.current = window.setTimeout(() => {
                 setIsLoading(false);
@@ -462,10 +513,18 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
             return;
         }
 
-        // Show animation for high-end devices
+        // Show animation for high-end devices on first load or after visiting internal URL
         if (shouldShowAnimation) {
             console.log("Showing animation during reload for:", currentUrl);
+
+            // Mark that animation has run for this tab
+            setRanAnimation(prev => ({
+                ...prev,
+                [activeTabId]: true
+            }));
+
             setPendingUrl(currentUrl);
+            setLastExternalUrl(currentUrl);
 
             // Important: Set this last to ensure state changes are batched correctly
             setShowConnectionAnimation(true);
@@ -687,7 +746,7 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
         );
     };
 
-    // Get the active tab's content - FIXED VERSION
+    // Get the active tab's content - UPDATED VERSION
     const getTabContent = () => {
         console.log("Getting tab content:", {
             showConnectionAnimation,
@@ -724,7 +783,7 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
         return getCurrentContent(activeTab.url);
     };
 
-    // Get content for a given URL
+    // Get content for a given URL - UPDATED VERSION
     const getCurrentContent = (url: string) => {
         if (isLoading && !showConnectionAnimation) {
             return (
@@ -777,22 +836,28 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
             // Return the site component
             return site.component;
         } else {
-            // For unknown URLs, use an iframe to show Google search results
-            const searchUrl = prepareGoogleSearchUrl(url);
-            return (
-                <div className={styles.iframeContainer}>
-                    <div className={styles.greenTintOverlay}></div>
-                    <div className={styles.crtOverlay}></div>
-                    <div className={styles.scanlines}></div>
-                    <div className={styles.glitchOverlay}></div>
-                    <iframe
-                        src={searchUrl}
-                        className={styles.browserIframe}
-                        title="External Content"
-                        sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-                    />
-                </div>
-            );
+            // First, determine if this is a search query or a direct URL
+            const isDirectUrl = url.includes('.') || url.startsWith('http');
+
+            if (isDirectUrl) {
+                // For direct URLs, use the PagePreview component to display actual content
+                return <PagePreview url={url} onNavigate={navigateTo} />;
+            } else {
+                // For search queries, use the search component
+                return (
+                    <div className={styles.iframeContainer}>
+                        <div className={styles.greenTintOverlay}></div>
+                        <div className={styles.crtOverlay}></div>
+                        <div className={styles.scanlines}></div>
+                        <div className={styles.glitchOverlay}></div>
+
+                        <GoogleSearchResults
+                            url={url}
+                            onNavigate={navigateTo}
+                        />
+                    </div>
+                );
+            }
         }
     };
 
@@ -911,4 +976,4 @@ const EnhancedMinimalBrowser: React.FC<{ isMobile?: boolean, hasKeyboardFocus?: 
     );
 };
 
-export default EnhancedMinimalBrowser;
+export default CyAc_browser_v1;

@@ -12,6 +12,7 @@
 		"cf-typegen": "wrangler types"
 	},
 	"dependencies": {
+		"dompurify": "^3.2.5",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-markdown": "^10.1.0",
@@ -23,6 +24,7 @@
 		"@cloudflare/vite-plugin": "^1.0.12",
 		"@cloudflare/workers-types": "^4.20250426.0",
 		"@eslint/js": "^9.22.0",
+		"@types/dompurify": "^3.0.5",
 		"@types/node": "^22.15.2",
 		"@types/react": "^19.0.10",
 		"@types/react-dom": "^19.0.4",

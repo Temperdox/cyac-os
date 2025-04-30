@@ -303,10 +303,45 @@ export class CommandProcessor {
             const itemType = FileSystem.getPathType(targetPath);
 
             if (itemType === 'file') {
-                // Display file content
-                const content = FileSystem.getFileContent(targetPath);
-                const lines = content.split('\n');
-                result.output.push(...lines);
+                // Get the file item to access all properties
+                const item = FileSystem.getItem(targetPath);
+
+                // Check if it has a component path - this is the key condition
+                if (item.component) {
+                    // This is a special file that should be opened in the TextViewer
+                    result.output.push(`[g]Opening ${item.name} in Text Viewer...[/g]`);
+
+                    // If the file has a direct component path, use it
+                    result.program = {
+                        id: `textviewer_${item.name}`,
+                        title: item.description || item.name,
+                        component: item.component,
+                        type: 'window'
+                    };
+                } else {
+                    // Get file content for regular files
+                    const content = FileSystem.getFileContent(targetPath);
+
+                    // Check if the content itself indicates a component file
+                    if (content.startsWith('[COMPONENT_FILE:')) {
+                        // Extract component path from content
+                        const componentPath = content.match(/\[COMPONENT_FILE:(.*?)\]/)?.[1] || '';
+
+                        // Launch TextViewer for component files
+                        result.output.push(`[g]Opening ${item.name} in Text Viewer...[/g]`);
+
+                        result.program = {
+                            id: `textviewer_${item.name}`,
+                            title: item.description || item.name,
+                            component: componentPath,
+                            type: 'window'
+                        };
+                    } else {
+                        // Display regular file content
+                        const lines = content.split('\n');
+                        result.output.push(...lines);
+                    }
+                }
             } else if (itemType === 'program' || itemType === 'scene' || itemType === 'subscene') {
                 // Launch program/app
                 const item = FileSystem.getItem(targetPath);

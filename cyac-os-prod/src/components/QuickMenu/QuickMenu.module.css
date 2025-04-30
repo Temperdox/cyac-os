@@ -5,6 +5,7 @@
     width: 500px;
     max-width: 40vw;
     max-height: calc(100vh - 50px);
+    height: calc(70vh - 50px);
     background-color: rgba(0, 0, 0, 0.95);
     border: 2px solid #ff3333;
     box-shadow: 0 0 20px rgba(255, 51, 51, 0.7);
@@ -168,8 +169,8 @@
     min-height: 200px;
     max-height: 40vh;
     background-color: #000000;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 51, 51, 0.3) rgba(0, 0, 0, 0.2);
+    scrollbar-width: thick;
+    scrollbar-color: rgba(156, 255, 51, 0.3) rgba(0, 0, 0, 0.2);
 }
 
 .menuControls {

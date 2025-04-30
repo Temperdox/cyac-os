@@ -10,6 +10,9 @@ interface Env {
   DISCORD_REDIRECT_URI_OS_PROD: { get(): Promise<string> };
   JWT_SECRET: { get(): Promise<string> };
   SESSION_SECRET: { get(): Promise<string> };
+  // Google Search API credentials
+  GOOGLE_SEARCH_API_KEY: { get(): Promise<string> };
+  GOOGLE_SEARCH_CX: { get(): Promise<string> };
   // any truly plain env var:
   NODE_ENV?: string;
 }
@@ -63,6 +66,153 @@ async function signJwt(payload: any, secret: string): Promise<string> {
   return `${headerSeg}.${payloadSeg}.${sigSeg}`;
 }
 
+// New handler for Google search requests
+async function handleSearch(request: Request, env: Env): Promise<Response> {
+  // Parse query parameters
+  const url = new URL(request.url);
+  const searchQuery = url.searchParams.get('q');
+  const origin = request.headers.get('Origin') || '*';
+
+  // CORS headers for search responses
+  const CORS_JSON = {
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Credentials': 'true',
+    'Content-Type': 'application/json',
+    'Cache-Control': 'max-age=1800' // Cache for 30 minutes
+  };
+
+  if (!searchQuery) {
+    return Response.json(
+        { error: 'Missing search query parameter' },
+        { status: 400, headers: CORS_JSON }
+    );
+  }
+
+  try {
+    // Get Google Search API credentials
+    const apiKey = await env.GOOGLE_SEARCH_API_KEY.get();
+    const cx = await env.GOOGLE_SEARCH_CX.get();
+
+    // Create Google Custom Search API URL
+    const googleApiUrl = new URL('https://www.googleapis.com/customsearch/v1');
+    googleApiUrl.searchParams.append('key', apiKey);
+    googleApiUrl.searchParams.append('cx', cx);
+    googleApiUrl.searchParams.append('q', searchQuery);
+
+    // Optional: Add safe search parameter
+    googleApiUrl.searchParams.append('safe', 'active');
+
+    // Make the request to Google
+    const searchResponse = await fetch(googleApiUrl.toString(), {
+      cf: {
+        // Optional: Use Cloudflare cache to save on API quota
+        cacheTtl: 3600,
+        cacheEverything: true,
+      }
+    });
+
+    if (!searchResponse.ok) {
+      const errorText = await searchResponse.text();
+      console.error('Google Search API error:', searchResponse.status, errorText);
+
+      return Response.json(
+          {
+            error: 'Failed to fetch search results',
+            status: searchResponse.status,
+            details: errorText
+          },
+          { status: searchResponse.status, headers: CORS_JSON }
+      );
+    }
+
+    // Parse the response from Google
+    const searchData = await searchResponse.json();
+
+    // Return the search results
+    return Response.json(searchData, {
+      status: 200,
+      headers: CORS_JSON
+    });
+
+  } catch (error) {
+    const err = error as Error;
+    console.error('Search endpoint error:', err.message, err.stack);
+
+    return Response.json(
+        {
+          error: 'Search request failed',
+          message: err.message || 'Unknown error'
+        },
+        { status: 500, headers: CORS_JSON }
+    );
+  }
+}
+
+// New handler for fetching external content
+async function handleFetchRequest(request: Request): Promise<Response> {
+  const url = new URL(request.url);
+  const targetUrl = url.searchParams.get('url');
+  const origin = request.headers.get('Origin') || '*';
+
+  // CORS headers for fetch responses
+  const CORS_HEADERS = {
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Credentials': 'true',
+    'Content-Type': 'text/html; charset=utf-8',
+    'Cache-Control': 'max-age=1800' // Cache for 30 minutes
+  };
+
+  if (!targetUrl) {
+    return new Response('Missing "url" parameter', {
+      status: 400,
+      headers: CORS_HEADERS
+    });
+  }
+
+  try {
+    // Fetch the target page
+    const upstream = await fetch(targetUrl, {
+      redirect: 'follow',
+      headers: {
+        // Set a common User-Agent to avoid being blocked
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      },
+      cf: {
+        // Optional Cloudflare-specific options for better performance
+        cacheTtl: 3600,
+        cacheEverything: true,
+      }
+    });
+
+    if (!upstream.ok) {
+      return new Response(`Failed to fetch: ${upstream.status} ${upstream.statusText}`, {
+        status: upstream.status,
+        headers: CORS_HEADERS
+      });
+    }
+
+    // Get the HTML content
+    const html = await upstream.text();
+
+    // Add basic security headers
+    return new Response(html, {
+      headers: {
+        ...CORS_HEADERS,
+        // Don't add X-Frame-Options here since we're trying to allow embedding
+        'Content-Security-Policy': "default-src 'self' 'unsafe-inline' data:; img-src * data:; style-src * 'unsafe-inline'; script-src 'none';",
+        'X-Content-Type-Options': 'nosniff'
+      }
+    });
+
+  } catch (error) {
+    const err = error as Error;
+    return new Response(`Error fetching URL: ${err.message}`, {
+      status: 500,
+      headers: CORS_HEADERS
+    });
+  }
+}
+
 export default {
   async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
@@ -90,6 +240,16 @@ export default {
     };
 
     try {
+      // Handle the fetch endpoint for external content
+      if (url.pathname === '/api/fetch') {
+        return handleFetchRequest(request);
+      }
+
+      // Handle the search endpoint
+      if (url.pathname === '/api/search') {
+        return handleSearch(request, env);
+      }
+
       // Determine the correct redirect URI based on hostname
       function getRedirectUri(url: URL, originHeader: string | null): string {
         // If it got an Origin header (from the browser), trust it; otherwise fall back to the worker URL.

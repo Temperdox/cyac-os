@@ -155,6 +155,10 @@
 .cyan { color: #33ffff; }
 .white { color: #ffffff; }
 
+.termCLick:hover {
+    text-decoration: underline;
+}
+
 /* Scrollbar styling */
 .output::-webkit-scrollbar {
     width: 8px;

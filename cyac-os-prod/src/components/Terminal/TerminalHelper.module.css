@@ -1,0 +1,84 @@
+.helperContainer {
+    position: relative;
+    display: inline-block;
+}
+
+.gifContainer {
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+.gifContainer:hover {
+    transform: scale(1.1);
+}
+
+.helperGif {
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+    display: block;
+    max-width: 80px;
+    height: auto;
+}
+
+.hovered .helperGif {
+    opacity: 1; /* 100% brightness on hover */
+}
+
+.speechBubble {
+    position: absolute;
+    top: -80px;
+    right: 0;
+    background-color: #000;
+    border: 2px solid #33ff33; /* Green border */
+    border-radius: 8px;
+    padding: 10px 15px;
+    min-width: 200px;
+    max-width: 300px;
+    color: #33ff33; /* Green text */
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(51, 255, 51, 0.3);
+    animation: pop 0.3s ease-out;
+}
+
+.speechBubble:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: 20px;
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: #33ff33 transparent transparent;
+    display: block;
+    width: 0;
+}
+
+.speechText {
+    min-height: 2.8em; /* Ensure space for at least 2 lines of text */
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(0.1);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .speechBubble {
+        min-width: 150px;
+        max-width: 200px;
+        font-size: 12px;
+    }
+}

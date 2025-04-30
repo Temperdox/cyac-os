@@ -1,24 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef, JSX} from 'react';
 import styles from './TaskBar.module.css';
 import IconRenderer from "../QuickMenu/IconRenderer.tsx";
-// Removing this import as we'll render the calendar in App.tsx instead
-// import RetroCalendar from '../RetroCalendar/RetroCalendar';
 
+// Single merged interface for TaskBar props
 interface TaskBarProps {
     items: Array<{
         id: string;
         title: string;
         minimized?: boolean;
         icon?: string;
+        component?: React.ComponentType<any>;
     }>;
     onItemClick: (id: string) => void;
     onQuickMenuToggle: () => void;
     onTerminalFocus: () => void;
     onClockClick?: () => void;
     activeWindowId?: string;
-    // Add these new props to work with App.tsx
     isCalendarOpen?: boolean;
     setIsCalendarOpen?: (isOpen: boolean) => void;
+    onWindowClose?: (id: string) => void;
+}
+
+// Interface for WindowPreview props
+interface WindowPreviewProps {
+    id: string;
+    item: {
+        id: string;
+        title: string;
+        minimized?: boolean;
+        component?: React.ComponentType<any>;
+    } | undefined;
+    position: { left: number; top: number };
+    onClose: (id: string) => void;
+    onMouseEnter: () => void;
+    onMouseLeave: () => void;
 }
 
 const TaskBar: React.FC<TaskBarProps> = ({
@@ -29,12 +44,20 @@ const TaskBar: React.FC<TaskBarProps> = ({
                                              onClockClick,
                                              activeWindowId,
                                              isCalendarOpen,
-                                             setIsCalendarOpen
+                                             setIsCalendarOpen,
+                                             onWindowClose
                                          }) => {
     const [currentTime, setCurrentTime] = useState<string>('');
-    const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-    // We no longer need this local state as we'll use the one from App.tsx
-    // const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
+    const [hoveredId, setHoveredId] = useState<string | null>(null);
+    const [previewPos, setPreviewPos] = useState({ left: 0, top: 0 });
+
+    // Define taskBarRef here
+    const taskBarRef = useRef<HTMLDivElement>(null);
+
+    // Refs for elements and timers
+    const iconsRef = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+    const previewTimeoutRef = useRef<number | null>(null);
+    const cancelHoverRef = useRef<number | null>(null);
 
     // Update time every second
     useEffect(() => {
@@ -57,14 +80,66 @@ const TaskBar: React.FC<TaskBarProps> = ({
         return () => clearInterval(interval);
     }, []);
 
-    // Detect device type for hover effects
-    const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    // Clean up timeouts on unmount
+    useEffect(() => {
+        return () => {
+            if (previewTimeoutRef.current) {
+                window.clearTimeout(previewTimeoutRef.current);
+            }
+            if (cancelHoverRef.current) {
+                window.clearTimeout(cancelHoverRef.current);
+            }
+        };
+    }, []);
+
+    // Update preview position when hoveredId changes
+    useEffect(() => {
+        if (hoveredId && iconsRef.current[hoveredId]) {
+            const rect = iconsRef.current[hoveredId]?.getBoundingClientRect();
+            if (rect) {
+                setPreviewPos({
+                    left: rect.left + rect.width / 2,
+                    top: rect.top - 8
+                });
+            }
+        }
+    }, [hoveredId]);
+
+    // Add CSS for preview animations to the document
+    useEffect(() => {
+        // Add keyframes for animation
+        const styleElement = document.createElement('style');
+        styleElement.innerHTML = `
+            @keyframes previewFadeIn {
+                from {
+                    opacity: 0;
+                    transform: translate(-50%, -95%);
+                }
+                to {
+                    opacity: 1;
+                    transform: translate(-50%, -100%);
+                }
+            }
+        `;
+        document.head.appendChild(styleElement);
+
+        // Clean up on unmount
+        return () => {
+            if (styleElement && document.head.contains(styleElement)) {
+                document.head.removeChild(styleElement);
+            }
+        };
+    }, []);
+
+    // Function to set ref for buttons
+    const setIconRef = (el: HTMLButtonElement | null, id: string) => {
+        iconsRef.current[id] = el;
+    };
 
     // Handle quick menu button click
     const handleQuickMenuClick = (e: React.MouseEvent) => {
         e.stopPropagation();
         onQuickMenuToggle();
-        // Close calendar if open
         if (isCalendarOpen && setIsCalendarOpen) {
             setIsCalendarOpen(false);
         }
@@ -74,7 +149,6 @@ const TaskBar: React.FC<TaskBarProps> = ({
     const handleItemClick = (id: string, e: React.MouseEvent) => {
         e.stopPropagation();
         onItemClick(id);
-        // Close calendar if open
         if (isCalendarOpen && setIsCalendarOpen) {
             setIsCalendarOpen(false);
         }
@@ -84,7 +158,6 @@ const TaskBar: React.FC<TaskBarProps> = ({
     const handleTerminalButtonClick = (e: React.MouseEvent) => {
         e.stopPropagation();
         onTerminalFocus();
-        // Close calendar if open
         if (isCalendarOpen && setIsCalendarOpen) {
             setIsCalendarOpen(false);
         }
@@ -93,14 +166,260 @@ const TaskBar: React.FC<TaskBarProps> = ({
     // Handle clock button click
     const handleClockClick = (e: React.MouseEvent) => {
         e.stopPropagation();
-        // Just call the onClockClick prop, which will handle the calendar toggle
         if (onClockClick) {
             onClockClick();
         }
     };
 
+    // Handle hover start with delay - matching your JSX timing of 200ms
+    const handleItemHover = (id: string) => {
+        // Clear any existing timeouts
+        if (previewTimeoutRef.current) {
+            window.clearTimeout(previewTimeoutRef.current);
+        }
+        if (cancelHoverRef.current) {
+            window.clearTimeout(cancelHoverRef.current);
+        }
+
+        // Set a small delay before showing the preview (200ms)
+        previewTimeoutRef.current = window.setTimeout(() => {
+            console.log(`Showing preview for ${id}`);
+            setHoveredId(id);
+
+            // Position the preview above the taskbar item
+            if (iconsRef.current[id]) {
+                const rect = iconsRef.current[id]?.getBoundingClientRect();
+                if (rect) {
+                    setPreviewPos({
+                        left: rect.left + rect.width / 2,
+                        top: rect.top - 8
+                    });
+                }
+            }
+            previewTimeoutRef.current = null;
+        }, 200) as unknown as number;
+    };
+
+    // Handle hover end with 300ms delay to allow movement to preview
+    const handleItemLeave = () => {
+        // Clear any existing timeouts
+        if (previewTimeoutRef.current) {
+            window.clearTimeout(previewTimeoutRef.current);
+            previewTimeoutRef.current = null;
+        }
+
+        // Add a delay before hiding to allow mouse to move to preview (300ms)
+        cancelHoverRef.current = window.setTimeout(() => {
+            setHoveredId(null);
+            cancelHoverRef.current = null;
+        }, 300) as unknown as number;
+    };
+
+    // Handle window close from preview
+    const handlePreviewClose = (id: string) => {
+        console.log(`Preview close clicked for ${id}`);
+
+        // Clear hover timers
+        if (previewTimeoutRef.current) {
+            window.clearTimeout(previewTimeoutRef.current);
+            previewTimeoutRef.current = null;
+        }
+        if (cancelHoverRef.current) {
+            window.clearTimeout(cancelHoverRef.current);
+            cancelHoverRef.current = null;
+        }
+
+        // Tell App to close the window
+        if (onWindowClose) {
+            onWindowClose(id);
+        }
+
+        // Hide the preview popup
+        setHoveredId(null);
+    };
+
+    // Handle preview mouse enter to prevent hiding
+    const handlePreviewMouseEnter = () => {
+        // Cancel any pending hide
+        if (cancelHoverRef.current) {
+            window.clearTimeout(cancelHoverRef.current);
+            cancelHoverRef.current = null;
+        }
+    };
+
+    // Create the WindowPreview component using JSX.Element type
+    const renderWindowPreview = (props: WindowPreviewProps): JSX.Element => {
+        const { id, item, position, onClose, onMouseEnter, onMouseLeave } = props;
+
+        if (!item) return <></>;
+
+        // Get component if available
+        const PreviewContent = item.component;
+        const isMinimized = item.minimized;
+        const title = item.title;
+
+        return (
+            <div
+                className={styles.taskbarPreview || "taskbar-preview"}
+                style={{
+                    position: 'absolute',
+                    left: position.left,
+                    top: position.top,
+                    transform: 'translate(-50%, -100%)',
+                    width: '220px',
+                    height: '160px',
+                    backgroundColor: '#001122',
+                    border: '1px solid #33ff33',
+                    borderRadius: '4px',
+                    boxShadow: '0 0 15px rgba(0, 0, 0, 0.8), 0 0 5px rgba(51, 255, 51, 0.5)',
+                    zIndex: 99999,
+                    overflow: 'hidden',
+                    marginBottom: '10px',
+                    animation: 'previewFadeIn 0.15s ease-out'
+                }}
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}
+            >
+                {/* Preview header */}
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '5px 8px',
+                        background: 'linear-gradient(to bottom, #000b66, #00443a)',
+                        borderBottom: '1px solid #33ff33',
+                        height: '28px'
+                    }}
+                >
+                    <span
+                        style={{
+                            color: '#33ff33',
+                            fontSize: '11px',
+                            fontWeight: 'bold',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            flex: 1
+                        }}
+                    >
+                        {title}
+                    </span>
+                    <button
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#ff9999',
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            cursor: 'pointer',
+                            padding: '0 5px',
+                            marginLeft: '5px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            height: '18px',
+                            width: '18px',
+                            borderRadius: '3px'
+                        }}
+                        onClick={() => onClose(id)}
+                        aria-label="Close window"
+                        onMouseOver={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
+                            e.currentTarget.style.color = '#ffffff';
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.color = '#ff9999';
+                        }}
+                    >
+                        ×
+                    </button>
+                </div>
+
+                {/* Preview content */}
+                <div
+                    style={{
+                        height: 'calc(100% - 28px)',
+                        overflow: 'hidden',
+                        backgroundColor: '#000000'
+                    }}
+                >
+                    {isMinimized ? (
+                        <div
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                color: '#33ff33',
+                                fontSize: '12px',
+                                textAlign: 'center',
+                                padding: '10px',
+                                background: 'radial-gradient(ellipse at center, #002200 0%, #000900 100%)'
+                            }}
+                        >
+                            <span>Window is minimized</span>
+                        </div>
+                    ) : PreviewContent ? (
+                        <div
+                            style={{
+                                width: '330%',
+                                height: '330%',
+                                transform: 'scale(0.3)',
+                                transformOrigin: 'top left',
+                                pointerEvents: 'none'
+                            }}
+                        >
+                            <PreviewContent
+                                isPreview={true}
+                                fromPreview={true}
+                            />
+                        </div>
+                    ) : (
+                        <div
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                color: '#33ff33',
+                                fontSize: '12px',
+                                textAlign: 'center',
+                                padding: '10px',
+                                background: 'radial-gradient(ellipse at center, #002200 0%, #000900 100%)'
+                            }}
+                        >
+                            <span>Preview of {title}</span>
+                        </div>
+                    )}
+                </div>
+
+                {/* Arrow pointing to taskbar item */}
+                <div
+                    style={{
+                        position: 'absolute',
+                        bottom: '-8px',
+                        left: '50%',
+                        marginLeft: '-8px',
+                        width: '0',
+                        height: '0',
+                        borderWidth: '8px 8px 0',
+                        borderStyle: 'solid',
+                        borderColor: '#33ff33 transparent transparent'
+                    }}
+                />
+            </div>
+        );
+    };
+
     return (
-        <div className={styles.taskBar}>
+        <div
+            ref={taskBarRef}
+            className={styles.taskBar}
+        >
             <div className={styles.startSection}>
                 <button
                     className={styles.quickMenuButton}
@@ -116,13 +435,15 @@ const TaskBar: React.FC<TaskBarProps> = ({
                 {items.map((item) => (
                     <button
                         key={item.id}
+                        ref={(el) => setIconRef(el, item.id)}
                         className={`${styles.taskButton} 
-                ${item.minimized ? styles.minimized : ''} 
-                ${activeWindowId === item.id ? styles.active : ''}`}
+                            ${item.minimized ? styles.minimized : ''} 
+                            ${activeWindowId === item.id ? styles.active : ''}`}
                         onClick={(e) => handleItemClick(item.id, e)}
-                        onMouseEnter={() => !isMobile && setHoveredItem(item.id)}
-                        onMouseLeave={() => !isMobile && setHoveredItem(null)}
+                        onMouseEnter={() => handleItemHover(item.id)}
+                        onMouseLeave={handleItemLeave}
                         aria-label={item.title}
+                        data-window-id={item.id}
                     >
                         <div className={styles.taskButtonContent}>
                             <IconRenderer
@@ -161,22 +482,15 @@ const TaskBar: React.FC<TaskBarProps> = ({
                 </button>
             </div>
 
-            {/* Calendar popup - Removed from here, will be rendered at the App level */}
-
-            {/* Preview when hovering over a taskbar item (on desktop only) */}
-            {!isMobile && hoveredItem && (
-                <div className={styles.taskPreview}>
-                    <div className={styles.previewTitle}>
-                        {items.find(item => item.id === hoveredItem)?.title || 'Window'}
-                    </div>
-                    <div className={styles.previewContent}>
-                        {/* Preview content could be added here */}
-                        <div className={styles.previewPlaceholder}>
-                            Preview not available
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* Render the preview component directly using JSX */}
+            {hoveredId && renderWindowPreview({
+                id: hoveredId,
+                item: items.find(item => item.id === hoveredId),
+                position: previewPos,
+                onClose: handlePreviewClose,
+                onMouseEnter: handlePreviewMouseEnter,
+                onMouseLeave: handleItemLeave
+            })}
         </div>
     );
 };

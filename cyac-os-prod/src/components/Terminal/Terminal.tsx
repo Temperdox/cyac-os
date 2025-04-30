@@ -3,6 +3,7 @@ import styles from './Terminal.module.css';
 import { FocusManager } from '../../services/FocusManager';
 import { CommandProcessor } from '../../services/CommandProcessor';
 import { FileSystem } from '../../services/FileSystem';
+import TerminalHelper from './TerminalHelper';
 
 interface TerminalProps {
     initialHeight?: number;
@@ -39,6 +40,15 @@ const Terminal: React.FC<TerminalProps> = ({
     const [, setCompletionLeft] = useState<number>(0);
     const [completions, setCompletions] = useState<string[]>([]);
     const [selectedCompletion, setSelectedCompletion] = useState<number>(0);
+
+    const helperTips = [
+        "Use UP/DOWN arrows to navigate command history",
+        "Press TAB to autocomplete commands and paths",
+        "Type 'ls' to list files and directories",
+        "Type 'help' for a list of all available commands",
+        "Use 'cat [filename]' to view file contents",
+        "Try 'cd' to change directories"
+    ];
 
     // Command categories for suggestions
     const pathCommands = ['cd', 'ls', 'mkdir', 'rm', 'rmdir'];
@@ -166,6 +176,36 @@ const Terminal: React.FC<TerminalProps> = ({
         };
     }, [isResizing, onResize]);
 
+    /**
+     * Handle program launch request from command processor
+     * @param program Program launch information
+     */
+    const handleProgramLaunch = (program: {
+        id: string;
+        title: string;
+        component: string;
+        type: 'window' | 'fullscreen';
+    }) => {
+        // Check if onCommand prop exists and call it with program info
+        if (onCommand) {
+            // For text files with component paths, special handling ensures they open with the correct viewer
+            if (program.id.startsWith('textviewer_')) {
+                // Pass through the onCommand prop with all necessary information
+                onCommand({
+                    id: program.id,
+                    title: program.title,
+                    component: program.component,
+                    type: program.type
+                });
+            } else {
+                // Regular program launch
+                onCommand(program);
+            }
+        } else {
+            console.warn('Terminal: onCommand prop not provided, cannot launch program:', program);
+        }
+    };
+
     // Process command internally
     const processCommand = async (command: string) => {
         // Handle clear command directly
@@ -178,7 +218,7 @@ const Terminal: React.FC<TerminalProps> = ({
             // Process command through CommandProcessor
             const result = await CommandProcessor.processCommand(command, currentPath);
 
-            // Add command output to terminal
+            // Add command output to terminal directly - no need for formatDirectoryListing
             if (result.output && result.output.length > 0) {
                 setHistory(prev => [...prev, ...result.output]);
             }
@@ -188,9 +228,9 @@ const Terminal: React.FC<TerminalProps> = ({
                 setCurrentPath(result.newPath);
             }
 
-            // Pass program launch to parent if needed
-            if (result.program && onCommand) {
-                onCommand(result.program);
+            // Handle program launch if needed
+            if (result.program) {
+                handleProgramLaunch(result.program);
             }
         } catch (error) {
             // Handle any errors with command processing
@@ -369,8 +409,50 @@ const Terminal: React.FC<TerminalProps> = ({
         }
     };
 
-    // Parse terminal output for styling
+    // Handle click on a terminal item
+    const handleItemClick = (item: string, itemType: string) => {
+        let command = '';
+
+        // If it's a directory, cd to it
+        if (itemType === 'directory') {
+            // Remove trailing slash if present
+            const dirName = item.endsWith('/') ? item.slice(0, -1) : item;
+            command = `cd ${dirName}`;
+        }
+        // If it's a file, cat it
+        else if (itemType === 'file') {
+            command = `cat ${item}`;
+        }
+        // If it's a program, run it directly (don't cd into it)
+        else if (itemType === 'program') {
+            // For programs, we need to extract just the program name without description
+            // Format might be "program - description"
+            const programName = item.split(' - ')[0].trim();
+            command = programName;
+        }
+
+        if (command) {
+            // Execute command directly without showing in input
+            // Add command to terminal history with prompt
+            const prompt = `${username.toLowerCase()}@cyac:${currentPath}$ ${command}`;
+            setHistory(prev => [...prev, prompt]);
+
+            // Add command to command history for up/down navigation
+            setCommandHistory(prev => [...prev, command]);
+
+            // Process command
+            processCommand(command);
+        }
+    };
+
+    // Parse terminal output for styling with clickable items
     const parseOutputLine = (line: string) => {
+        // Special handling for lines with directory/file/program listings
+        if (line.includes('[g]Directories:[/g]') || line.includes('[y]Files:[/y]') ||
+            line.includes('[c]Programs:[/c]')) {
+            return parseDirectoryLine(line);
+        }
+
         // Simple ansi-like color tag parsing
         const colorPattern = /\[(r|g|b|y|c|w)\](.*?)\[\/\1\]/g;
 
@@ -429,6 +511,159 @@ const Terminal: React.FC<TerminalProps> = ({
         return parts.length ? parts : <span>{line}</span>;
     };
 
+    // Parse directory listing lines with clickable items based on actual CommandProcessor output format
+    const parseDirectoryLine = (line: string) => {
+        // Handle directory listings: "[g]Directories:[/g] dir1/ dir2/"
+        if (line.includes('[g]Directories:[/g]')) {
+            const parts = line.split('[g]Directories:[/g]');
+            if (parts.length > 1) {
+                const directories = parts[1].trim().split(' ');
+
+                return (
+                    <>
+                        <span className={styles.green}>Directories:</span>
+                        {' '}
+                        {directories.map((dir, idx) => (
+                            <span
+                                key={idx}
+                                className={`${styles.blue} ${styles.termCLick}`}
+                                onClick={() => handleItemClick(dir, 'directory')}
+                                style={{ cursor: 'pointer', marginRight: '12px' }}
+                            >
+                                {dir}
+                            </span>
+                        ))}
+                    </>
+                );
+            }
+        }
+
+        // Handle file listings: "[y]Files:[/y] file1.txt file2.txt"
+        else if (line.includes('[y]Files:[/y]')) {
+            const parts = line.split('[y]Files:[/y]');
+            if (parts.length > 1) {
+                const files = parts[1].trim().split(' ');
+
+                return (
+                    <>
+                        <span className={styles.yellow}>Files:</span>
+                        {' '}
+                        {files.map((file, idx) => (
+                            <span
+                                key={idx}
+                                className={`${styles.blue} ${styles.termCLick}`}
+                                onClick={() => handleItemClick(file, 'file')}
+                                style={{ cursor: 'pointer', marginRight: '12px' }}
+                            >
+                                {file}
+                            </span>
+                        ))}
+                    </>
+                );
+            }
+        }
+
+        // Handle program listings: "[c]Programs:[/c] program1 - description program2 - description"
+        else if (line.includes('[c]Programs:[/c]')) {
+            const parts = line.split('[c]Programs:[/c]');
+            if (parts.length > 1) {
+                // Programs might have descriptions with spaces, so we need to handle them carefully
+                // The format is usually "program1 - description program2 - description"
+                const programText = parts[1].trim();
+
+                // Split by looking for the pattern of "word - "
+                const programRegex = /\s*([^\s-]+(?:\s+[^\s-]+)*?)(?:\s+-\s+(.*?))?(?=\s+[^\s-]+\s+-|\s*$)/g;
+                const programs = [];
+                let match;
+
+                while ((match = programRegex.exec(programText)) !== null) {
+                    programs.push({
+                        name: match[1].trim(),
+                        description: match[2] ? match[2].trim() : ''
+                    });
+                }
+
+                // If the regex didn't match any programs, fallback to simple space splitting
+                const fallbackPrograms = programs.length > 0 ? programs :
+                    programText.split(/\s+/).map(p => ({ name: p, description: '' }));
+
+                return (
+                    <>
+                        <span className={styles.cyan}>Programs:</span>
+                        {' '}
+                        {fallbackPrograms.map((program, idx) => (
+                            <span
+                                className={`${styles.blue} ${styles.termCLick}`}
+                                key={idx}
+                                onClick={() => handleItemClick(program.name, 'program')}
+                                style={{ cursor: 'pointer', marginRight: '12px' }}
+                            >
+                                {program.name}{program.description ? ` - ${program.description}` : ''}
+                            </span>
+                        ))}
+                    </>
+                );
+            }
+        }
+
+        // Default case - just color parse the line
+        return parseStandardLine(line);
+    };
+
+    // Helper function to parse standard lines with color tags
+    const parseStandardLine = (line: string) => {
+        const colorPattern = /\[(r|g|b|y|c|w)\](.*?)\[\/\1\]/g;
+
+        if (!line.includes('[')) {
+            return <span>{line}</span>;
+        }
+
+        const parts: React.ReactNode[] = [];
+        let lastIndex = 0;
+        let match;
+        let key = 0;
+
+        const colorClasses: Record<string, string> = {
+            r: styles.red,
+            g: styles.green,
+            b: styles.blue,
+            y: styles.yellow,
+            c: styles.cyan,
+            w: styles.white,
+        };
+
+        while ((match = colorPattern.exec(line)) !== null) {
+            const [fullMatch, color, text] = match;
+            const colorClass = colorClasses[color] || '';
+
+            if (match.index > lastIndex) {
+                parts.push(
+                    <span key={key++}>
+                        {line.substring(lastIndex, match.index)}
+                    </span>
+                );
+            }
+
+            parts.push(
+                <span key={key++} className={colorClass}>
+                    {text}
+                </span>
+            );
+
+            lastIndex = match.index + fullMatch.length;
+        }
+
+        if (lastIndex < line.length) {
+            parts.push(
+                <span key={key++}>
+                    {line.substring(lastIndex)}
+                </span>
+            );
+        }
+
+        return parts.length ? parts : <span>{line}</span>;
+    };
+
     // Handle clicks on the focus indicator directly
     const handleFocusIndicatorClick = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -458,14 +693,8 @@ const Terminal: React.FC<TerminalProps> = ({
                 ))}
             </div>
 
-             {/*Hints Bar (always visible on bottom of terminal)*/}
-            {/*<div className={styles.hintBar}>
-                <div className={styles.hint}>HINT: USE UP/DOWN ARROWS TO NAVIGATE COMMAND HISTORY</div>
-                <div className={styles.hint}>HINT: SOME SCENES AND SUBSCENES REQUIRE AUTHENTICATION</div>
-            </div>*/}
-
             {/* Terminal Input - always at the bottom */}
-            <form className={styles.inputLine} onSubmit={handleSubmit}>
+            <form className={styles.inputLine} onSubmit={handleSubmit} ref={inputLineRef}>
                 <span className={styles.prompt}>{username.toLowerCase()}@cyac:{currentPath}$</span>
                 <input
                     ref={inputRef}
@@ -483,6 +712,14 @@ const Terminal: React.FC<TerminalProps> = ({
                     autoCorrect="off"
                     spellCheck="false"
                 />
+
+                {/* Add helper gif component to terminal */}
+                <div style={{position: 'absolute', right: '10px', bottom: '5px'}}>
+                    <TerminalHelper
+                        gifPath="/assets/images/cyac_assistant/final.gif"
+                        tips={helperTips}
+                    />
+                </div>
             </form>
 
             {/* Tab Completions Menu */}

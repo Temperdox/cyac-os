@@ -7,4 +7,5 @@
 
 * {
     font-family: 'MarathonFont', monospace !important;
+    user-select: none !important;
 }

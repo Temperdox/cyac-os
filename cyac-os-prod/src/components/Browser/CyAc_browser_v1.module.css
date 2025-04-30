@@ -605,3 +605,743 @@
         padding: clamp(8px, 1.5vw, 15px);
     }
 }
+
+/* Main search container */
+.searchContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    background-color: transparent;
+    padding: 1rem;
+    overflow-y: auto;
+    z-index: 2;
+}
+
+/* Search header with logo and search form */
+.searchHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #00aa00;
+}
+
+.searchLogo {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px #00ff00;
+    margin-bottom: 1rem;
+    letter-spacing: 2px;
+}
+
+.searchForm {
+    display: flex;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.searchInput {
+    flex: 1;
+    background-color: rgba(0, 30, 0, 0.8);
+    border: 2px solid #00aa00;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    outline: none;
+    margin-right: 0.5rem;
+    border-radius: 4px;
+}
+
+.searchInput:focus {
+    border-color: #00ff00;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.searchButton {
+    background-color: rgba(0, 51, 0, 0.8);
+    border: 2px solid #00aa00;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 4px;
+}
+
+.searchButton:hover {
+    background-color: rgba(0, 68, 0, 0.9);
+    border-color: #00ff00;
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+}
+
+.searchButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Search stats */
+.searchStats {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    color: #00cc00;
+    border-left: 3px solid #00aa00;
+    padding-left: 0.5rem;
+}
+
+/* Search results */
+.searchResults {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.searchResult {
+    position: relative;
+    padding: 1rem;
+    border: 1px solid #003300;
+    background-color: rgba(0, 15, 0, 0.7);
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.searchResult:hover {
+    border-color: #00aa00;
+    box-shadow: 0 0 15px rgba(0, 170, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.searchResult:hover:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.1), transparent);
+    pointer-events: none;
+    animation: scanline 2s linear infinite;
+}
+
+@keyframes scanline {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.resultMeta {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.resultFavicon {
+    width: 16px;
+    height: 16px;
+    margin-right: 0.5rem;
+}
+
+.resultUrl {
+    font-size: 0.9rem;
+    color: #00aa00;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.resultTitle {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+}
+
+.resultLink {
+    color: #00ff00;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.resultLink:hover {
+    text-decoration: underline;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.resultSnippet {
+    font-size: 0.95rem;
+    color: #00dd00;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.resultSnippet em, .resultSnippet b {
+    background-color: rgba(0, 170, 0, 0.2);
+    font-style: normal;
+    padding: 0 2px;
+    font-weight: normal;
+}
+
+.resultThumbnail {
+    margin-top: 0.75rem;
+    max-width: 120px;
+    border: 1px solid #004400;
+}
+
+.resultThumbnail img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Loading state */
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+    text-align: center;
+}
+
+.searchSpinner {
+    border: 4px solid rgba(0, 170, 0, 0.3);
+    border-top: 4px solid #00ff00;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.searchSpinner:after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border: 1px solid rgba(0, 255, 0, 0.2);
+    border-radius: 50%;
+    animation: pulse 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Error state */
+.errorContainer {
+    text-align: center;
+    padding: 2rem;
+    background-color: rgba(50, 0, 0, 0.2);
+    border: 1px solid #aa0000;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+}
+
+.errorMessage {
+    color: #ff3333;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.errorHelp {
+    color: #ffaaaa;
+    font-size: 0.9rem;
+}
+
+/* No results */
+.noResults {
+    text-align: center;
+    padding: 2rem;
+    background-color: rgba(0, 15, 0, 0.5);
+    border: 1px dashed #006600;
+    border-radius: 4px;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #004400;
+}
+
+.paginationButton {
+    background-color: rgba(0, 51, 0, 0.8);
+    border: 1px solid #006600;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 0 0.5rem;
+    border-radius: 3px;
+}
+
+.paginationButton:hover:not(.disabled) {
+    background-color: rgba(0, 68, 0, 0.9);
+    border-color: #00aa00;
+}
+
+.paginationButton.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pageNumbers {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0 1rem;
+}
+
+.pageNumbers span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 3px;
+}
+
+.pageNumbers span:hover {
+    background-color: rgba(0, 51, 0, 0.8);
+}
+
+.pageNumbers span.currentPage {
+    background-color: rgba(0, 68, 0, 0.9);
+    border: 1px solid #00aa00;
+    font-weight: bold;
+}
+
+/* Add these styles to your CyAc_browser_v1.module.css file */
+
+/* Enhanced Page Preview Container */
+/* Add these styles to your CyAc_browser_v1.module.css file */
+
+/* PagePreview container with correct theme colors */
+.pagePreviewContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: #121212;
+    color: #bb86fc;
+    font-family: 'Courier New', monospace;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* External content container - match your existing theme */
+.pageContent {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: 1rem;
+    color: #bb86fc !important;
+    font-family: 'Courier New', monospace !important;
+    background-color: #121212;
+    flex: 1;
+}
+
+/* Override external styles with !important to maintain your theme */
+.pageContent * {
+    color: #bb86fc !important;
+    font-family: 'Courier New', monospace !important;
+    background-color: transparent !important;
+}
+
+/* Links within external content */
+.pageContent a {
+    color: #03dac6 !important;
+    text-decoration: underline !important;
+    cursor: pointer !important;
+    position: relative !important;
+}
+
+/* Hover effect for links */
+.pageContent a:hover {
+    color: #bb86fc !important;
+    text-shadow: 0 0 5px rgba(187, 134, 252, 0.5) !important;
+}
+
+/* Headings within external content */
+.pageContent h1,
+.pageContent h2,
+.pageContent h3,
+.pageContent h4,
+.pageContent h5,
+.pageContent h6 {
+    color: #bb86fc !important;
+    font-family: 'Courier New', monospace !important;
+    font-weight: bold !important;
+    margin: 0.5em 0 !important;
+}
+
+/* Images within external content */
+.pageContent img {
+    max-width: 100% !important;
+    border: 1px solid rgba(187, 134, 252, 0.3) !important;
+    filter: sepia(0.2) hue-rotate(235deg) saturate(1.2) !important;
+}
+
+/* Tables within external content */
+.pageContent table {
+    border-collapse: collapse !important;
+    margin: 1em 0 !important;
+    width: 100% !important;
+    border: 1px solid rgba(187, 134, 252, 0.3) !important;
+}
+
+.pageContent th,
+.pageContent td {
+    border: 1px solid rgba(187, 134, 252, 0.3) !important;
+    padding: 0.5em !important;
+    text-align: left !important;
+}
+
+.pageContent th {
+    background-color: rgba(35, 29, 41, 0.8) !important;
+    font-weight: bold !important;
+}
+
+.pageContent tr:nth-child(odd) {
+    background-color: rgba(35, 29, 41, 0.5) !important;
+}
+
+/* Fix form elements */
+.pageContent input,
+.pageContent button,
+.pageContent select,
+.pageContent textarea {
+    background-color: rgba(35, 29, 41, 0.8) !important;
+    border: 1px solid rgba(187, 134, 252, 0.3) !important;
+    color: #bb86fc !important;
+    padding: 0.25em 0.5em !important;
+    font-family: 'Courier New', monospace !important;
+}
+
+.pageContent button:hover,
+.pageContent input[type="submit"]:hover,
+.pageContent input[type="button"]:hover {
+    background-color: rgba(35, 29, 41, 0.9) !important;
+    border-color: rgba(187, 134, 252, 0.5) !important;
+    cursor: pointer !important;
+}
+
+/* Scrollbar styling to match your theme */
+.pageContent::-webkit-scrollbar {
+    width: 12px !important;
+    height: 12px !important;
+}
+
+.pageContent::-webkit-scrollbar-track {
+    background: rgba(18, 18, 18, 0.8) !important;
+}
+
+.pageContent::-webkit-scrollbar-thumb {
+    background: rgba(187, 134, 252, 0.3) !important;
+    border-radius: 6px !important;
+}
+
+.pageContent::-webkit-scrollbar-thumb:hover {
+    background: rgba(187, 134, 252, 0.5) !important;
+}
+
+/* Fix for iframes */
+.pageContent iframe {
+    border: 1px solid rgba(187, 134, 252, 0.3) !important;
+    background-color: #121212 !important;
+    max-width: 100% !important;
+}
+
+/* Loading state with correct theme colors */
+.pageLoading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    background-color: #121212;
+}
+
+.spinnerContainer {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 1.5rem;
+}
+
+.pageLoading .spinner {
+    width: 100%;
+    height: 100%;
+    border: 4px solid rgba(187, 134, 252, 0.1);
+    border-radius: 50%;
+    border-top: 4px solid #bb86fc;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.pageLoading .loadingText {
+    font-size: 1.2rem;
+    text-align: center;
+    margin-top: 1rem;
+    color: #bb86fc;
+    text-shadow: 0 0 5px rgba(187, 134, 252, 0.5);
+}
+
+/* Error state styling with correct theme colors */
+.pageError {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: 2rem;
+    background-color: #121212;
+}
+
+.errorIcon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #cf6679;
+}
+
+.errorTitle {
+    color: #cf6679;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 5px rgba(207, 102, 121, 0.5);
+}
+
+.errorMessage {
+    color: #bb86fc;
+    margin-bottom: 2rem;
+    max-width: 600px;
+}
+
+.retryButton,
+.homeButton {
+    background-color: rgba(35, 29, 41, 0.8);
+    border: 1px solid rgba(187, 134, 252, 0.3);
+    color: #bb86fc;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    margin: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 4px;
+}
+
+.retryButton:hover,
+.homeButton:hover {
+    background-color: rgba(35, 29, 41, 0.9);
+    border-color: rgba(187, 134, 252, 0.5);
+    box-shadow: 0 0 10px rgba(187, 134, 252, 0.3);
+}
+
+/* Glitch effect for errors */
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-3px, 3px); }
+    40% { transform: translate(-3px, -3px); }
+    60% { transform: translate(3px, 3px); }
+    80% { transform: translate(3px, -3px); }
+    100% { transform: translate(0); }
+}
+
+.pageError .errorTitle {
+    position: relative;
+}
+
+.pageError .errorTitle:after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #ff6666;
+    clip-path: inset(0 0 50% 0);
+    animation: glitch 1s infinite linear alternate-reverse;
+}
+
+/* Add these styles to your CyAc_browser_v1.module.css file */
+
+/* Frame-blocked sites container */
+.frameBlockedContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    padding: 2rem;
+    text-align: center;
+    color: #bb86fc;
+}
+
+/* Site logo placeholder */
+.siteLogoPlaceholder {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(35, 29, 41, 0.8);
+    border: 1px solid rgba(187, 134, 252, 0.3);
+    border-radius: 20px;
+    margin-bottom: 2rem;
+}
+
+/* Twitter/X logo */
+.twitterLogo {
+    font-size: 80px;
+    font-weight: bold;
+    color: #03dac6;
+}
+
+/* Generic site logo */
+.genericSiteLogo {
+    font-size: 80px;
+    font-weight: bold;
+    color: #03dac6;
+}
+
+/* Title for frame-blocked message */
+.frameBlockedTitle {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #bb86fc;
+}
+
+/* Message explaining why the site is blocked */
+.frameBlockedMessage {
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+}
+
+/* Container for action buttons */
+.frameBlockedActions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Button to open in external browser */
+.externalLinkButton {
+    background-color: rgba(35, 29, 41, 0.8);
+    border: 1px solid rgba(187, 134, 252, 0.3);
+    color: #03dac6;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.externalLinkButton:hover {
+    background-color: rgba(35, 29, 41, 0.9);
+    border-color: rgba(187, 134, 252, 0.5);
+    box-shadow: 0 0 10px rgba(187, 134, 252, 0.3);
+}
+
+/* Triangle warning icon for frame-blocked sites */
+.frameBlockedContainer::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 80px solid transparent;
+    border-right: 80px solid transparent;
+    border-bottom: 140px solid rgba(3, 218, 198, 0.2);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -80%);
+    z-index: -1;
+    filter: blur(10px);
+}
+
+/* Notification styling */
+.notificationContainer {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    max-width: 300px;
+    pointer-events: auto;
+}
+
+.notification {
+    background-color: rgba(20, 20, 20, 0.9);
+    border: 1px solid #03dac6;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(3, 218, 198, 0.5);
+    color: #bb86fc;
+    padding: 10px 15px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    animation: glowPulse 2s infinite alternate;
+}
+
+.notificationIcon {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.notificationMessage {
+    flex: 1;
+}
+
+.notificationClose {
+    background: none;
+    border: none;
+    color: #03dac6;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0 0 0 10px;
+    line-height: 1;
+}
+
+.notificationClose:hover {
+    color: #bb86fc;
+}
+
+@keyframes glowPulse {
+    0% {
+        box-shadow: 0 0 5px rgba(3, 218, 198, 0.3);
+    }
+    100% {
+        box-shadow: 0 0 15px rgba(3, 218, 198, 0.7);
+    }
+}

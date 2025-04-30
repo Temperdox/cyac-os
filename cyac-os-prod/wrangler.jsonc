@@ -35,7 +35,13 @@
 			"secret_name": "SESSION_SECRET" },
 		{ "binding": "JWT_SECRET",
 			"store_id": "feb5692e468449288b6c2db0106f07ee",
-			"secret_name": "JWT_SECRET" }
+			"secret_name": "JWT_SECRET" },
+		{ "binding": "GOOGLE_SEARCH_API_KEY",
+			"store_id": "feb5692e468449288b6c2db0106f07ee",
+			"secret_name": "GOOGLE_SEARCH_API_KEY" },
+		{ "binding": "GOOGLE_SEARCH_CX",
+			"store_id": "feb5692e468449288b6c2db0106f07ee",
+			"secret_name": "GOOGLE_SEARCH_CX" }
 	]
 	/**
 	 * Smart Placement

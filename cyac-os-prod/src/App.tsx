@@ -27,6 +27,7 @@ interface OpenWindow {
     component: React.ComponentType<any>;
     props?: any;
     minimized: boolean;
+    icon?: string;
 }
 
 // Programs interface
@@ -35,6 +36,7 @@ interface Program {
     title: string;
     component: string;
     type: 'window' | 'fullscreen';
+    icon?: string; // Add icon for taskbar preview
 }
 
 const App: React.FC = () => {
@@ -261,6 +263,7 @@ const App: React.FC = () => {
             title: program.title,
             component: Component,
             minimized: false,
+            icon: program.icon, // Pass the icon from program
             props: displayMode === 'fullscreen' ? { isFullscreen: true } : {}
         };
 
@@ -308,7 +311,8 @@ const App: React.FC = () => {
                 id: `${item.type}_${item.name}`,
                 title: item.description || item.name,
                 component: item.component,
-                type: 'window'
+                type: 'window',
+                icon: item.icon // Pass the icon if available
             });
         } else if (item.type === 'file') {
             try {
@@ -326,7 +330,8 @@ const App: React.FC = () => {
                         id: uniqueId,
                         title: item.name,
                         component: ComponentToLaunch,
-                        minimized: false
+                        minimized: false,
+                        icon: item.icon // Pass the icon if available
                     };
 
                     // Add the window
@@ -363,7 +368,8 @@ const App: React.FC = () => {
                             id: uniqueId,
                             title: item.name,
                             component: ComponentToLaunch,
-                            minimized: false
+                            minimized: false,
+                            icon: item.icon // Pass the icon if available
                         };
 
                         // Add the window
@@ -386,7 +392,8 @@ const App: React.FC = () => {
                             title: item.name,
                             component: dynamicComponents['/components/viewers/TextViewer'],
                             props: { content },
-                            minimized: false
+                            minimized: false,
+                            icon: 'file-text' // Default file icon
                         };
 
                         // Add the new window to the list of open windows
@@ -410,6 +417,17 @@ const App: React.FC = () => {
             }
         }
     };
+
+    // Function to get window content for preview
+    /*const getWindowContent = (id: string) => {
+        const window = openWindows.find(w => w.id === id);
+        if (!window) return null;
+
+        // Create a shallow clone of the window content
+        // This is a simplified version - you may need to adjust based on your component structure
+        const Component = window.component;
+        return <Component {...window.props} isPreview={true} />;
+    };*/
 
     // Handle taskbar item click
     const handleTaskbarItemClick = (id: string) => {
@@ -559,13 +577,26 @@ const App: React.FC = () => {
         return <DiscordCallback onComplete={handleAuthComplete} />;
     }
 
-    // Render power button or boot sequence if not booted yet
+    // Render power button screen with CRT effects
     if (!powered) {
-        return <PowerButton onPowerOn={handlePowerOn} />;
+        return (
+            <div className={styles.app}>
+                <div className={styles.dotPattern}></div>
+                <CrtEffects isHardwareAccelerated={isHardwareAccelerated} />
+                <PowerButton onPowerOn={handlePowerOn} />
+            </div>
+        );
     }
 
+    // Render boot sequence with CRT effects
     if (!booted) {
-        return <BootSequence onComplete={handleBootComplete} />;
+        return (
+            <div className={styles.app}>
+                <div className={styles.dotPattern}></div>
+                <CrtEffects isHardwareAccelerated={isHardwareAccelerated} />
+                <BootSequence onComplete={handleBootComplete} />
+            </div>
+        );
     }
 
     // Calculate available height for content based on terminal visibility
@@ -661,12 +692,14 @@ const App: React.FC = () => {
                 }}
             />
 
-            {/* Taskbar */}
+            {/* Taskbar with preview support */}
             <TaskBar
                 items={openWindows.map(w => ({
                     id: w.id,
                     title: w.title,
-                    minimized: w.minimized
+                    minimized: w.minimized,
+                    icon: w.icon,
+                    component: w.component // Pass the actual component for preview
                 }))}
                 onItemClick={handleTaskbarItemClick}
                 onQuickMenuToggle={handleQuickMenuToggle}
@@ -675,6 +708,7 @@ const App: React.FC = () => {
                 activeWindowId={activeWindowId}
                 isCalendarOpen={isCalendarOpen}
                 setIsCalendarOpen={setIsCalendarOpen}
+                onWindowClose={handleWindowClose}
             />
 
             {/* Calendar overlay - rendered at the App level to ensure proper stacking */}
