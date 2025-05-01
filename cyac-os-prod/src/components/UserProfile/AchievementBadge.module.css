@@ -1,0 +1,176 @@
+.badge {
+    position: relative;
+    background-color: rgba(0, 17, 34, 0.7);
+    border-radius: 8px;
+    padding: 10px;
+    height: 100px;
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.badge:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.badge:active {
+    transform: translateY(-2px);
+}
+
+.badgeContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    z-index: 2;
+}
+
+.badgeIcon {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+    transition: all 0.3s;
+}
+
+.badge:hover .badgeIcon {
+    transform: scale(1.1);
+}
+
+.badgeInfo {
+    text-align: center;
+    width: 100%;
+}
+
+.badgeTitle {
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 4px;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.badgeRarity {
+    font-size: 10px;
+    font-weight: bold;
+    opacity: 0.8;
+}
+
+/* Locked state */
+.locked {
+    filter: grayscale(0.8);
+    opacity: 0.7;
+}
+
+.lockedInfo {
+    filter: blur(3px);
+}
+
+.lockedOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+}
+
+.lockIcon {
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Rarity styles */
+.common {
+    border: 2px solid #aaaaaa;
+    box-shadow: 0 0 5px rgba(170, 170, 170, 0.5);
+}
+
+.common .badgeRarity {
+    color: #cccccc;
+}
+
+.uncommon {
+    border: 2px solid #33ff33;
+    box-shadow: 0 0 5px rgba(51, 255, 51, 0.5);
+}
+
+.uncommon .badgeRarity {
+    color: #33ff33;
+}
+
+.rare {
+    border: 2px solid #3399ff;
+    box-shadow: 0 0 5px rgba(51, 153, 255, 0.5);
+}
+
+.rare .badgeRarity {
+    color: #3399ff;
+}
+
+.epic {
+    border: 2px solid #cc33ff;
+    box-shadow: 0 0 8px rgba(204, 51, 255, 0.7);
+}
+
+.epic .badgeRarity {
+    color: #cc33ff;
+}
+
+.legendary {
+    border: 2px solid #ffaa00;
+    box-shadow: 0 0 10px rgba(255, 170, 0, 0.7);
+    animation: legendaryGlow 2s infinite alternate;
+}
+
+.legendary .badgeRarity {
+    color: #ffaa00;
+    animation: textPulse 2s infinite alternate;
+}
+
+.legendary::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+            transparent,
+            rgba(255, 170, 0, 0.1),
+            transparent,
+            transparent
+    );
+    animation: rotate 4s linear infinite;
+    z-index: 1;
+}
+
+/* Animations */
+@keyframes legendaryGlow {
+    0% { box-shadow: 0 0 5px rgba(255, 170, 0, 0.5); }
+    100% { box-shadow: 0 0 15px rgba(255, 170, 0, 0.9); }
+}
+
+@keyframes textPulse {
+    0% { text-shadow: 0 0 2px rgba(255, 170, 0, 0.5); }
+    100% { text-shadow: 0 0 8px rgba(255, 170, 0, 0.9); }
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

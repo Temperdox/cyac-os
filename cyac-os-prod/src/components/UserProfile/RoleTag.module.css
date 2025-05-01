@@ -1,0 +1,39 @@
+.roleTag {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 10px;
+    border: 1px solid;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.2s;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.roleTag:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.roleIcon {
+    width: 14px;
+    height: 14px;
+    margin-right: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.roleIcon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.roleName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
