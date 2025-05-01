@@ -367,7 +367,7 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
         return true;
     };
 
-    // Handle item click
+    // Find this function in your code (around line 418)
     const handleItemClick = (item: any) => {
         if (item.type === 'directory') {
             if (!canAccess(item)) return;
@@ -386,18 +386,14 @@ const QuickMenu: React.FC<QuickMenuProps> = ({
                 handleFileDirectly(targetDir, item.name);
             }
 
-            // Close menu after navigation on desktop
-            if (!isMobile) {
-                onClose();
-            }
+            // Always close menu after file navigation (removed the isMobile check)
+            onClose();
         } else {
             // Launch program, scene, subscene
             onNavigate(`${item.parentPath || currentPath}/${item.name}`, item);
 
-            // Close menu after navigation
-            if (!isMobile) {
-                onClose();
-            }
+            // Always close menu after program navigation (removed the isMobile check)
+            onClose();
         }
     };
 

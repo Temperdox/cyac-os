@@ -51,16 +51,19 @@ export class FileSystem {
                                             name: 'MarkdownGuide.txt',
                                             type: 'file',
                                             component: '/components/viewers/TextViewer/Documents/MarkdownGuide',
+                                            icon: "/assets/images/icons/note.png",
                                        },
                                         'CyberAcmeOsSystemManual.txt': {
                                             name: 'CyberAcmeOsSystemManual.txt',
                                             type: 'file',
                                             component: '/components/viewers/TextViewer/Documents/CyberAcmeOsSystemManual',
+                                            icon: "/assets/images/icons/note.png",
                                         },
                                         'TerminalColorFormatter.txt': {
                                             name: 'TerminalColorFormatter.txt',
                                             type: 'file',
                                             component: '/components/viewers/TextViewer/Documents/TerminalColorFormatter',
+                                            icon: "/assets/images/icons/note.png",
                                         }
                                     }
                                 },
@@ -77,7 +80,7 @@ export class FileSystem {
                                                     type: 'program',
                                                     component: '/components/Browser/CyAc_browser_v1',
                                                     description: 'CyberAcme Web Browser v1.0',
-                                                    icon: "/assets/images/icons/CyAcBrowserIcon.png",
+                                                    icon: "/assets/images/icons/browser.png",
                                                 }
                                             }
                                         },
@@ -92,28 +95,29 @@ export class FileSystem {
                                                         'tetris': {
                                                             name: 'Tetris',
                                                             type: 'program',
-                                                            component: '/components/programs/GameLauncher/games/Tetris',
+                                                            component: '/components/viewers/GameLauncher/Games/Tetris',
                                                             description: 'Classic Tetris Game'
                                                         },
                                                         'snake': {
                                                             name: 'Snake',
                                                             type: 'program',
-                                                            component: '/components/programs/GameLauncher/games/Snake',
+                                                            component: '/components/viewers/GameLauncher/Games/Snake',
                                                             description: 'Classic Snake Game'
                                                         },
                                                         'tictactoe': {
                                                             name: 'TicTacToe',
                                                             type: 'program',
-                                                            component: '/components/programs/GameLauncher/games/TicTacToe',
+                                                            component: '/components/viewers/GameLauncher/Games/TicTacToe',
                                                             description: 'Classic Snake Game'
                                                         }
                                                     },
                                                 },
                                                 'GameLauncher': {
-                                                    name: 'GameLauncher',
+                                                    name: 'NuPlay',
                                                     type: 'program',
                                                     component: '/components/viewers/GameLauncher',
-                                                    description: 'CyberAcme Game Center'
+                                                    description: 'CyberAcme Game Center',
+                                                    icon: "/assets/images/icons/game-launcher.png",
                                                 }
                                             }
                                         },

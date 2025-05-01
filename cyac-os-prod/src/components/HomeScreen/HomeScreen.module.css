@@ -265,6 +265,23 @@
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
+    .homeScreen {
+        height: 90%;
+        margin-top: 10%;
+    }
+
+    .logoContainer {
+        margin-bottom: 20px;
+    }
+
+    .mottoContainer {
+        margin: 10px 0 20px 0;
+    }
+
+    .separator {
+        margin: 15px 0;
+    }
+
     .logo {
         font-size: 2.5rem;
     }
@@ -277,10 +294,19 @@
         font-size: 1rem;
     }
 
+    .commandHint {
+        font-size: .7rem;
+    }
+
     .statusContainer {
         flex-direction: column;
         gap: 5px;
+        margin: 10px 0;
         align-items: flex-start;
+    }
+
+    .discordButtonWrapper {
+        margin: 15px 0;
     }
 
     .bottomHints {

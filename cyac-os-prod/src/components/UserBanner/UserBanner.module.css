@@ -14,7 +14,7 @@
 .userAuthBanner.mobile {
     border-top: 1px solid #0f0;
     border-bottom: none; /* Remove bottom border on mobile */
-    margin-bottom: 70px; /* Space for the footer navigation */
+    margin-bottom: 30px; /* Space for the footer navigation */
     margin-top: auto; /* Push to the bottom of its container */
 }
 

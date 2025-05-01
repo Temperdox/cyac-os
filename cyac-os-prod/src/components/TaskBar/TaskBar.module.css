@@ -106,9 +106,12 @@
     width: 100%;
 }
 
+.taskButtonContent .taskButtonIcon {
+    width: 20px !important;
+}
+
 .taskButtonIcon {
     font-size: 10px;
-    height: 32px !important;
 }
 
 .taskButtonText {
@@ -345,6 +348,13 @@
     .statusItem span {
         display: none;
     }
+}
+
+.taskbarButtonIcon {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    margin-right: 4px;
 }
 
 .icon-image {
