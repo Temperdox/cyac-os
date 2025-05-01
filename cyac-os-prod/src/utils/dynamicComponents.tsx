@@ -16,6 +16,7 @@ import GameLauncher from '../components/viewers/GameLauncher';
 import TicTacToe from '../components/viewers/GameLauncher/Games/TicTacToe';
 import Tetris from "../components/viewers/GameLauncher/Games/Tetris.tsx";
 import Snake from "../components/viewers/GameLauncher/Games/Snake.tsx";
+import CyberQuest from "../components/viewers/GameLauncher/Games/CyberQuest/CyberQuest";
 
 // Create a mapping of component paths to React components
 const dynamicComponents: { [key: string]: React.ComponentType<any> } = {
@@ -61,6 +62,7 @@ const dynamicComponents: { [key: string]: React.ComponentType<any> } = {
 
     // Games
     '/components/viewers/GameLauncher/Games/TicTacToe': TicTacToe,
+    '/components/viewers/GameLauncher/Games/CyberQuest': CyberQuest,
 
     // Add placeholder references for other games that will be implemented later
     '/components/viewers/GameLauncher/Games/Tetris': Tetris,

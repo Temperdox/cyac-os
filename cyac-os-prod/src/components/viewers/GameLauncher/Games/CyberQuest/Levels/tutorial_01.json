@@ -1,0 +1,42 @@
+{
+  "id": "tutorial_01",
+  "name": "System Basics",
+  "description": "Learn the basics of cyber infiltration",
+  "difficulty": "easy",
+  "type": "puzzle",
+  "order": 1,
+  "data": {
+    "intro": "Welcome, agent. Your first task is to learn the basic controls and operations of our cyber infiltration system. This training simulation will prepare you for more complex missions ahead.",
+    "outro": "Well done! You now understand the fundamentals of the system. You're ready to take on more challenging tasks.",
+    "objectives": [
+      {
+        "id": "obj_1",
+        "description": "Connect to the terminal",
+        "type": "activate",
+        "target": "terminal",
+        "points": 10
+      },
+      {
+        "id": "obj_2",
+        "description": "Execute first command",
+        "type": "hack",
+        "target": "command_prompt",
+        "points": 20
+      },
+      {
+        "id": "obj_3",
+        "description": "Download training data",
+        "type": "collect",
+        "target": "data_01",
+        "points": 30
+      }
+    ]
+  },
+  "maxScore": 100,
+  "timeLimit": 180,
+  "rewards": {
+    "points": 50,
+    "bonusPoints": 25,
+    "experience": 100
+  }
+}

@@ -1,0 +1,419 @@
+.shopContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.shopHeader {
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-bottom: 1px solid #33ffff;
+}
+
+.shopTitle {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #33ffff;
+    text-shadow: 0 0 10px rgba(51, 255, 255, 0.5);
+}
+
+.playerPoints {
+    display: flex;
+    align-items: baseline;
+    gap: 0.2rem;
+    margin-left: auto;
+    margin-right: 1.5rem;
+}
+
+.pointsValue {
+    color: #ffff33;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.pointsLabel {
+    color: rgba(255, 255, 51, 0.7);
+    font-size: 1rem;
+}
+
+.backButton {
+    padding: 0.5rem 1rem;
+    background-color: rgba(255, 51, 51, 0.1);
+    border: 1px solid rgba(255, 51, 51, 0.5);
+    color: #ff5151;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.backButton:hover {
+    background-color: rgba(255, 51, 51, 0.2);
+    box-shadow: 0 0 10px rgba(255, 51, 51, 0.3);
+}
+
+.shopContent {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 200px 1fr 300px;
+    overflow: hidden;
+}
+
+/* Categories Sidebar */
+.categoriesSidebar {
+    background-color: rgba(0, 0, 0, 0.7);
+    border-right: 1px solid rgba(51, 255, 255, 0.3);
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.categoriesTitle {
+    color: #33ffff;
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+}
+
+.categoriesList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.categoryButton {
+    padding: 0.7rem 1rem;
+    background-color: rgba(51, 255, 255, 0.1);
+    border: 1px solid rgba(51, 255, 255, 0.3);
+    color: #33ffff;
+    text-align: left;
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.categoryButton:hover {
+    background-color: rgba(51, 255, 255, 0.2);
+}
+
+.categoryButton.active {
+    background-color: rgba(51, 255, 255, 0.3);
+    border-color: #33ffff;
+    box-shadow: 0 0 10px rgba(51, 255, 255, 0.3);
+}
+
+/* Items Grid */
+.itemsGrid {
+    background-color: rgba(0, 10, 20, 0.5);
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+    overflow-y: auto;
+}
+
+.itemCard {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(51, 255, 255, 0.3);
+    border-radius: 3px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    overflow: hidden;
+}
+
+.itemCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+            135deg,
+            rgba(51, 255, 255, 0.1) 0%,
+            transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.itemCard:hover::before {
+    opacity: 1;
+}
+
+.itemCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.itemCard.selected {
+    border-color: #33ffff;
+    box-shadow: 0 0 15px rgba(51, 255, 255, 0.5);
+}
+
+.itemRarity {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+}
+
+.itemRarity.common {
+    background-color: #cccccc;
+}
+
+.itemRarity.uncommon {
+    background-color: #33ff33;
+}
+
+.itemRarity.rare {
+    background-color: #3399ff;
+}
+
+.itemRarity.epic {
+    background-color: #cc33ff;
+}
+
+.itemRarity.legendary {
+    background-color: #ffcc33;
+}
+
+.itemIcon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.itemInfo {
+    width: 100%;
+    text-align: center;
+}
+
+.itemName {
+    margin: 0 0 0.3rem 0;
+    font-size: 1rem;
+    color: #33ffff;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.itemType {
+    font-size: 0.8rem;
+    color: rgba(51, 255, 255, 0.7);
+    margin-bottom: 0.3rem;
+}
+
+.itemPrice {
+    font-size: 0.9rem;
+    color: #ffff33;
+    font-weight: bold;
+}
+
+.noItems {
+    grid-column: 1 / -1;
+    padding: 3rem;
+    text-align: center;
+    color: rgba(51, 255, 255, 0.7);
+    font-style: italic;
+}
+
+/* Item Detail */
+.itemDetail {
+    background-color: rgba(0, 0, 0, 0.7);
+    border-left: 1px solid rgba(51, 255, 255, 0.3);
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+.detailTitle {
+    color: #33ffff;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.3rem;
+}
+
+.detailRarity {
+    display: inline-block;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+    border-radius: 3px;
+    margin-bottom: 1rem;
+}
+
+.detailRarity.common {
+    background-color: rgba(204, 204, 204, 0.1);
+    color: #cccccc;
+}
+
+.detailRarity.uncommon {
+    background-color: rgba(51, 255, 51, 0.1);
+    color: #33ff33;
+}
+
+.detailRarity.rare {
+    background-color: rgba(51, 153, 255, 0.1);
+    color: #3399ff;
+}
+
+.detailRarity.epic {
+    background-color: rgba(204, 51, 255, 0.1);
+    color: #cc33ff;
+}
+
+.detailRarity.legendary {
+    background-color: rgba(255, 204, 51, 0.1);
+    color: #ffcc33;
+}
+
+.detailDescription {
+    color: rgba(51, 255, 255, 0.9);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+.detailEffects {
+    margin-bottom: 1.5rem;
+}
+
+.detailEffects h4 {
+    color: #33ffff;
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+}
+
+.effectsList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.effectItem {
+    padding: 0.5rem;
+    background-color: rgba(51, 255, 255, 0.05);
+    margin-bottom: 0.5rem;
+    border-left: 3px solid rgba(51, 255, 255, 0.3);
+    font-size: 0.9rem;
+}
+
+.detailQuantity {
+    color: rgba(51, 255, 255, 0.8);
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.purchaseSection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.detailPrice {
+    font-size: 1rem;
+    color: rgba(51, 255, 255, 0.8);
+}
+
+.priceValue {
+    color: #ffff33;
+    font-weight: bold;
+}
+
+.purchaseButton {
+    padding: 0.7rem 1.2rem;
+    background-color: rgba(51, 255, 51, 0.2);
+    border: 1px solid rgba(51, 255, 51, 0.5);
+    color: #33ff33;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.purchaseButton:hover:not(:disabled) {
+    background-color: rgba(51, 255, 51, 0.3);
+    box-shadow: 0 0 15px rgba(51, 255, 51, 0.5);
+}
+
+.purchaseButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.errorMessage {
+    margin-top: 1rem;
+    padding: 0.7rem;
+    background-color: rgba(255, 51, 51, 0.1);
+    border-left: 3px solid #ff3333;
+    color: #ff3333;
+    font-size: 0.9rem;
+}
+
+/* Responsive styles */
+@media (max-width: 1024px) {
+    .shopContent {
+        grid-template-columns: 150px 1fr 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .shopContent {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+    }
+
+    .shopHeader {
+        padding: 0.8rem;
+    }
+
+    .shopTitle {
+        font-size: 1.2rem;
+    }
+
+    .categoriesSidebar {
+        grid-row: 1;
+        border-right: none;
+        border-bottom: 1px solid rgba(51, 255, 255, 0.3);
+        padding: 0.8rem;
+        max-height: 150px;
+    }
+
+    .categoriesTitle {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .categoriesList {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .categoryButton {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .itemsGrid {
+        grid-row: 2;
+        padding: 0.8rem;
+    }
+
+    .itemDetail {
+        grid-row: 3;
+        border-left: none;
+        border-top: 1px solid rgba(51, 255, 255, 0.3);
+        padding: 0.8rem;
+        max-height: 250px;
+    }
+
+    .detailTitle {
+        font-size: 1.1rem;
+    }
+}

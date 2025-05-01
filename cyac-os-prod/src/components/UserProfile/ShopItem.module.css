@@ -1,0 +1,436 @@
+.shopItem {
+    position: relative;
+    background-color: rgba(0, 17, 34, 0.6);
+    border: 2px solid rgba(51, 255, 51, 0.4);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 380px;
+    transition: all 0.3s;
+}
+
+.shopItem:hover {
+    border-color: #33ff33;
+    box-shadow: 0 0 15px rgba(51, 255, 51, 0.5);
+    transform: translateY(-5px);
+}
+
+/* Item states and badges */
+.owned {
+    border-color: rgba(100, 100, 100, 0.5);
+    opacity: 0.8;
+}
+
+.owned:hover {
+    border-color: rgba(100, 100, 100, 0.8);
+    box-shadow: 0 0 10px rgba(100, 100, 100, 0.5);
+}
+
+.newTag, .featuredTag, .discountTag {
+    position: absolute;
+    top: 10px;
+    padding: 3px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 2;
+    border-radius: 4px;
+}
+
+.newTag {
+    background-color: rgba(255, 51, 51, 0.7);
+    color: white;
+    right: 10px;
+    animation: pulse 2s infinite alternate;
+}
+
+.featuredTag {
+    background-color: rgba(255, 204, 0, 0.7);
+    color: #000;
+    left: 10px;
+}
+
+.discountTag {
+    background-color: rgba(0, 204, 102, 0.7);
+    color: white;
+    right: 10px;
+    top: 40px;
+}
+
+.ownedOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.owned:hover .ownedOverlay {
+    opacity: 1;
+}
+
+.ownedText {
+    background-color: rgba(100, 100, 100, 0.8);
+    color: white;
+    padding: 5px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    transform: rotate(-15deg);
+    letter-spacing: 2px;
+}
+
+/* Item image */
+.itemImageContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    height: 150px;
+    background-color: rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.itemImage {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s;
+}
+
+.shopItem:hover .itemImage {
+    transform: scale(1.1);
+}
+
+/* Item details section */
+.itemDetails {
+    padding: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.itemName {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 0 0 5px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.itemMeta {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.itemCategory, .itemGame {
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.itemCategory {
+    background-color: rgba(51, 153, 255, 0.2);
+    color: #3399ff;
+    border: 1px solid #3399ff;
+}
+
+.itemGame {
+    background-color: rgba(153, 102, 204, 0.2);
+    color: #9966cc;
+    border: 1px solid #9966cc;
+}
+
+.rarityTag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.rarityTag.common {
+    background-color: rgba(150, 150, 150, 0.2);
+    color: #aaaaaa;
+    border: 1px solid #aaaaaa;
+}
+
+.rarityTag.uncommon {
+    background-color: rgba(51, 255, 51, 0.2);
+    color: #33ff33;
+    border: 1px solid #33ff33;
+}
+
+.rarityTag.rare {
+    background-color: rgba(51, 153, 255, 0.2);
+    color: #3399ff;
+    border: 1px solid #3399ff;
+}
+
+.rarityTag.epic {
+    background-color: rgba(204, 51, 255, 0.2);
+    color: #cc33ff;
+    border: 1px solid #cc33ff;
+}
+
+.rarityTag.legendary {
+    background-color: rgba(255, 170, 0, 0.2);
+    color: #ffaa00;
+    border: 1px solid #ffaa00;
+}
+
+.itemDescription {
+    font-size: 14px;
+    color: #cccccc;
+    flex: 1;
+    margin: 0 0 10px 0;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+/* Price section */
+.priceSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.price, .discountedPrice {
+    display: flex;
+    align-items: baseline;
+}
+
+.priceAmount, .finalPrice {
+    font-size: 18px;
+    font-weight: bold;
+    color: #33ff33;
+}
+
+.originalPrice {
+    text-decoration: line-through;
+    color: #aaaaaa;
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+.pointsLabel {
+    font-size: 12px;
+    color: #aaaaaa;
+    margin-left: 3px;
+}
+
+.purchaseButton, .useButton {
+    background-color: rgba(51, 255, 51, 0.1);
+    color: #33ff33;
+    border: 1px solid #33ff33;
+    padding: 6px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+}
+
+.purchaseButton:hover, .useButton:hover {
+    background-color: rgba(51, 255, 51, 0.2);
+    box-shadow: 0 0 10px rgba(51, 255, 51, 0.5);
+}
+
+.cantAfford {
+    background-color: rgba(255, 51, 51, 0.1);
+    color: #ff3333;
+    border-color: #ff3333;
+    cursor: not-allowed;
+}
+
+.cantAfford:hover {
+    background-color: rgba(255, 51, 51, 0.2);
+    box-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+}
+
+/* Rarity styles */
+.shopItem.common {
+    border-color: rgba(150, 150, 150, 0.4);
+}
+
+.shopItem.common:hover {
+    border-color: #aaaaaa;
+    box-shadow: 0 0 15px rgba(150, 150, 150, 0.5);
+}
+
+.shopItem.uncommon {
+    border-color: rgba(51, 255, 51, 0.4);
+}
+
+.shopItem.uncommon:hover {
+    border-color: #33ff33;
+    box-shadow: 0 0 15px rgba(51, 255, 51, 0.5);
+}
+
+.shopItem.rare {
+    border-color: rgba(51, 153, 255, 0.4);
+}
+
+.shopItem.rare:hover {
+    border-color: #3399ff;
+    box-shadow: 0 0 15px rgba(51, 153, 255, 0.5);
+}
+
+.shopItem.epic {
+    border-color: rgba(204, 51, 255, 0.4);
+}
+
+.shopItem.epic:hover {
+    border-color: #cc33ff;
+    box-shadow: 0 0 15px rgba(204, 51, 255, 0.5);
+}
+
+.shopItem.legendary {
+    border-color: rgba(255, 170, 0, 0.4);
+    box-shadow: 0 0 10px rgba(255, 170, 0, 0.3);
+    animation: legendaryGlow 2s infinite alternate;
+}
+
+.shopItem.legendary:hover {
+    border-color: #ffaa00;
+    box-shadow: 0 0 20px rgba(255, 170, 0, 0.7);
+}
+
+/* Hover details */
+.hoverDetails {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 13, 26, 0.95);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.shopItem:hover .hoverDetails {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.hoverItemName {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 0 0 10px 0;
+    border-bottom: 1px solid rgba(51, 255, 51, 0.3);
+    padding-bottom: 10px;
+}
+
+.hoverDescription {
+    font-size: 14px;
+    color: #cccccc;
+    margin-bottom: 15px;
+    overflow-y: auto;
+    max-height: 100px;
+}
+
+.statsContainer {
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(51, 255, 51, 0.3);
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.statsHeader {
+    font-size: 14px;
+    font-weight: bold;
+    color: #33ff33;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.statsList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.statItem {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+}
+
+.statName {
+    color: #aaaaaa;
+}
+
+.statValue {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.hoverButton {
+    margin-top: auto;
+    background-color: rgba(51, 255, 51, 0.1);
+    color: #33ff33;
+    border: 1px solid #33ff33;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+    width: 100%;
+    text-align: center;
+}
+
+.hoverButton:hover {
+    background-color: rgba(51, 255, 51, 0.3);
+    box-shadow: 0 0 10px rgba(51, 255, 51, 0.5);
+}
+
+.hoverButton.cantAfford {
+    background-color: rgba(255, 51, 51, 0.1);
+    color: #ff3333;
+    border-color: #ff3333;
+    cursor: not-allowed;
+}
+
+.hoverButton.cantAfford:hover {
+    background-color: rgba(255, 51, 51, 0.2);
+    box-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+@keyframes legendaryGlow {
+    0% { box-shadow: 0 0 5px rgba(255, 170, 0, 0.3); }
+    100% { box-shadow: 0 0 15px rgba(255, 170, 0, 0.7); }
+}

@@ -1,0 +1,280 @@
+{
+  "categories": [
+    {
+      "id": "tools",
+      "name": "Hacking Tools",
+      "description": "Specialized tools to assist in cyber infiltration missions"
+    },
+    {
+      "id": "upgrades",
+      "name": "System Upgrades",
+      "description": "Permanent improvements to your hacking capabilities"
+    },
+    {
+      "id": "powerups",
+      "name": "Power-Ups",
+      "description": "Temporary boosts and special abilities"
+    },
+    {
+      "id": "cosmetics",
+      "name": "Cosmetics",
+      "description": "Visual customizations for your hacking interface"
+    }
+  ],
+  "items": [
+    {
+      "id": "tool_advanced_scanner",
+      "name": "Advanced Scanner",
+      "description": "Reveals hidden elements and vulnerabilities in systems",
+      "type": "tool",
+      "price": 200,
+      "rarity": "uncommon",
+      "category": "tools",
+      "effects": [
+        {
+          "type": "reveal_path",
+          "value": "hidden_elements"
+        }
+      ],
+      "image": "/images/items/advanced_scanner.png"
+    },
+    {
+      "id": "tool_network_analyzer",
+      "name": "Network Analyzer",
+      "description": "Maps out network structures automatically, revealing pathways in maze levels",
+      "type": "tool",
+      "price": 300,
+      "rarity": "rare",
+      "category": "tools",
+      "effects": [
+        {
+          "type": "reveal_path",
+          "value": "network_map"
+        }
+      ],
+      "image": "/images/items/network_analyzer.png"
+    },
+    {
+      "id": "tool_auto_decryptor",
+      "name": "Auto-Decryptor",
+      "description": "Automatically solves simple decryption puzzles",
+      "type": "tool",
+      "price": 750,
+      "rarity": "epic",
+      "category": "tools",
+      "effects": [
+        {
+          "type": "auto_solve",
+          "value": "simple_decryption"
+        }
+      ],
+      "image": "/images/items/auto_decryptor.png",
+      "unlockRequirement": {
+        "type": "level",
+        "value": 5
+      }
+    },
+    {
+      "id": "upgrade_neural_interface",
+      "name": "Neural Interface",
+      "description": "Enhances hacking speed and provides occasional hints",
+      "type": "upgrade",
+      "price": 500,
+      "rarity": "epic",
+      "category": "upgrades",
+      "effects": [
+        {
+          "type": "speed_boost",
+          "value": 1.5
+        },
+        {
+          "type": "hint",
+          "value": "periodic"
+        }
+      ],
+      "image": "/images/items/neural_interface.png"
+    },
+    {
+      "id": "upgrade_firewall_bypass",
+      "name": "Firewall Bypass Module",
+      "description": "Permanently reduces the difficulty of firewall hacking puzzles",
+      "type": "upgrade",
+      "price": 400,
+      "rarity": "rare",
+      "category": "upgrades",
+      "effects": [
+        {
+          "type": "puzzle_difficulty",
+          "value": "firewall",
+          "modifier": -1
+        }
+      ],
+      "image": "/images/items/firewall_bypass.png"
+    },
+    {
+      "id": "upgrade_score_amplifier",
+      "name": "Score Amplifier",
+      "description": "Permanently increases all points earned by 10%",
+      "type": "upgrade",
+      "price": 1000,
+      "rarity": "legendary",
+      "category": "upgrades",
+      "effects": [
+        {
+          "type": "score_multiplier",
+          "value": 1.1
+        }
+      ],
+      "image": "/images/items/score_amplifier.png",
+      "unlockRequirement": {
+        "type": "achievement",
+        "value": "cyberquest_level5"
+      }
+    },
+    {
+      "id": "powerup_time_warp",
+      "name": "Time Warp",
+      "description": "Slows down time for 30 seconds, giving you more time to solve puzzles",
+      "type": "powerup",
+      "price": 350,
+      "rarity": "rare",
+      "category": "powerups",
+      "effects": [
+        {
+          "type": "time_slow",
+          "value": 0.5,
+          "duration": 30
+        }
+      ],
+      "image": "/images/items/time_warp.png",
+      "consumable": true,
+      "quantity": 3
+    },
+    {
+      "id": "powerup_firewall_breaker",
+      "name": "Firewall Breaker",
+      "description": "One-time use tool that instantly bypasses a firewall",
+      "type": "powerup",
+      "price": 300,
+      "rarity": "rare",
+      "category": "powerups",
+      "effects": [
+        {
+          "type": "custom",
+          "value": "bypass_firewall"
+        }
+      ],
+      "image": "/images/items/firewall_breaker.png",
+      "consumable": true,
+      "quantity": 2
+    },
+    {
+      "id": "powerup_data_magnet",
+      "name": "Data Magnet",
+      "description": "Automatically collects all data fragments within a certain radius",
+      "type": "powerup",
+      "price": 250,
+      "rarity": "uncommon",
+      "category": "powerups",
+      "effects": [
+        {
+          "type": "collect_radius",
+          "value": 3,
+          "duration": 60
+        }
+      ],
+      "image": "/images/items/data_magnet.png",
+      "consumable": true,
+      "quantity": 2
+    },
+    {
+      "id": "cosmetic_elite_hacker",
+      "name": "Elite Hacker Theme",
+      "description": "A sleek, dark theme for the true hacking professional",
+      "type": "cosmetic",
+      "price": 150,
+      "rarity": "uncommon",
+      "category": "cosmetics",
+      "effects": [
+        {
+          "type": "custom",
+          "value": "elite_hacker_theme"
+        }
+      ],
+      "image": "/images/items/elite_hacker_theme.png"
+    },
+    {
+      "id": "cosmetic_neon_grid",
+      "name": "Neon Grid Theme",
+      "description": "Transform your terminal into a vibrant neon grid",
+      "type": "cosmetic",
+      "price": 200,
+      "rarity": "uncommon",
+      "category": "cosmetics",
+      "effects": [
+        {
+          "type": "custom",
+          "value": "neon_grid_theme"
+        }
+      ],
+      "image": "/images/items/neon_grid_theme.png"
+    },
+    {
+      "id": "cosmetic_holographic",
+      "name": "Holographic Interface",
+      "description": "Premium holographic UI with animated elements",
+      "type": "cosmetic",
+      "price": 450,
+      "rarity": "epic",
+      "category": "cosmetics",
+      "effects": [
+        {
+          "type": "custom",
+          "value": "holographic_interface"
+        }
+      ],
+      "image": "/images/items/holographic_interface.png",
+      "unlockRequirement": {
+        "type": "achievement",
+        "value": "cyberquest_perfect"
+      }
+    }
+  ],
+  "specialOffers": [
+    {
+      "id": "starter_pack",
+      "name": "Starter Hacker Pack",
+      "description": "Essential tools for beginning hackers",
+      "price": 400,
+      "originalPrice": 550,
+      "items": [
+        "tool_advanced_scanner",
+        "powerup_time_warp",
+        "cosmetic_elite_hacker"
+      ],
+      "image": "/images/offers/starter_pack.png",
+      "availability": {
+        "startDate": "2025-01-01",
+        "endDate": "2025-12-31",
+        "newUserOnly": true
+      }
+    },
+    {
+      "id": "elite_bundle",
+      "name": "Elite Hacker Bundle",
+      "description": "Premium collection of high-grade hacking tools",
+      "price": 1500,
+      "originalPrice": 2000,
+      "items": [
+        "tool_auto_decryptor",
+        "upgrade_neural_interface",
+        "powerup_firewall_breaker",
+        "cosmetic_holographic"
+      ],
+      "image": "/images/offers/elite_bundle.png",
+      "availability": {
+        "playerLevel": 5
+      }
+    }
+  ]
+}

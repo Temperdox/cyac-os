@@ -1,0 +1,202 @@
+{
+  "id": "maze_01",
+  "name": "Network Maze",
+  "description": "Navigate through a complex network structure to access the central server",
+  "difficulty": "normal",
+  "type": "maze",
+  "order": 3,
+  "data": {
+    "intro": "This network is structured like a maze. Find the path to the central server while avoiding detection from security systems. Proceed carefully - every move you make could trigger an alert.",
+    "outro": "Impressive navigation skills! You've reached the central server undetected and successfully extracted the required data.",
+    "gridSize": { "width": 10, "height": 10 },
+    "entityData": [
+      {
+        "id": "player_start",
+        "type": "player",
+        "position": { "x": 0, "y": 0 }
+      },
+      {
+        "id": "goal",
+        "type": "server",
+        "position": { "x": 9, "y": 9 }
+      },
+      {
+        "id": "firewall_1",
+        "type": "firewall",
+        "position": { "x": 2, "y": 3 },
+        "properties": {
+          "strength": 2,
+          "alertLevel": 1
+        }
+      },
+      {
+        "id": "firewall_2",
+        "type": "firewall",
+        "position": { "x": 5, "y": 2 },
+        "properties": {
+          "strength": 3,
+          "alertLevel": 2
+        }
+      },
+      {
+        "id": "firewall_3",
+        "type": "firewall",
+        "position": { "x": 7, "y": 6 },
+        "properties": {
+          "strength": 4,
+          "alertLevel": 3
+        }
+      },
+      {
+        "id": "camera_1",
+        "type": "camera",
+        "position": { "x": 3, "y": 5 },
+        "properties": {
+          "rotation": 45,
+          "detectionRadius": 3,
+          "sweepAngle": 90
+        }
+      },
+      {
+        "id": "camera_2",
+        "type": "camera",
+        "position": { "x": 6, "y": 3 },
+        "properties": {
+          "rotation": 270,
+          "detectionRadius": 3,
+          "sweepAngle": 90
+        }
+      },
+      {
+        "id": "data_fragment_1",
+        "type": "data",
+        "position": { "x": 4, "y": 1 },
+        "properties": {
+          "value": 20,
+          "name": "Network Map Segment A"
+        }
+      },
+      {
+        "id": "data_fragment_2",
+        "type": "data",
+        "position": { "x": 2, "y": 7 },
+        "properties": {
+          "value": 30,
+          "name": "Security Protocols"
+        }
+      },
+      {
+        "id": "data_fragment_3",
+        "type": "data",
+        "position": { "x": 8, "y": 4 },
+        "properties": {
+          "value": 50,
+          "name": "Access Credentials"
+        }
+      },
+      {
+        "id": "terminal_1",
+        "type": "terminal",
+        "position": { "x": 1, "y": 4 },
+        "properties": {
+          "miniGameId": "firewall_bypass",
+          "securityLevel": 1
+        }
+      },
+      {
+        "id": "terminal_2",
+        "type": "terminal",
+        "position": { "x": 5, "y": 8 },
+        "properties": {
+          "miniGameId": "camera_disable",
+          "securityLevel": 2
+        }
+      }
+    ],
+    "objectives": [
+      {
+        "id": "obj_1",
+        "description": "Map the network layout",
+        "type": "solve",
+        "target": "map_complete",
+        "points": 50
+      },
+      {
+        "id": "obj_2",
+        "description": "Bypass firewalls",
+        "type": "hack",
+        "target": "firewall_bypass",
+        "points": 75
+      },
+      {
+        "id": "obj_3",
+        "description": "Reach the central server",
+        "type": "reach",
+        "target": "central_server",
+        "points": 100
+      },
+      {
+        "id": "obj_4",
+        "description": "Collect all data fragments",
+        "type": "collect",
+        "target": "all_data",
+        "points": 75
+      }
+    ],
+    "mazeLayout": [
+      [0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+      [1, 1, 0, 1, 0, 1, 0, 1, 1, 0],
+      [0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+      [0, 1, 1, 1, 0, 0, 0, 1, 1, 0],
+      [0, 0, 0, 0, 0, 1, 1, 1, 0, 0],
+      [1, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+      [0, 0, 0, 1, 1, 1, 1, 0, 1, 0],
+      [0, 1, 0, 0, 0, 0, 1, 0, 1, 0],
+      [0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 1, 1, 1, 0, 0]
+    ]
+  },
+  "maxScore": 400,
+  "timeLimit": 600,
+  "miniGames": [
+    {
+      "id": "firewall_bypass",
+      "type": "wire_connect",
+      "data": {
+        "wires": 6,
+        "solution": [
+          { "from": 0, "to": 4 },
+          { "from": 1, "to": 3 },
+          { "from": 2, "to": 5 }
+        ],
+        "securityLevel": 2,
+        "timeLimit": 60
+      },
+      "rewards": {
+        "points": 25
+      }
+    },
+    {
+      "id": "camera_disable",
+      "type": "pattern_match",
+      "data": {
+        "patterns": ["0xF7A4", "0xC3B2", "0xE9D1"],
+        "targetPattern": "0xF7A4",
+        "timeLimit": 45
+      },
+      "rewards": {
+        "points": 25
+      }
+    }
+  ],
+  "rewards": {
+    "points": 150,
+    "bonusPoints": 75,
+    "experience": 200,
+    "items": ["tool_network_analyzer"]
+  },
+  "requirements": {
+    "completedLevels": ["decryption_01"],
+    "playerLevel": 2
+  }
+}

@@ -52,6 +52,15 @@ export function registerGames(): void {
             'Snake'
         );
 
+        // CyberQuest
+        FileSystem.registerComponent(
+            gamesPath,
+            'CyberQuest',
+            '/components/viewers/GameLauncher/Games/CyberQuest',
+            'program',
+            'CyberQuest - Hack the System'
+        );
+
         console.log('Game registration complete');
     } catch (error) {
         console.error('Failed to register games:', error);

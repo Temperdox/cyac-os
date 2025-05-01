@@ -62,6 +62,17 @@ const FALLBACK_GAMES: Game[] = [
         releaseDate: '2025',
         collections: ['arcade'],
         features: ['singleplayer', 'high-scores']
+    },
+    {
+        id: "cyberquest",
+        title: "CyberQuest",
+        description: "Hack the system, claim the rewards. Navigate through cyber puzzles to earn cR and unlock achievements.",
+        coverImage: "/game-covers/cyberquest.png",
+        component: "/components/viewers/GameLauncher/Games/CyberQuest",
+        developer: "CyberAcme",
+        releaseDate: "2025",
+        collections: ["puzzle", "strategy"],
+        features: ["singleplayer", "achievements", "shop"]
     }
 ];
 

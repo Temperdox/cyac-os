@@ -109,7 +109,13 @@ export class FileSystem {
                                                             type: 'program',
                                                             component: '/components/viewers/GameLauncher/Games/TicTacToe',
                                                             description: 'Classic Snake Game'
-                                                        }
+                                                        },
+                                                        'cyberquest': {
+                                                            name: 'CyberQuest',
+                                                            type: 'program',
+                                                            component: '/components/viewers/GameLauncher/Games/CyberQuest',
+                                                            description: 'Hack the system, claim the rewards. Navigate through cyber puzzles to earn cR and unlock achievements.'
+                                                        },
                                                     },
                                                 },
                                                 'GameLauncher': {

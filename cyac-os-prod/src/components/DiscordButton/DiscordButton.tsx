@@ -70,7 +70,7 @@ const DiscordButton: React.FC<DiscordButtonProps> = ({ className }) => {
 
                     <div className={styles.usersOnline}>
                         <div className={styles.onlineIndicator}></div>
-                        <div className={styles.onlineText}>186 MEMBERS</div>
+                        <div className={styles.onlineText}>263 MEMBERS</div>
                     </div>
                 </div>
 

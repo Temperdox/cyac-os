@@ -1,0 +1,480 @@
+.shopContainer {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 13, 26, 0.95);
+    color: #33ff33;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: #33ff33 #001122;
+}
+
+.shopContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.shopContainer::-webkit-scrollbar-track {
+    background: #001122;
+}
+
+.shopContainer::-webkit-scrollbar-thumb {
+    background-color: #33ff33;
+    border-radius: 4px;
+}
+
+/* Shop header with title and points */
+.shopHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 2px solid rgba(51, 255, 51, 0.3);
+    margin-bottom: 20px;
+    position: sticky;
+    top: -20px;
+    z-index: 100;
+    padding-top: 20px;
+    background-color: rgba(0, 13, 26, 0.95);
+}
+
+.shopTitle {
+    font-size: 32px;
+    font-weight: bold;
+    color: #33ff33;
+    text-shadow: 0 0 10px rgba(51, 255, 51, 0.7);
+    margin: 0;
+    letter-spacing: 2px;
+}
+
+.pointsDisplay {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 51, 0, 0.2);
+    border: 2px solid #33ff33;
+    border-radius: 8px;
+    padding: 8px 16px;
+    box-shadow: 0 0 10px rgba(51, 255, 51, 0.3);
+}
+
+.pointsIcon {
+    font-size: 24px;
+}
+
+.pointsAmount {
+    font-size: 24px;
+    font-weight: bold;
+    color: #33ff33;
+    text-shadow: 0 0 5px rgba(51, 255, 51, 0.7);
+}
+
+.pointsLabel {
+    font-size: 14px;
+    color: #cccccc;
+}
+
+/* Featured section */
+.featuredSection {
+    margin-bottom: 30px;
+}
+
+.sectionTitle {
+    font-size: 24px;
+    font-weight: bold;
+    color: #33ff33;
+    margin-bottom: 15px;
+    border-left: 4px solid #33ff33;
+    padding-left: 10px;
+    text-shadow: 0 0 5px rgba(51, 255, 51, 0.5);
+}
+
+.itemCount {
+    font-size: 18px;
+    color: #aaaaaa;
+}
+
+.featuredGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Filters section */
+.filtersSection {
+    background-color: rgba(0, 25, 50, 0.3);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(51, 255, 51, 0.2);
+}
+
+.filterGroup {
+    margin-bottom: 10px;
+}
+
+.filterLabel {
+    display: block;
+    font-size: 14px;
+    color: #33ff33;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.categoryFilters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.categoryButton {
+    background-color: transparent;
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    transition: all 0.2s;
+    border-radius: 4px;
+}
+
+.categoryButton:hover {
+    background-color: rgba(51, 255, 51, 0.1);
+    box-shadow: 0 0 8px rgba(51, 255, 51, 0.3);
+}
+
+.categoryButton.active {
+    background-color: rgba(51, 255, 51, 0.2);
+    box-shadow: 0 0 10px rgba(51, 255, 51, 0.5);
+    color: #ffffff;
+}
+
+.filterControls {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.filterSelect {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    padding: 8px 15px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    min-width: 160px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.filterSelect option {
+    background-color: #001122;
+    color: #33ff33;
+}
+
+/* Toggle switch for showing owned items */
+.toggleSwitch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.toggleSwitch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggleSlider {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid #666666;
+    border-radius: 24px;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.toggleSlider:before {
+    position: absolute;
+    content: '';
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 3px;
+    background-color: #666666;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+input:checked + .toggleSlider {
+    background-color: rgba(51, 255, 51, 0.2);
+    border-color: #33ff33;
+}
+
+input:checked + .toggleSlider:before {
+    transform: translateX(26px);
+    background-color: #33ff33;
+}
+
+.toggleLabel {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #cccccc;
+}
+
+/* Main shop content */
+.shopContent {
+    flex: 1;
+}
+
+.itemsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Loading state */
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0;
+}
+
+.loadingSpinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(51, 255, 51, 0.3);
+    border-top: 3px solid #33ff33;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+.loadingText {
+    color: #33ff33;
+    font-size: 18px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Empty state */
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.emptyIcon {
+    font-size: 50px;
+    margin-bottom: 20px;
+    opacity: 0.7;
+}
+
+.emptyText {
+    color: #aaaaaa;
+    font-size: 18px;
+}
+
+/* Confirmation modal content */
+.confirmationContent {
+    padding: 10px;
+}
+
+.confirmItemDetails {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.confirmItemImage {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 2px solid #33ff33;
+    background-color: rgba(0, 17, 34, 0.5);
+}
+
+.confirmItemInfo {
+    flex: 1;
+}
+
+.confirmItemName {
+    font-size: 22px;
+    color: #ffffff;
+    margin: 0 0 5px 0;
+}
+
+.confirmItemCategory {
+    font-size: 14px;
+    color: #aaaaaa;
+    margin-bottom: 15px;
+}
+
+.confirmItemPrice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.confirmOriginalPrice {
+    text-decoration: line-through;
+    color: #aaaaaa;
+    font-size: 16px;
+}
+
+.confirmDiscountedPrice {
+    color: #33ff33;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.confirmDiscount {
+    background-color: rgba(51, 255, 51, 0.2);
+    color: #33ff33;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 14px;
+    border: 1px solid #33ff33;
+}
+
+.confirmPrice {
+    color: #33ff33;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.confirmPointsLabel {
+    color: #aaaaaa;
+    font-size: 14px;
+}
+
+.confirmBalance {
+    background-color: rgba(0, 17, 34, 0.5);
+    border: 1px solid rgba(51, 255, 51, 0.3);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.confirmBalanceRow {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.confirmBalanceRow:last-child {
+    margin-bottom: 0;
+}
+
+.confirmNewBalance {
+    border-top: 1px solid rgba(51, 255, 51, 0.3);
+    padding-top: 10px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.confirmMessage {
+    text-align: center;
+    font-size: 16px;
+    color: #cccccc;
+}
+
+.purchaseResult {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+}
+
+.resultIcon {
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+
+.success .resultIcon {
+    color: #33ff33;
+}
+
+.error .resultIcon {
+    color: #ff3333;
+}
+
+.resultMessage {
+    font-size: 18px;
+}
+
+.success .resultMessage {
+    color: #33ff33;
+}
+
+.error .resultMessage {
+    color: #ff3333;
+}
+
+/* Mobile layout adjustments */
+.mobile .shopHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.mobile .pointsDisplay {
+    align-self: flex-end;
+}
+
+.mobile .featuredGrid,
+.mobile .itemsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.mobile .filterControls {
+    flex-direction: column;
+    gap: 15px;
+}
+
+.mobile .categoryFilters {
+    overflow-x: auto;
+    padding-bottom: 5px;
+    flex-wrap: nowrap;
+}
+
+.mobile .categoryButton {
+    white-space: nowrap;
+}
+
+.mobile .confirmItemDetails {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+@media (max-width: 480px) {
+    .featuredGrid,
+    .itemsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .mobile .categoryButton {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+}

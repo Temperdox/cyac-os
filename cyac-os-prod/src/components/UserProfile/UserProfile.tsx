@@ -4,6 +4,8 @@ import { DiscordAuthService } from '../../services/DiscordAuthService';
 import { AchievementService } from '../../services/AchievementService';
 import { InventoryService } from '../../services/InventoryService';
 import { ServerProgressionService } from '../../services/ServerProgressionService';
+import { PointsService } from '../../services/PointsService';
+import Shop from './Shop';
 import InventoryItem from './InventoryItem';
 import AchievementBadge from './AchievementBadge';
 import RoleTag from './RoleTag';
@@ -14,6 +16,15 @@ interface UserProfileProps {
     isOpen: boolean;
     onClose: () => void;
     isMobile?: boolean;
+}
+
+interface PointsTransaction {
+    id: string;
+    timestamp: Date;
+    amount: number;
+    type: 'earn' | 'spend';
+    source: string;
+    description: string;
 }
 
 interface Achievement {
@@ -66,7 +77,9 @@ const UserProfile: React.FC<UserProfileProps> = ({
                                                  }) => {
     // State hooks
     const [user, setUser] = useState<any>(null);
-    const [activeTab, setActiveTab] = useState<'overview' | 'achievements' | 'inventory' | 'server'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'achievements' | 'inventory' | 'server' | 'shop'>('overview');
+    const [userPoints, setUserPoints] = useState<number>(0);
+    const [transactions, setTransactions] = useState<PointsTransaction[]>([]);
     const [achievements, setAchievements] = useState<Achievement[]>([]);
     const [inventory, setInventory] = useState<InventoryItem[]>([]);
     const [serverProgression, setServerProgression] = useState<ServerProgression | null>(null);
@@ -75,6 +88,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
     const [inventoryFilter, setInventoryFilter] = useState<string>('all');
     const [activeAchievement, setActiveAchievement] = useState<Achievement | null>(null);
     const [activeInventoryItem, setActiveInventoryItem] = useState<InventoryItem | null>(null);
+    const [isContentHovered, setIsContentHovered] = useState<boolean>(false);
 
     // Refs for 3D effects
     const profileContainerRef = useRef<HTMLDivElement>(null);
@@ -91,40 +105,66 @@ const UserProfile: React.FC<UserProfileProps> = ({
         }
     }, [isOpen]);
 
-    // Apply 3D effect on mouse move
+    useEffect(() => {
+        if (isOpen) {
+            loadUserPoints();
+
+            // Listen for points changes
+            window.addEventListener('pointsChanged', handlePointsChange);
+
+            return () => {
+                window.removeEventListener('pointsChanged', handlePointsChange);
+            };
+        }
+    }, [isOpen]);
+
+    // Apply 3D effect on mouse move - OPTIMIZED VERSION
     useEffect(() => {
         if (!isOpen || isMobile) return;
 
-        const handleMouseMove = (e: MouseEvent) => {
-            if (!profileContainerRef.current || !avatarContainerRef.current) return;
+        const container = profileContainerRef.current;
+        const avatar = avatarContainerRef.current;
+        if (!container || !avatar) return;
 
-            // Calculate 3D effect for profile container
-            const profileRect = profileContainerRef.current.getBoundingClientRect();
-            const profileX = (e.clientX - profileRect.left) / profileRect.width - 0.5;
-            const profileY = (e.clientY - profileRect.top) / profileRect.height - 0.5;
+        // Cache rect and RAF handle
+        let rect = container.getBoundingClientRect();
+        let frame: number | null = null;
+        let pointerX = 0, pointerY = 0;
 
-            // Apply subtle rotation to profile container
-            profileContainerRef.current.style.transform =
-                `perspective(1000px) rotateX(${profileY * -3}deg) rotateY(${profileX * 3}deg)`;
+        const onMouseMove = (e: MouseEvent) => {
+            // update raw coords
+            pointerX = (e.clientX - rect.left) / rect.width - 0.5;
+            pointerY = (e.clientY - rect.top) / rect.height - 0.5;
 
-            // Apply stronger effect to avatar
-            avatarContainerRef.current.style.transform =
-                `translateZ(20px) rotateX(${profileY * -8}deg) rotateY(${profileX * 8}deg)`;
+            // schedule an RAF if none pending
+            if (frame === null) {
+                frame = requestAnimationFrame(() => {
+                    // subtle card rotation
+                    container.style.transform = `perspective(1000px) rotateX(${-pointerY * 3}deg) rotateY(${pointerX * 3}deg)`;
+                    // stronger avatar "pop-out"
+                    avatar.style.transform = `translateZ(20px) rotateX(${-pointerY * 8}deg) rotateY(${pointerX * 8}deg)`;
+                    // clear RAF handle
+                    frame = null;
+                });
+            }
         };
 
-        window.addEventListener('mousemove', handleMouseMove);
+        const onResize = () => {
+            rect = container.getBoundingClientRect();
+        };
+
+        // Listen only on the container
+        container.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('resize', onResize);
 
         return () => {
-            window.removeEventListener('mousemove', handleMouseMove);
+            container.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('resize', onResize);
+            if (frame !== null) cancelAnimationFrame(frame);
 
-            // Reset transforms when unmounting
-            if (profileContainerRef.current) {
-                profileContainerRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
-            }
-
-            if (avatarContainerRef.current) {
-                avatarContainerRef.current.style.transform = 'translateZ(0) rotateX(0deg) rotateY(0deg)';
-            }
+            // reset transforms
+            container.style.transform = '';
+            avatar.style.transform = '';
         };
     }, [isOpen, isMobile]);
 
@@ -154,6 +194,36 @@ const UserProfile: React.FC<UserProfileProps> = ({
         } catch (error) {
             console.error("Error loading user data:", error);
         }
+    };
+
+    const handleTabContentMouseEnter = () => {
+        setIsContentHovered(true);
+    };
+
+    const handleTabContentMouseLeave = () => {
+        setIsContentHovered(false);
+    };
+
+    const loadUserPoints = async () => {
+        try {
+            const points = await PointsService.getPoints();
+            setUserPoints(points);
+
+            // Load recent transactions
+            const recentTransactions = await PointsService.getTransactions(5);
+            setTransactions(recentTransactions);
+        } catch (error) {
+            console.error('Error loading user points:', error);
+        }
+    };
+
+    const handlePointsChange = () => {
+        loadUserPoints().then(r => console.log('User data loaded:', r));
+    };
+
+// Format points with commas
+    const formatPoints = (points: number): string => {
+        return points.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     };
 
     // Helper to format game IDs into readable names
@@ -211,12 +281,19 @@ const UserProfile: React.FC<UserProfileProps> = ({
     return (
         <div className={`${styles.profileBackdrop} ${isMobile ? styles.mobile : ''}`}>
             <div
-                className={styles.profileContainer}
+                className={`${styles.profileContainer} ${isContentHovered ? styles.contentHovered : ''}`}
                 ref={profileContainerRef}
             >
                 {/* Header with close button */}
                 <div className={styles.profileHeader}>
                     <h2 className={styles.profileTitle}>USER PROFILE</h2>
+
+                    {/* Points Display - in the top right */}
+                    <div className={styles.pointsDisplay}>
+                        <div className={styles.pointsIcon}>cR</div>
+                        <div className={styles.pointsAmount}>{formatPoints(userPoints)}</div>
+                    </div>
+
                     <button
                         className={styles.closeButton}
                         onClick={onClose}
@@ -278,8 +355,8 @@ const UserProfile: React.FC<UserProfileProps> = ({
                                 <div className={styles.statItem}>
                                     <span className={styles.statLabel}>ACHIEVEMENTS</span>
                                     <span className={styles.statValue}>
-                    {achievementStats.unlocked}/{achievementStats.total}
-                  </span>
+                                        {achievementStats.unlocked}/{achievementStats.total}
+                                    </span>
                                 </div>
                                 <div className={styles.statItem}>
                                     <span className={styles.statLabel}>ITEMS</span>
@@ -318,7 +395,10 @@ const UserProfile: React.FC<UserProfileProps> = ({
                 </div>
 
                 {/* Tab navigation */}
-                <div className={styles.tabsContainer}>
+                <div className={styles.tabsContainer}
+                     onMouseEnter={handleTabContentMouseEnter}
+                     onMouseLeave={handleTabContentMouseLeave}
+                >
                     <button
                         className={`${styles.tabButton} ${activeTab === 'overview' ? styles.active : ''}`}
                         onClick={() => setActiveTab('overview')}
@@ -343,10 +423,20 @@ const UserProfile: React.FC<UserProfileProps> = ({
                     >
                         SERVER
                     </button>
+                    <button
+                        className={`${styles.tabButton} ${activeTab === 'shop' ? styles.active : ''}`}
+                        onClick={() => setActiveTab('shop')}
+                    >
+                        SHOP
+                    </button>
                 </div>
 
-                {/* Tab content */}
-                <div className={styles.tabContent}>
+                {/* Tab content with hover events */}
+                <div
+                    className={styles.tabContent}
+                    onMouseEnter={handleTabContentMouseEnter}
+                    onMouseLeave={handleTabContentMouseLeave}
+                >
                     {/* Overview Tab */}
                     {activeTab === 'overview' && (
                         <div className={styles.overviewTab}>
@@ -430,6 +520,39 @@ const UserProfile: React.FC<UserProfileProps> = ({
                                         <div className={styles.emptyState}>No items in inventory</div>
                                     )}
                                 </div>
+                            </div>
+
+                            {/* Recent transactions */}
+                            <div className={styles.overviewSection}>
+                                <h3 className={styles.sectionTitle}>RECENT TRANSACTIONS</h3>
+                                {transactions.length > 0 ? (
+                                    <div className={styles.transactionsList}>
+                                        {transactions.map((transaction) => (
+                                            <div
+                                                key={transaction.id}
+                                                className={`${styles.transactionItem} ${styles[transaction.type]}`}
+                                            >
+                                                <div className={styles.transactionInfo}>
+                                                    <div className={styles.transactionDescription}>
+                                                        {transaction.description}
+                                                    </div>
+                                                    <div className={styles.transactionSource}>
+                                                        {transaction.source}
+                                                    </div>
+                                                    <div className={styles.transactionTime}>
+                                                        {transaction.timestamp.toLocaleString()}
+                                                    </div>
+                                                </div>
+                                                <div className={styles.transactionAmount}>
+                                                    {transaction.type === 'earn' ? '+' : '-'}
+                                                    {transaction.amount}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className={styles.emptyState}>No recent transactions</div>
+                                )}
                             </div>
                         </div>
                     )}
@@ -617,6 +740,13 @@ const UserProfile: React.FC<UserProfileProps> = ({
                             ) : (
                                 <div className={styles.emptyState}>No server progression data available</div>
                             )}
+                        </div>
+                    )}
+
+                    {/* Shop Tab */}
+                    {activeTab === 'shop' && (
+                        <div className={styles.shopTab}>
+                            <Shop isMobile={isMobile} />
                         </div>
                     )}
                 </div>

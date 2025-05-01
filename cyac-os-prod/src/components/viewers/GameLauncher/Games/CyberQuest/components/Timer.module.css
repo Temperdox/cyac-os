@@ -1,0 +1,68 @@
+.timer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 1rem;
+}
+
+.timeDisplay {
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #33ffff;
+    margin-bottom: 0.3rem;
+    min-width: 60px;
+    text-align: center;
+}
+
+.timeDisplay.warning {
+    color: #ffcc33;
+    animation: pulse 1s infinite alternate;
+}
+
+.timeDisplay.critical {
+    color: #ff3333;
+    animation: pulse 0.5s infinite alternate;
+}
+
+@keyframes pulse {
+    from {
+        opacity: 0.7;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.progressContainer {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(51, 255, 255, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progressBar {
+    height: 100%;
+    background-color: #33ffff;
+    border-radius: 2px;
+    transition: width 1s linear;
+}
+
+.progressBar.warning {
+    background-color: #ffcc33;
+}
+
+.progressBar.critical {
+    background-color: #ff3333;
+    animation: flash 0.5s infinite alternate;
+}
+
+@keyframes flash {
+    from {
+        opacity: 0.7;
+    }
+    to {
+        opacity: 1;
+    }
+}

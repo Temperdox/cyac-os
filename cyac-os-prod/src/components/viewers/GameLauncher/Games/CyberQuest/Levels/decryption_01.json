@@ -1,0 +1,65 @@
+{
+  "id": "decryption_01",
+  "name": "Basic Decryption",
+  "description": "Decrypt a simple cipher to gain access to secured data",
+  "difficulty": "easy",
+  "type": "decryption",
+  "order": 2,
+  "data": {
+    "intro": "This server is protected with a simple Caesar cipher. Decrypt the password to gain access to the protected data. The security is minimal but serves as a good introduction to basic decryption techniques.",
+    "outro": "Excellent work! The encryption was no match for your skills. You've successfully decrypted the password and accessed the secured database.",
+    "backgroundImage": "decryption_bg.jpg",
+    "ambientSound": "server_room.mp3",
+    "objectives": [
+      {
+        "id": "obj_1",
+        "description": "Identify the cipher type",
+        "type": "solve",
+        "target": "cipher_type",
+        "points": 30
+      },
+      {
+        "id": "obj_2",
+        "description": "Decode the key",
+        "type": "solve",
+        "target": "decrypt_key",
+        "points": 50
+      },
+      {
+        "id": "obj_3",
+        "description": "Access the secured database",
+        "type": "hack",
+        "target": "secure_db",
+        "points": 70
+      }
+    ]
+  },
+  "maxScore": 200,
+  "timeLimit": 300,
+  "miniGames": [
+    {
+      "id": "cipher_game",
+      "type": "password_crack",
+      "data": {
+        "cipher": "Caesar",
+        "shift": 3,
+        "password": "SECUREACCESS",
+        "initialHint": "The password has been encrypted using a simple substitution cipher where each letter is shifted by a constant value.",
+        "baseScore": 100,
+        "maxAttempts": 5
+      },
+      "rewards": {
+        "points": 50
+      }
+    }
+  ],
+  "rewards": {
+    "points": 100,
+    "bonusPoints": 50,
+    "experience": 150,
+    "unlocks": ["maze_01"]
+  },
+  "requirements": {
+    "completedLevels": ["tutorial_01"]
+  }
+}

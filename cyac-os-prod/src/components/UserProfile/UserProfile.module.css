@@ -30,6 +30,9 @@
     transform-style: preserve-3d;
     transition: transform 0.1s ease-out;
     animation: glowPulse 3s infinite alternate, slideIn 0.3s ease-out;
+    /* GPU optimization */
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 /* Header styles */
@@ -65,10 +68,44 @@
     letter-spacing: 2px;
 }
 
+/* Top-right points display */
+.pointsDisplay {
+    position: absolute;
+    top: 70px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 51, 0, 0.4);
+    border: 2px solid #33ff33;
+    border-radius: 8px;
+    padding: 8px 16px;
+    box-shadow: 0 0 15px rgba(51, 255, 51, 0.5);
+    z-index: 15;
+    animation: glowPulse 3s infinite alternate;
+}
+
+.pointsIcon {
+    font-size: 20px;
+}
+
+.pointsAmount {
+    font-size: 24px;
+    font-weight: bold;
+    color: #33ff33;
+    text-shadow: 0 0 8px rgba(51, 255, 51, 0.7);
+}
+
+.pointsLabel {
+    font-size: 12px;
+    color: #cccccc;
+}
+
 .closeButton {
     background-color: transparent;
     border: 1px solid #33ff33;
     color: #33ff33;
+    min-width: fit-content;
     width: 30px;
     height: 30px;
     border-radius: 4px;
@@ -95,6 +132,7 @@
     padding: 20px;
     min-height: 170px;
     overflow: hidden;
+    transition: min-height 0.3s ease-out;
 }
 
 .profileBanner {
@@ -124,6 +162,7 @@
     z-index: 3;
     display: flex;
     gap: 20px;
+    transition: transform 0.3s ease-out;
 }
 
 .avatarContainer {
@@ -132,6 +171,9 @@
     height: 120px;
     transform-style: preserve-3d;
     transition: transform 0.15s ease-out;
+    /* GPU optimization */
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .userAvatar {
@@ -243,6 +285,9 @@
     margin-bottom: 15px;
     width: 100%;
     max-width: 400px;
+    height: auto;
+    opacity: 1;
+    transition: all 0.3s ease-out;
 }
 
 .roleTagsContainer {
@@ -250,6 +295,10 @@
     flex-wrap: wrap;
     gap: 8px;
     max-width: 400px;
+    height: auto;
+    opacity: 1;
+    margin-bottom: 15px;
+    transition: all 0.3s ease-out;
 }
 
 .moreRoles {
@@ -315,6 +364,7 @@
     padding: 15px;
     scrollbar-width: thin;
     scrollbar-color: #33ff33 #001122;
+    transition: max-height 0.3s ease-out;
 }
 
 .tabContent::-webkit-scrollbar {
@@ -429,6 +479,70 @@
     font-weight: bold;
 }
 
+/* Transactions list */
+.transactionsList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.transactionItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-left: 4px solid;
+    transition: transform 0.2s;
+}
+
+.transactionItem:hover {
+    transform: translateX(5px);
+}
+
+.transactionItem.earn {
+    border-left-color: #33ff33;
+}
+
+.transactionItem.spend {
+    border-left-color: #ff3333;
+}
+
+.transactionInfo {
+    flex: 1;
+}
+
+.transactionDescription {
+    font-size: 14px;
+    color: #ffffff;
+    margin-bottom: 3px;
+}
+
+.transactionSource {
+    font-size: 12px;
+    color: #aaaaaa;
+    margin-bottom: 3px;
+}
+
+.transactionTime {
+    font-size: 11px;
+    color: #777777;
+}
+
+.transactionAmount {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.earn .transactionAmount {
+    color: #33ff33;
+}
+
+.spend .transactionAmount {
+    color: #ff3333;
+}
+
 /* Achievements tab */
 .achievementsTab {
     display: flex;
@@ -466,6 +580,7 @@
     height: 100%;
     background: linear-gradient(to right, #004400, #33ff33);
     transition: width 0.5s;
+    will-change: width;
 }
 
 .percentageText {
@@ -702,6 +817,13 @@
     font-weight: bold;
 }
 
+/* Shop tab */
+.shopTab {
+    height: 100%;
+    padding: 0;
+    margin: -15px;
+}
+
 /* Detail modal */
 .detailModal {
     position: fixed;
@@ -729,6 +851,7 @@
     max-height: 80vh;
     overflow-y: auto;
     animation: modalSlideIn 0.3s ease-out;
+    will-change: transform, opacity;
 }
 
 .closeModalButton {
@@ -924,6 +1047,45 @@
     box-shadow: none;
 }
 
+/* Content hover effects */
+.profileContainer.contentHovered .userInfoSection {
+    min-height: 50px; /* Reduced minimum height */
+    transition: all 0.3s ease-out;
+}
+
+/* Scale down the avatar section */
+.profileContainer.contentHovered .avatarSection {
+    transform: scale(0.5);
+    transform-origin: left center;
+    margin-top: -40px;
+    transition: all 0.3s ease-out;
+}
+
+/* Hide progress bar on hover */
+.profileContainer.contentHovered .progressBarContainer {
+    height: 0;
+    opacity: 0;
+    margin: 0;
+    overflow: hidden;
+    transition: all 0.3s ease-out;
+}
+
+/* Hide role tags on hover */
+.profileContainer.contentHovered .roleTagsContainer {
+    height: 0;
+    opacity: 0;
+    margin: 0;
+    overflow: hidden;
+    transition: all 0.3s ease-out;
+}
+
+/* Make tab content take more vertical space */
+.profileContainer.contentHovered .tabContent {
+    max-height: calc(100% - 10px); /* Increase max height */
+    min-height: calc(100% - 190px);
+    transition: all 0.3s ease-out;
+}
+
 /* Mobile styles */
 .profileBackdrop.mobile .profileContainer {
     width: 100%;
@@ -932,6 +1094,16 @@
     max-height: none;
     border-radius: 0;
     transform: none !important;
+}
+
+.mobile .pointsDisplay {
+    top: 15px;
+    right: 50px;
+    padding: 6px 12px;
+}
+
+.mobile .pointsAmount {
+    font-size: 20px;
 }
 
 .profileBackdrop.mobile .userInfoSection {
@@ -1041,6 +1213,7 @@
     height: 100%;
     background: linear-gradient(to right, #004400, #33ff33);
     transition: width 0.5s ease-out;
+    will-change: width;
 }
 
 .progressLabel {
